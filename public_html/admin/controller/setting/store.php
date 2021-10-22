@@ -198,6 +198,12 @@ class ControllerSettingStore extends Controller {
 			$data['error_email'] = '';
 		}
 
+		if (isset($this->error['chief_email'])) {
+			$data['error_chief_email'] = $this->error['chief_email'];
+		} else {
+			$data['error_chief_email'] = '';
+		}
+		
 		if (isset($this->error['telephone'])) {
 			$data['error_telephone'] = $this->error['telephone'];
 		} else {
@@ -374,6 +380,14 @@ class ControllerSettingStore extends Controller {
 			$data['config_email'] = $store_info['config_email'];
 		} else {
 			$data['config_email'] = '';
+		}
+
+		if (isset($this->request->post['config_chief_email'])) {
+			$data['config_chief_email'] = $this->request->post['config_chief_email'];
+		} elseif (isset($store_info['config_chief_email'])) {
+			$data['config_chief_email'] = $store_info['config_chief_email'];
+		} else {
+			$data['config_chief_email'] = '';
 		}
 
 		if (isset($this->request->post['config_telephone'])) {
@@ -678,6 +692,10 @@ class ControllerSettingStore extends Controller {
 			$this->error['email'] = $this->language->get('error_email');
 		}
 
+		if ((utf8_strlen($this->request->post['config_chief_email']) > 96) || !filter_var($this->request->post['config_chief_email'], FILTER_VALIDATE_EMAIL)) {
+			$this->error['chief_email'] = $this->language->get('error_chief_email');
+		}
+		
 		if ((utf8_strlen($this->request->post['config_telephone']) < 3) || (utf8_strlen($this->request->post['config_telephone']) > 32)) {
 			$this->error['telephone'] = $this->language->get('error_telephone');
 		}

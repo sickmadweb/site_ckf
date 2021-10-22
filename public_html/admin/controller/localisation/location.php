@@ -272,6 +272,12 @@ class ControllerLocalisationLocation extends Controller {
 			$data['error_telephone'] = '';
 		}
 
+		if (isset($this->error['chief_email'])) {
+			$data['error_chief_email'] = $this->error['chief_email'];
+		} else {
+			$data['error_chief_email'] = '';
+		}
+		
 		$url = '';
 
 		if (isset($this->request->get['sort'])) {
@@ -346,6 +352,13 @@ class ControllerLocalisationLocation extends Controller {
 			$data['telephone'] = '';
 		}
 		
+		if (isset($this->request->post['chief_email'])) {
+			$data['chief_email'] = $this->request->post['chief_email'];
+		} elseif (!empty($location_info)) {
+			$data['chief_email'] = $location_info['chief_email'];
+		} else {
+			$data['chief_email'] = '';
+		}	
 		if (isset($this->request->post['fax'])) {
 			$data['fax'] = $this->request->post['fax'];
 		} elseif (!empty($location_info)) {

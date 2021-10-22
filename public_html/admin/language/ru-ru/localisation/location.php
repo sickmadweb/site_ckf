@@ -20,14 +20,15 @@ $_['column_address']   = 'Адрес';
 $_['column_action']    = 'Действие';
 
 // Entry
-$_['entry_name']       = 'Название магазина';
-$_['entry_address']    = 'Адрес';
-$_['entry_geocode']    = 'Геокод';
-$_['entry_telephone']  = 'Телефон';
-$_['entry_fax']        = 'Факс';
-$_['entry_image']      = 'Изображение';
-$_['entry_open']       = 'Режим работы';
-$_['entry_comment']    = 'Комментарий';
+$_['entry_name']        = 'Название магазина';
+$_['entry_address']     = 'Адрес';
+$_['entry_geocode']     = 'Геокод';
+$_['entry_telephone']   = 'Телефон';
+$_['entry_fax']         = 'Факс';
+$_['entry_image']       = 'Изображение';
+$_['entry_open']        = 'Режим работы';
+$_['entry_comment']     = 'Комментарий';
+$_['entry_chief_email'] = 'Почта директора';
 
 // Help
 $_['help_geocode']     = 'Пожалуйста, укажите геокод своего магазина вручную.';
