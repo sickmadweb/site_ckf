@@ -135,77 +135,16 @@
               <label class="control-label" for="input-status">{{ entry_status }}</label>
               <select name="filter_status" id="input-status" class="form-control">
                 <option value=""></option>
-                
-                
-                
-                  
-                
-
                   {% if filter_status == '1' %}
-
-                
-                
-                  
-                
-                
                 <option value="1" selected="selected">{{ text_enabled }}</option>
-                
-                
-                
-                  
-                
-
                   {% else %}
-
-                
-                
-                  
-                
-                
                 <option value="1">{{ text_enabled }}</option>
-                
-                
-                
-                  
-                
-
                   {% endif %}
                   {% if filter_status == '0' %}
-
-                
-                
-                  
-                
-                
                 <option value="0" selected="selected">{{ text_disabled }}</option>
-                
-                
-                
-                  
-                
-
                   {% else %}
-
-                
-                
-                  
-                
-                
                 <option value="0">{{ text_disabled }}</option>
-                
-                
-                
-                  
-                
-
                   {% endif %}
-
-
-              
-              
-                
-              
-              
               </select>
             </div>
 			<div class="form-group">
@@ -224,6 +163,18 @@
                   {% endif %}
               </select>
 			</div>
+			<div class="form-group">
+        <label class="control-label" for="input-image">{{ entry_image }}</label>
+        <select name="filter_image" id="input-image" class="form-control">
+          <option value=""></option>
+            {% if filter_image == '0' %}
+          <option value="0" selected="selected">{{ text_no_image }}</option>
+            {% else %}
+          <option value="0">{{ text_no_image }}</option>
+            {% endif %}
+        </select>
+</div>
+
             <div class="form-group text-right">
               <button type="button" id="button-filter" class="btn btn-default"><i class="fa fa-filter"></i> {{ button_filter }}</button>
 			  <button type="button" id="button-clear-filter" class="btn btn-default"><i class="fa fa-times"></i><span class="hidden-sm"> {{ button_clear }}</span></button>
@@ -359,6 +310,10 @@ $('#button-filter').on('click', function() {
 	var filter_noindex = $('select[name=\'filter_noindex\']').val();
 	if (filter_noindex !== '') {
 		url += '&filter_noindex=' + encodeURIComponent(filter_noindex);
+	}
+	var filter_image = $('select[name=\'filter_image\']').val();
+	if (filter_image !== '') {
+		url += '&filter_image=' + encodeURIComponent(filter_image);
 	}
 
 	location = 'index.php?route=catalog/product&user_token={{ user_token }}' + url;

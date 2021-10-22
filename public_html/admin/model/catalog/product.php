@@ -502,6 +502,10 @@ class ModelCatalogProduct extends Model {
 			$sql .= " AND p.noindex = '" . (int)$data['filter_noindex'] . "'";
 		}
 
+		if (isset($data['filter_image']) && $data['filter_image'] !== '') {
+			$sql .= " AND p.image IN ('', 'no_image.png')";
+		}
+		
 		$sql .= " GROUP BY p.product_id";
 
 		$sort_data = array(
@@ -850,6 +854,10 @@ class ModelCatalogProduct extends Model {
 			$sql .= " AND p.noindex = '" . (int)$data['filter_noindex'] . "'";
 		}
 
+		if (isset($data['filter_image']) && $data['filter_image'] !== '') {
+			$sql .= " AND p.image IN ('', 'no_image.png')";
+		}
+		
 		$query = $this->db->query($sql);
 
 		return $query->row['total'];
