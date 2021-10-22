@@ -1,0 +1,31 @@
+{% if locations|length >= 1 %}
+<div class="pull-left">
+  <form action="{{ action }}" method="post" enctype="multipart/form-data" id="form-location">
+    <div class="btn-group">
+      <button class="btn btn-link dropdown-toggle" data-toggle="dropdown">
+        {% for location in locations %}
+        {% if location.location_id == location_id %} 
+        {{ location.name }}
+        <span><a href="tel:{{ location.telephone }}"><i class="fa fa-phone"></i></a> <span class="hidden-xs hidden-sm hidden-md">{{ location.telephone }}</span></span>
+        {% endif %}
+        {% endfor %}
+        {% if location_id is empty  %} 
+        <span class="hidden-xs hidden-sm hidden-md">{{ text_location }}</span>
+        {% endif %}
+        &nbsp;<i class="fa fa-caret-down"></i>
+      </button>  
+        
+      <ul class="dropdown-menu">
+        {% for location in locations %}
+        <li>
+          <button class="btn btn-link btn-block location-select" type="button" name="{{ location.location_id }}">{{ location.name }}</button>
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+    <input type="hidden" name="location_id" value="" />
+    <input type="hidden" name="redirect" value="{{ redirect }}" />
+  </form>
+
+</div>
+{% endif %}

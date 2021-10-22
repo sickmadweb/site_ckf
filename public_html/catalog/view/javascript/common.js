@@ -41,6 +41,15 @@ $(document).ready(function() {
 		$('#form-currency').submit();
 	});
 
+	// Location
+	$('#form-location .location-select').on('click', function(e) {
+		e.preventDefault();
+
+		$('#form-location input[name=\'location_id\']').val($(this).attr('name'));
+
+		$('#form-location').submit();
+	});
+
 	// Language
 	$('#form-language .language-select').on('click', function(e) {
 		e.preventDefault();
