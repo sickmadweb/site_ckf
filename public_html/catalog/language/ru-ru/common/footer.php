@@ -22,3 +22,5 @@ $_['text_wishlist']     = 'Закладки';
 $_['text_newsletter']   = 'Рассылка';
 $_['text_powered']      = 'Работает на <a target="_blank" href="https://ocstore.com/?utm_source=ocstore3_install">ocStore</a><br /> %s &copy; %s';
 $_['text_location']     = 'Адреса магазинов';
+$_['text_about_us']     = 'О компании';
+$_['text_deliverly']    = 'Доставка';
