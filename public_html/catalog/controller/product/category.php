@@ -73,6 +73,11 @@ class ControllerProductCategory extends Controller {
 			'text' => $this->language->get('text_home'),
 			'href' => $this->url->link('common/home')
 		);
+		
+		$data['breadcrumbs'][] = array(
+			'text' => $this->language->get('text_category'),
+			'href' => $this->url->link('product/category')
+		);
 
 		if (isset($this->request->get['path'])) {
 			$url = '';
@@ -115,9 +120,9 @@ class ControllerProductCategory extends Controller {
 			$category_id = 0;
 		}
 
-		$category_info = $this->model_catalog_category->getCategory($category_id);
+			$category_info = $this->model_catalog_category->getCategory($category_id);
 
-		if ($category_info) {
+		if ($category_id != 0) {
 
 			if ($category_info['meta_title']) {
 				$this->document->setTitle($category_info['meta_title']);
@@ -135,11 +140,6 @@ class ControllerProductCategory extends Controller {
 				$data['heading_title'] = $category_info['name'];
 			}
 
-			$this->document->setDescription($category_info['meta_description']);
-			$this->document->setKeywords($category_info['meta_keyword']);
-
-			$data['text_compare'] = sprintf($this->language->get('text_compare'), (isset($this->session->data['compare']) ? count($this->session->data['compare']) : 0));
-
 			// Set the last category breadcrumb
 			$data['breadcrumbs'][] = array(
 				'text' => $category_info['name'],
@@ -153,6 +153,20 @@ class ControllerProductCategory extends Controller {
 			}
 
 			$data['description'] = html_entity_decode($category_info['description'], ENT_QUOTES, 'UTF-8');
+			$this->document->setDescription($category_info['meta_description']);
+			$this->document->setKeywords($category_info['meta_keyword']);
+
+		} else {
+
+			$this->request->get['path'] = '';
+		}
+
+
+			$data['text_compare'] = sprintf($this->language->get('text_compare'), (isset($this->session->data['compare']) ? count($this->session->data['compare']) : 0));
+
+
+
+
 			$data['compare'] = $this->url->link('product/compare');
 
 			$url = '';
@@ -183,8 +197,15 @@ class ControllerProductCategory extends Controller {
 					'filter_sub_category' => true
 				);
 
+				if ($result['image']) {
+					$image = $this->model_tool_image->resize($result['image'], $this->config->get('theme_' . $this->config->get('config_theme') . '_image_product_width'), $this->config->get('theme_' . $this->config->get('config_theme') . '_image_product_height'));
+				} else {
+					$image = $this->model_tool_image->resize('placeholder.png', $this->config->get('theme_' . $this->config->get('config_theme') . '_image_product_width'), $this->config->get('theme_' . $this->config->get('config_theme') . '_image_product_height'));
+				}
+
 				$data['categories'][] = array(
 					'name' => $result['name'] . ($this->config->get('config_product_count') ? ' (' . $this->model_catalog_product->getTotalProducts($filter_data) . ')' : ''),
+					'thumb' => $image,
 					'href' => $this->url->link('product/category', 'path=' . $this->request->get['path'] . '_' . $result['category_id'] . $url)
 				);
 			}
@@ -376,18 +397,37 @@ class ControllerProductCategory extends Controller {
 			$data['results'] = sprintf($this->language->get('text_pagination'), ($product_total) ? (($page - 1) * $limit) + 1 : 0, ((($page - 1) * $limit) > ($product_total - $limit)) ? $product_total : ((($page - 1) * $limit) + $limit), $product_total, ceil($product_total / $limit));
 
             if (!$this->config->get('config_canonical_method')) {
-                // http://googlewebmastercentral.blogspot.com/2011/09/pagination-with-relnext-and-relprev.html
-                if ($page == 1) {
-                    $this->document->addLink($this->url->link('product/category', 'path=' . $category_info['category_id']), 'canonical');
-                } elseif ($page == 2) {
-                    $this->document->addLink($this->url->link('product/category', 'path=' . $category_info['category_id']), 'prev');
-                } else {
-                    $this->document->addLink($this->url->link('product/category', 'path=' . $category_info['category_id'] . '&page=' . ($page - 1)), 'prev');
-                }
 
-                if ($limit && ceil($product_total / $limit) > $page) {
-                    $this->document->addLink($this->url->link('product/category', 'path=' . $category_info['category_id'] . '&page=' . ($page + 1)), 'next');
-                }
+				if ($category_id != 0) {
+					// http://googlewebmastercentral.blogspot.com/2011/09/pagination-with-relnext-and-relprev.html
+					if ($page == 1) {
+						$this->document->addLink($this->url->link('product/category', 'path=' . $category_info['category_id']), 'canonical');
+					} elseif ($page == 2) {
+						$this->document->addLink($this->url->link('product/category', 'path=' . $category_info['category_id']), 'prev');
+					} else {
+						$this->document->addLink($this->url->link('product/category', 'path=' . $category_info['category_id'] . '&page=' . ($page - 1)), 'prev');
+					}
+
+					if ($limit && ceil($product_total / $limit) > $page) {
+						$this->document->addLink($this->url->link('product/category', 'path=' . $category_info['category_id'] . '&page=' . ($page + 1)), 'next');
+					}
+
+				} else {
+
+					// http://googlewebmastercentral.blogspot.com/2011/09/pagination-with-relnext-and-relprev.html
+					if ($page == 1) {
+						$this->document->addLink($this->url->link('product/category'), 'canonical');
+					} elseif ($page == 2) {
+						$this->document->addLink($this->url->link('product/category'), 'prev');
+					} else {
+						$this->document->addLink($this->url->link('product/category'), 'prev');
+					}
+
+					if ($limit && ceil($product_total / $limit) > $page) {
+						$this->document->addLink($this->url->link('product/category'), 'next');
+					}
+				}
+
             } else {
 
                 if (isset($this->request->server['HTTPS']) && (($this->request->server['HTTPS'] == 'on') || ($this->request->server['HTTPS'] == '1'))) {
@@ -431,52 +471,6 @@ class ControllerProductCategory extends Controller {
 			$data['header'] = $this->load->controller('common/header');
 
 			$this->response->setOutput($this->load->view('product/category', $data));
-		} else {
-			$url = '';
-
-			if (isset($this->request->get['path'])) {
-				$url .= '&path=' . $this->request->get['path'];
-			}
-
-			if (isset($this->request->get['filter'])) {
-				$url .= '&filter=' . $this->request->get['filter'];
-			}
-
-			if (isset($this->request->get['sort'])) {
-				$url .= '&sort=' . $this->request->get['sort'];
-			}
-
-			if (isset($this->request->get['order'])) {
-				$url .= '&order=' . $this->request->get['order'];
-			}
-
-			if (isset($this->request->get['page'])) {
-				$url .= '&page=' . $this->request->get['page'];
-			}
-
-			if (isset($this->request->get['limit'])) {
-				$url .= '&limit=' . $this->request->get['limit'];
-			}
-
-			$data['breadcrumbs'][] = array(
-				'text' => $this->language->get('text_error'),
-				'href' => $this->url->link('product/category', $url)
-			);
-
-			$this->document->setTitle($this->language->get('text_error'));
-
-			$data['continue'] = $this->url->link('common/home');
-
-			$this->response->addHeader($this->request->server['SERVER_PROTOCOL'] . ' 404 Not Found');
-
-			$data['column_left'] = $this->load->controller('common/column_left');
-			$data['column_right'] = $this->load->controller('common/column_right');
-			$data['content_top'] = $this->load->controller('common/content_top');
-			$data['content_bottom'] = $this->load->controller('common/content_bottom');
-			$data['footer'] = $this->load->controller('common/footer');
-			$data['header'] = $this->load->controller('common/header');
-
-			$this->response->setOutput($this->load->view('error/not_found', $data));
-		}
+		
 	}
 }

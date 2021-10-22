@@ -15,6 +15,11 @@ class ControllerProductProduct extends Controller {
 			'href' => $this->url->link('common/home')
 		);
 
+		$data['breadcrumbs'][] = array(
+			'text' => $this->language->get('text_category'),
+			'href' => $this->url->link('product/category')
+		);
+
 		$this->load->model('catalog/category');
 
 		if (isset($this->request->get['path'])) {
