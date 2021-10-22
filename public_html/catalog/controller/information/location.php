@@ -16,7 +16,6 @@ class ControllerInformationLocation extends Controller {
 
 	public function getList() {
 		
-		
 		$this->load->language('information/location');
 
 		$this->document->setTitle($this->language->get('heading_title'));
@@ -86,9 +85,7 @@ class ControllerInformationLocation extends Controller {
 					$image = $this->model_tool_image->resize('/catalog/logockf-re.png', 300, 300);
 				}
 				
-//				$location_contact = $this->model_localisation_location->getLocationsContacts($location_id);
-
-
+				$location_contact = $this->model_localisation_location->getLocationsContacts($location_id);
 
 				$data['locations'][] = array(
 					'location_id' => $location_info['location_id'],
@@ -100,7 +97,7 @@ class ControllerInformationLocation extends Controller {
 					'image'       => $image,
 					'open'        => nl2br($location_info['open']),
 					'comment'     => $location_info['comment'],
-//					'contacts'    => $location_contact,	
+					'contacts'    => $location_contact,	
 					
 					'href' => strlen($location_info['href']) > 1? $location_info['href'] : $this->url->link('information/location', 'location_id=' . $location_info['location_id']) 
 				);
@@ -109,11 +106,7 @@ class ControllerInformationLocation extends Controller {
 
 
 		}
-/*
-		echo "<pre>";
-		print_r($data['locations']);
-		echo "</pre>";
-*/
+
 		if (isset($this->request->post['name'])) {
 			$data['name'] = $this->request->post['name'];
 		} else {
@@ -210,14 +203,12 @@ class ControllerInformationLocation extends Controller {
 
 		$this->load->model('localisation/location');
 
-//		$location_contact = $this->model_localisation_location->getLocationsContacts($location_id);
+		$location_contact = $this->model_localisation_location->getLocationsContacts($location_id);
 		$location_info = $this->model_localisation_location->getLocation($location_id);
-//		$location_images = $this->model_localisation_location->getLocationsImages($location_id);		
-
+		$location_images = $this->model_localisation_location->getLocationsImages($location_id);		
 
 		if ($location_info) {
-			
-			
+	
 		$data['breadcrumbs'][] = array(
 			'text' => $location_info['name'],
 			'href' => $this->url->link('information/location', 'location_id=' . $location_id) 
@@ -234,9 +225,6 @@ class ControllerInformationLocation extends Controller {
 					
 					$images =  array();
 					foreach($location_images as $ad_image) {
-						echo "<pre>";
-						print_r($ad_image['image']);
-						echo "</pre>";
 							
 					$images[] = $this->model_tool_image->resize('catalog'.$ad_image['image'], 500, 500);	
 					}
@@ -245,25 +233,20 @@ class ControllerInformationLocation extends Controller {
 					$images = false;
 				}
 				
-		/*
-		echo "<pre>";
-			print_r($images);
-		echo "</pre>";
-		*/
 		$data['heading_title'] = $location_info['name'];
 		$data['image'] = $image ;
 		$data['images'] = $images ;
 		$data['open'] = nl2br($location_info['open']);
-	//	$data['contacts'] = $location_contact ;
+		$data['contacts'] = $location_contact ;
 		$data['telephone'] = $location_info['telephone'];
 		$data['address'] = nl2br($location_info['address']);
 		$data['name'] = $location_info['name'];
 		$data['comment'] = $location_info['comment'];
 		$data['location_id'] = $location_info['location_id'];
 		$data['maps'] = isset($location_info['maps']) ? $location_info['maps'] :  false;
+		$data['images'] = $images;
 
 		}
-		
 
 		if (isset($this->request->post['name'])) {
 			$data['name'] = $this->request->post['name'];
