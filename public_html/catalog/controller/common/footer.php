@@ -33,6 +33,10 @@ class ControllerCommonFooter extends Controller {
 		$data['deliverly'] = $this->url->link('information/deliverly', '', true);
 		$data['video_category'] = $this->url->link('information/video_category', '', true);		
 
+		$data['callback'] = $this->load->controller('extension/form/callback');
+		$data['query_price'] = $this->load->controller('extension/form/query_price');
+		$data['support'] = $this->load->controller('extension/form/support');
+				
 		$data['powered'] = sprintf($this->language->get('text_powered'), $this->config->get('config_name'), date('Y', time()));
 
 		// Whos Online

@@ -1,0 +1,105 @@
+<!-- Trigger the modal with a button -->
+<button type="button" class="btn btn-info " data-toggle="modal" data-target="#support_modal">{{ title }}</button>
+
+<!-- Modal -->
+<div id="support_modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">{{ title }}</h4>
+      </div>
+      <div class="modal-body">
+
+        <form name="support_form" id="support_form" class="form row support_form" >
+          <span class="form-group col-xs-12">
+            Если нашли проблемы в работе сайта или нашли ошибку напишите нам
+          <b>{{ director_mail }}</b>
+          </span>
+
+          <div class="form-group col-xs-12 hidden" >
+              <input class="form-control" type="password" autoComplete="current-password" value="{{ key }}" name="key">
+              <input class="form-control keypres" type="text"  value="0" placeholder="Enter password" name="keypres">
+              <input class="form-control " type="text"  value="support_form" placeholder="Enter password" name="forms"> 
+              <input class="form-control " type="text"  value="{{ title_page }}" placeholder="" name="title">          
+          </div>
+
+          <div class="form-group col-xs-12">
+            <label class="control-label" for="comment">{{ comment }}</label>
+            <div class="">          
+              <textarea class="form-control"   rows="5" name="comment"></textarea>
+            </div>
+          </div>
+
+          <div class="form-group col-xs-6">
+            <label class="control-label" for="name">{{ text_name }}</label>
+            <div class="">          
+              <input type="text" class="form-control"  placeholder="{{ text_name }}" name="name">
+            </div>
+          </div>
+
+          <div class="form-group col-xs-6">
+            <label class="control-label" for="contact">{{ text_contacts }}</label>
+            <div class="">          
+              <input type="text" class="form-control" placeholder="{{ text_contacts }}" name="contact">
+            </div>
+          </div>
+          
+          <div class="form-group col-xs-12">        
+            <div class="pull-right">
+              <button type="button" id="support_form_send" class="btn btn-default">{{ text_send }}</button>
+            </div>
+          </div>
+        </form>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{{ text_close }}</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  $( "#support_form_send" ).on( "click", function( event ) {
+    console.log("1");
+    if ( $('#support_form textarea').val() < 1) {
+      
+      $("#support_form textarea").before('<div class="alert alert-danger alert-dismissible">Оставьте ваше сообщение!<button type="button" class="close" data-dismiss="alert">×</button></div>');
+
+
+    } else {
+
+      $.ajax({
+        url: 'index.php?route=mail/form',
+        type: 'post',
+        data: $( "#support_form" ).serialize(),
+        dataType: 'json',
+        success: function(json) {
+          $("#support_form, .modal-footer").before('<div class="alert alert-success alert-dismissible">Сообщение отправлено!<button type="button" class="close" data-dismiss="alert">×</button></div>');
+          $(".support_form > .form-group").hide();
+          $('.close').alert('close');
+          $("#support_form").trigger("reset");
+          $("#support_form, .modal-header").after(json['return']);
+
+        } ,
+        error: function(xhr, ajaxOptions, thrownError) {
+          alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+          $("#support_form, .modal-footer").before('<div class="alert alert-danger alert-dismissible">Произошла ошибка повторите позже!<button type="button" class="close" data-dismiss="alert">×</button></div>');
+        }
+
+      });
+
+    }
+    });
+
+    let support_keypress = 0; 
+    $('#support_form textarea').keydown(function(e) {
+      support_keypress++;
+      $('#support_form .keypres').val(support_keypress) ;
+
+    });
+</script>

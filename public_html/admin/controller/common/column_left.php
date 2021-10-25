@@ -714,6 +714,15 @@ class ControllerCommonColumnLeft extends Controller {
 					'children' => array()
 				);
 			}
+			
+			if ($this->user->hasPermission('access', 'report/form')) {
+				$report[] = array(
+					'name'	   => $this->language->get('text_form'),
+					'href'     => $this->url->link('report/form', 'user_token=' . $this->session->data['user_token'], true),
+					'children' => array()		
+				);
+			}
+
 
 			if ($this->user->hasPermission('access', 'report/statistics')) {
 				$report[] = array(
@@ -732,6 +741,7 @@ class ControllerCommonColumnLeft extends Controller {
 					'children' => $report
 				);
 			}
+
 
 			// Stats
 			if ($this->user->hasPermission('access', 'report/statistics')) {

@@ -1,0 +1,107 @@
+<!-- Trigger the modal with a button -->
+<button type="button" class="btn btn-info " data-toggle="modal" data-target="#callback_modal">{{ title }}</button>
+
+<!-- Modal -->
+<div id="callback_modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">{{ title }}</h4>
+      </div>
+      <div class="modal-body">
+
+        <form name="callback_form" id="callback_form" class="form row callback_form" >
+          <span class="form-group col-xs-12">
+            Здесь вы можете описать ваши претензии по качеству услуг, возникших проблемах или нарушениях со стороны персонала. А также выразить ваши пожелания и предложения по улучшению нашей работы. Если вам необходим ответ оставьте ваши контактные данные в поле «Контакты», иначе сообщение будет отправлено анонимно. Все сообщения рассматриваются Владельцем лично и не останутся без внимания.
+          <b>{{ director_mail }}</b>
+          </span>
+
+          <div class="form-group col-xs-12 hidden">
+
+              <input  type="password" class="form-control" autoComplete="current-password" value="{{ key }}" name="key">
+              <input class="form-control keypres" type="text"  value="0" placeholder="Enter password" name="keypres">
+              <input class="form-control " type="text"  value="1" placeholder="" name="boss_email">
+              <input class="form-control " type="text"  value="callback_form" placeholder="" name="forms">
+              <input class="form-control " type="text"  value="{{ title_page }}" placeholder="" name="title">           
+          </div>
+
+          <div class="form-group col-xs-12">
+            <label class="control-label required" for="comment">{{ comment }}</label>
+            <div class="">          
+              <textarea required class="form-control"   rows="5" name="comment"></textarea>
+            </div>
+          </div>
+
+          <div class="form-group col-xs-6">
+            <label class="control-label" for="name">{{ text_name }}</label>
+            <div class="">          
+              <input  type="text" class="form-control"  placeholder="{{ text_name }}" name="name">
+            </div>
+          </div>
+
+          <div class="form-group col-xs-6">
+            <label class="control-label" for="contact">{{ text_contacts }}</label>
+            <div class="">          
+              <input  type="text" class="form-control"  placeholder="{{ text_contacts }}" name="contact">
+            </div>
+          </div>
+          
+          <div class="form-group col-xs-12">        
+            <div class="pull-right">
+              <button type="button" id="callback_form_send" class="btn btn-default">{{ text_send }}</button>
+            </div>
+          </div>
+        </form>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{{ text_close }}</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  $( "#callback_form_send" ).on( "click", function( event ) {
+    console.log("1");
+    if ( $('#callback_form textarea').val() < 1) {
+      
+      $("#callback_form textarea").before('<div class="alert alert-danger alert-dismissible">Оставьте ваше сообщение!<button type="button" class="close" data-dismiss="alert">×</button></div>');
+
+
+    } else {
+
+      $.ajax({
+        url: 'index.php?route=mail/form',
+        type: 'post',
+        data: $( "#callback_form" ).serialize(),
+        dataType: 'json',
+        success: function(json) {
+          $("#callback_form, .modal-footer").before('<div class="alert alert-success alert-dismissible">Сообщение отправлено!<button type="button" class="close" data-dismiss="alert">×</button></div>');
+          $(".callback_form > .form-group").hide();
+          $('.close').alert('close');
+          $("#callback_form").trigger("reset");
+          $("#callback_form, .modal-header").after(json['return']);
+
+        } ,
+        error: function(xhr, ajaxOptions, thrownError) {
+          alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+          $("#callback_form, .modal-footer").before('<div class="alert alert-danger alert-dismissible">Произошла ошибка повторите позже!<button type="button" class="close" data-dismiss="alert">×</button></div>');
+        }
+
+      });
+
+    }
+    });
+
+    let callback_keypress = 0; 
+    $('#callback_form textarea').keydown(function(e) {
+      callback_keypress++;
+      $('#callback_form .keypres').val(callback_keypress) ;
+
+    });
+</script>
