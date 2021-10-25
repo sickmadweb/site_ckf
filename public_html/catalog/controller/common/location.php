@@ -9,7 +9,7 @@ class ControllerCommonLocation extends Controller {
 
 		$data['locations'] = array();
 
-		$data['location_id'] = $this->session->data['location_id'];
+
 
 		$results = $this->model_localisation_location->getLocations();
 
@@ -21,6 +21,18 @@ class ControllerCommonLocation extends Controller {
 					'telephone'    => $result['telephone']
 				);
 		}
+
+
+		if (isset($this->session->data['location_id'])) {
+
+			$data['location_id'] = $this->session->data['location_id'];
+			
+		} else {
+
+			$data['location_id'] = $data['locations'][0];
+			
+		}
+
 
 		if (!isset($this->request->get['route'])) {
 			$data['redirect'] = $this->url->link('common/home');
