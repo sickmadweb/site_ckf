@@ -386,6 +386,42 @@ class ControllerUserUser extends Controller {
 			$data['email'] = '';
 		}
 
+		$this->load->model('localisation/location');	
+
+		$locations = array();
+
+		$locations_info = $this->model_localisation_location->getLocations();
+
+		foreach ($locations_info as $key => $value) {
+			
+			$locations[] = array(
+				'location_id' => $value['location_id'],
+				'name'     => $value['name']
+			);
+		}
+		$data['locations'] 	 = $locations;
+		
+
+
+		if (isset($this->request->post['location_id'])) {
+			$data['location_id'] = $this->request->post['location_id'];
+		} elseif (!empty($user_info)) {
+			$data['location_id'] = $user_info['location_id'];
+		} else {
+			$data['location_id'] = '';
+		}
+
+		$user_contacts_info = $this->model_user_user->getUserContacts($this->request->get['user_id']);
+
+			foreach($user_contacts_info as $key => $value) {
+				
+				$data['user_contacts'][] = array(
+					'phone' => $value['phone'],
+					'viber' 	   => $value['viber'],
+					'whatsapp'	   => $value['whatsapp']
+				);
+		}
+
 		if (isset($this->request->post['image'])) {
 			$data['image'] = $this->request->post['image'];
 		} elseif (!empty($user_info)) {

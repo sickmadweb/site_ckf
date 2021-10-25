@@ -27,6 +27,12 @@ $_['entry_lastname']   	= 'Фамилия';
 $_['entry_email']      	= 'E-Mail';
 $_['entry_image']      	= 'Изображение';
 $_['entry_status']     	= 'Статус';
+$_['entry_location']  	= 'Выберете местополжение';
+$_['entry_contacts']    = 'Контакты';
+$_['entry_phone']     	= 'Телефон';
+$_['entry_whatsapp']    = 'Whatsapp';
+$_['entry_viber']     	= 'Viber';
+
 
 // Error
 $_['error_permission'] 	= 'У вас недостаточно прав для внесения изменений!';

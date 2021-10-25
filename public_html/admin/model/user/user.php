@@ -125,4 +125,28 @@ class ModelUserUser extends Model {
 	public function deleteLoginAttempts($username) {
 		$this->db->query("DELETE FROM `" . DB_PREFIX . "customer_login` WHERE email = '" . $this->db->escape(utf8_strtolower($username)) . "'");
 	}
+
+	public function getUserContacts($user_id) {
+		$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "user_contacts WHERE user_id = '" . (int)$user_id . "'");
+
+		return $query->rows;
+	}
+
+	public function addUserContacts($user_id, $data) {
+
+		$this->db->query("DELETE FROM " . DB_PREFIX . "user_contacts WHERE user_id = '" . (int)$user_id . "'");
+
+        if (isset($data['phone_data'])) {
+            foreach ($data['phone_data'] as $key => $value) {
+                $this->db->query("INSERT INTO " . DB_PREFIX . "user_contacts SET user_id = '" . $user_id . "',
+	
+			`phone` = '" . (isset($value['phone']) ? $value['phone'] : null) . "',
+			`viber` = '" . (isset($value['viber']) ? 1 : 0) . "',
+			`whatsapp` = '" . (isset($value['whatsapp']) ? 1 : 0) . "'
+			");
+            }
+        }
+
+	}
+	
 }
