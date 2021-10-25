@@ -51,6 +51,17 @@ class ControllerCommonColumnLeft extends Controller {
 				);
 			}
 
+			// Video Category
+
+
+			if ($this->user->hasPermission('access', 'catalog/video_category')) {
+				$catalog[] = array(
+					'name'	   => $this->language->get('text_video_category'),
+					'href'     => $this->url->link('catalog/video_category', 'user_token=' . $this->session->data['user_token'], true),
+					'children' => array()		
+				);
+			}
+			
 			// Attributes
 			$attribute = array();
 

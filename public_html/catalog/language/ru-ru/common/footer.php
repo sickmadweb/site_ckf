@@ -24,3 +24,4 @@ $_['text_powered']      = 'Работает на <a target="_blank" href="https:
 $_['text_location']     = 'Адреса магазинов';
 $_['text_about_us']     = 'О компании';
 $_['text_deliverly']    = 'Доставка';
+$_['text_video_category']    = 'Видео материалы';

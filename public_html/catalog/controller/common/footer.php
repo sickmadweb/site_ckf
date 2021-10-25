@@ -31,6 +31,7 @@ class ControllerCommonFooter extends Controller {
 		$data['location'] = $this->url->link('information/location', '', true);
 		$data['about_us'] = $this->url->link('information/about_us', '', true);
 		$data['deliverly'] = $this->url->link('information/deliverly', '', true);
+		$data['video_category'] = $this->url->link('information/video_category', '', true);		
 
 		$data['powered'] = sprintf($this->language->get('text_powered'), $this->config->get('config_name'), date('Y', time()));
 
