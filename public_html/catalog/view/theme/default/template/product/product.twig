@@ -120,6 +120,32 @@
             <button type="button" data-toggle="tooltip" class="btn btn-default" title="{{ button_wishlist }}" onclick="wishlist.add('{{ product_id }}');"><i class="fa fa-heart"></i></button>
             <button type="button" data-toggle="tooltip" class="btn btn-default" title="{{ button_compare }}" onclick="compare.add('{{ product_id }}');"><i class="fa fa-exchange"></i></button>
           </div>
+
+          <table id="sales_data" class="table table-striped table-bordered table-hover">
+            <thead>
+              <tr>
+                <td class="text-left">{{ text_location }}</td>
+                <td class="text-left">{{ text_price }}</td>
+                <td class="text-left">{{ text_quantity }}</td>
+                <td class="text-left">{{ text_status }}</td>
+              </tr>
+            </thead>
+            <tbody>
+                {% for location_data in sales_data %}
+                    <tr>
+                      <td class="text-left">{{ location_data.location }}</td>
+                      <td class="text-left">{{ location_data.price }}</td>
+                      <td class="text-left">{{ location_data.quantity }}</td>
+                          <td class="text-left">{{ location_data.status }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+      
+            <tfoot>
+      
+            </tfoot>
+          </table>
+
           <h1>{{ heading_title }}</h1>
           <ul class="list-unstyled">
             {% if manufacturer %}

@@ -460,6 +460,28 @@ class ControllerProductProduct extends Controller {
 				}
 			}
 
+
+			$data['sales_data'] = array();
+
+			$this->load->model('localisation/location');
+	
+			$locations = $this->model_localisation_location->getLocations();
+	
+			foreach ($locations as $location) {
+	
+			$prices = $this->currency->local_price($this->request->get['product_id'], $location['location_id']);
+	
+			$warehouses = $this->currency->local_status($this->request->get['product_id'], $location['location_id'] );
+	
+				$data['sales_data'][] = array(
+					'location'     => $location['name'],
+					'price'        => isset($prices['price']) ? $this->currency->format($prices['price'], $this->config->get('config_currency')) : $this->currency->format(0, $this->config->get('config_currency')),
+					'quantity'     => $warehouses['quantity'],			
+					'status'       => $warehouses['status']
+				);
+	
+			}
+
 			$data['recurrings'] = $this->model_catalog_product->getProfiles($this->request->get['product_id']);
 
 			$this->model_catalog_product->updateViewed($this->request->get['product_id']);
