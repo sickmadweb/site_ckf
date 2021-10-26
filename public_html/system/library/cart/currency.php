@@ -125,7 +125,7 @@ class Currency {
 		SELECT price, location_id FROM " . DB_PREFIX . "product_location_price 
 		
 		WHERE product_id='" . (int)$product_id . "'
-		AND location_id = '".$location_id."'
+		AND   location_id = '".$location_id."'
 
 		");
 
@@ -136,21 +136,21 @@ class Currency {
 	public function local_status($product_id, $location_id = false ) {
 
 		if ($location_id == false ) {
-			$location_id = $this->session->data['location_id'];
+			$location_id = $this->session->data['location_id']['location_id'];
 		}
 
 		$query = $this->db->query("
 
-		SELECT * , l.name AS location, ss.name AS status
+		SELECT ss.name AS status, pw.quantity
 		
 		FROM " . DB_PREFIX . "product_to_warehouse pw
 		LEFT JOIN " . DB_PREFIX . "stock_status ss ON pw.stock_status_id = ss.stock_status_id 	
-		LEFT JOIN " . DB_PREFIX . "location l ON pw.location_id = l.location_id
+
 
 		WHERE product_id='" . (int)$product_id . "' AND pw.location_id = '".$location_id."'
 
-		");
-
+		");		
+		
 		return $query->row;
 
 	}

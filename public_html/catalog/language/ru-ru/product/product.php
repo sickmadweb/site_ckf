@@ -35,7 +35,8 @@ $_['text_month']               = 'Месяц';
 $_['text_year']                = 'Год';
 $_['text_benefits']            = 'Преимущества:';
 $_['text_category']            = 'Каталог';
-
+$_['text_not_available']       = 'Нет в наличии';
+$_['text_query_prices']        = 'Цена по запросу';
 
 // Entry
 $_['entry_qty']                = 'Кол-во';

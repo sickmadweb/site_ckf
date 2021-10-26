@@ -22,15 +22,12 @@ class ControllerCommonLocation extends Controller {
 				);
 		}
 
-
-		if (isset($this->session->data['location_id'])) {
-
-			$data['location_id'] = $this->session->data['location_id'];
-			
-		} else {
-
+		if (empty($this->session->data['location_id'])) {
 			$data['location_id'] = $data['locations'][0];
-			
+			$this->session->data['location_id']	= $data['locations'][0]['location_id'];		
+		} else {
+			$data['location_id'] = $this->session->data['location_id'];
+
 		}
 
 

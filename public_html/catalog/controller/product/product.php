@@ -476,12 +476,22 @@ class ControllerProductProduct extends Controller {
 				$data['sales_data'][] = array(
 					'location'     => $location['name'],
 					'price'        => isset($prices['price']) ? $this->currency->format($prices['price'], $this->config->get('config_currency')) : $this->currency->format(0, $this->config->get('config_currency')),
-					'quantity'     => $warehouses['quantity'],			
-					'status'       => $warehouses['status']
+					'quantity'     => isset($warehouses['quantity']) ? $warehouses['quantity'] : 0,			
+					'status'       => isset($warehouses['status']) ? $warehouses['status'] : $this->language->get('text_not_available') ,		
 				);
 	
 			}
 			
+			$status = $this->currency->local_status($this->request->get['product_id'], $this->session->data['location_id']);
+			$price = $this->currency->local_price($this->request->get['product_id'], $this->session->data['location_id']);
+			if (empty($status['status'])) {
+				$data['stock'] = $this->language->get('text_not_available');
+			} else {
+				$data['stock'] = $status['status'];
+			}
+
+			$data['price'] = isset($price['price']) ? $this->currency->format($price['price'], $this->config->get('config_currency')) : $this->language->get('text_query_prices') ;
+
 			$data['packages'] = $this->model_catalog_product->getPackages($this->request->get['product_id']);
 
 			$data['recurrings'] = $this->model_catalog_product->getProfiles($this->request->get['product_id']);
