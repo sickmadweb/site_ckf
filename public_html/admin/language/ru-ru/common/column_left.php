@@ -140,3 +140,4 @@ $_['text_processing_status']           = 'Заказов в процессе';
 $_['text_other_status']                = 'Другие заказы'; 
 $_['text_video_category']              = 'Категории видео материалов';
 $_['text_offer']                 	   = 'Товар (Offer)';
+$_['text_view']                 	   = 'Товар (View)';
