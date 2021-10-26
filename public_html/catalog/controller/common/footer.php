@@ -38,6 +38,8 @@ class ControllerCommonFooter extends Controller {
 		$data['support'] = $this->load->controller('extension/form/support');
 	
 		$data['offers'] = $this->url->link('product/offers', '', true);
+		$data['views'] = $this->url->link('product/views', '', true);
+		
 		$data['location'] = $this->url->link('information/location', '', true);
 
 		$data['powered'] = sprintf($this->language->get('text_powered'), $this->config->get('config_name'), date('Y', time()));
