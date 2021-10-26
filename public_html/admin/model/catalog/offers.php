@@ -50,19 +50,7 @@ class ModelCatalogOffers extends Model {
 				}
 			}
 		}
-		
-		if (isset($data['product_related'])) {
-			foreach ($data['product_related'] as $related_id) {
-				$this->db->query("INSERT INTO " . DB_PREFIX . "product_related_wb SET offers_id = '" . (int)$offers_id . "', product_id = '" . (int)$related_id . "'");
-			}
-		}
-	
-		if (isset($data['article_related'])) {
-			foreach ($data['article_related'] as $related_id) {
-				$this->db->query("INSERT INTO " . DB_PREFIX . "article_related_wb SET offers_id = '" . (int)$offers_id . "', article_id = '" . (int)$related_id . "'");
-			}
-		}
-		
+				
 		// Set which layout to use with this offers
 		if (isset($data['offers_layout'])) {
 			foreach ($data['offers_layout'] as $store_id => $layout_id) {
@@ -171,29 +159,7 @@ class ModelCatalogOffers extends Model {
 				}
 			}
 		}
-		
-		$this->db->query("DELETE FROM " . DB_PREFIX . "product_related_wb WHERE offers_id = '" . (int)$offers_id . "'");
-	
-		if (isset($data['product_related'])) {
-			foreach ($data['product_related'] as $related_id) {
-				$this->db->query("DELETE FROM " . DB_PREFIX . "product_related_wb WHERE offers_id = '" . (int)$offers_id . "' AND product_id = '" . (int)$related_id . "'");
-				$this->db->query("INSERT INTO " . DB_PREFIX . "product_related_wb SET offers_id = '" . (int)$offers_id . "', product_id = '" . (int)$related_id . "'");
-				
-	
-			}
-		}
-		
-		$this->db->query("DELETE FROM " . DB_PREFIX . "article_related_wb WHERE offers_id = '" . (int)$offers_id . "'");
-	
-		if (isset($data['article_related'])) {
-			foreach ($data['article_related'] as $related_id) {
-				$this->db->query("DELETE FROM " . DB_PREFIX . "article_related_wb WHERE offers_id = '" . (int)$offers_id . "' AND article_id = '" . (int)$related_id . "'");
-				$this->db->query("INSERT INTO " . DB_PREFIX . "article_related_wb SET offers_id = '" . (int)$offers_id . "', article_id = '" . (int)$related_id . "'");
-				
-	
-			}
-		}
-		
+						
 		$this->db->query("DELETE FROM " . DB_PREFIX . "offers_to_layout WHERE offers_id = '" . (int)$offers_id . "'");
 
 		if (isset($data['offers_layout'])) {
@@ -236,8 +202,6 @@ class ModelCatalogOffers extends Model {
 		$this->db->query("DELETE FROM " . DB_PREFIX . "offers_to_layout WHERE offers_id = '" . (int)$offers_id . "'");
 		$this->db->query("DELETE FROM " . DB_PREFIX . "product_to_offers WHERE offers_id = '" . (int)$offers_id . "'");
 		$this->db->query("DELETE FROM " . DB_PREFIX . "seo_url WHERE query = 'offers_id=" . (int)$offers_id . "'");
-		$this->db->query("DELETE FROM " . DB_PREFIX . "product_related_wb WHERE offers_id = '" . (int)$offers_id . "'");
-		$this->db->query("DELETE FROM " . DB_PREFIX . "article_related_wb WHERE offers_id = '" . (int)$offers_id . "'");
 		$this->db->query("DELETE FROM " . DB_PREFIX . "coupon_offers WHERE offers_id = '" . (int)$offers_id . "'");
 
 		$this->cache->delete('offers');
@@ -402,30 +366,6 @@ class ModelCatalogOffers extends Model {
 		return $offers_seo_url_data;
 	}
 	
-	public function getOffersRelated($offers_id) {
-		$offers_related_data = array();
-		
-		$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "product_related_wb WHERE product_id = '" . (int)$product_id . "'");
-		
-		foreach ($query->rows as $result) {
-			$product_related_data[] = $result['related_id'];
-		}
-		
-		return $product_related_data;
-	}
-	
-	public function getOffersRelated_article($offers_id) {
-		$offers_related_data = array();
-		
-		$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "article_related_wb WHERE article_id = '" . (int)$article_id . "'");
-		
-		foreach ($query->rows as $result) {
-			$article_related_data[] = $result['related_id'];
-		}
-		
-		return $article_related_data;
-	}
-	
 	public function getOffersLayouts($offers_id) {
 		$offers_layout_data = array();
 
@@ -459,28 +399,5 @@ class ModelCatalogOffers extends Model {
 		$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "offers_path WHERE path_id = '" . (int)$parent_id . "'");
 		return $query->rows;
 	}
-	
-	public function getProductRelated($offers_id) {
-		$product_related_data = array();
 		
-		$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "product_related_wb WHERE offers_id = '" . (int)$offers_id . "'");
-		
-		foreach ($query->rows as $result) {
-			$product_related_data[] = $result['product_id'];
-		}
-		
-		return $product_related_data;
-	}
-	
-	public function getArticleRelated($offers_id) {
-		$article_related_data = array();
-		
-		$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "article_related_wb WHERE offers_id = '" . (int)$offers_id . "'");
-		
-		foreach ($query->rows as $result) {
-			$article_related_data[] = $result['article_id'];
-		}
-		
-		return $article_related_data;
-	}
 }
