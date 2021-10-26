@@ -440,7 +440,7 @@ class ControllerProductView extends Controller {
 		
 				$data['variants'][] = array(
 					'name'     => $variant['name'],		
-					'product_id'       => $variant['product_id']
+					'offer_id'       => $variant['offer_id']
 				);
 	
 			}

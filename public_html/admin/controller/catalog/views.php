@@ -320,7 +320,6 @@ class ControllerCatalogViews extends Controller {
 		if (isset($this->request->get['views_id']) && ($this->request->server['REQUEST_METHOD'] != 'POST')) {
 			$views_info = $this->model_catalog_views->getViews($this->request->get['views_id']);
 		}
-
 		$data['user_token'] = $this->session->data['user_token'];
 
 		$this->load->model('localisation/language');

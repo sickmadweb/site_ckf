@@ -451,7 +451,7 @@ class ControllerCatalogView extends Controller {
 				
 
 				
-				$category = $this->model_catalog_category->getCategory($filter_category);
+				$category = $this->model_catalog_views->getCategory($filter_category);
 				if ($category) {
 					$filter_category_name = ($category['path']) ? $category['path'] . ' &gt; ' . $category['name'] : $category['name'];
 				} else {
@@ -1313,9 +1313,9 @@ class ControllerCatalogView extends Controller {
 		}
 
 		// Categories
-		$this->load->model('catalog/category');
+		$this->load->model('catalog/views');
 		
-		$data['categories'] = $this->model_catalog_category->getAllCategories();
+		$data['categories'] = $this->model_catalog_views->getAllCategories();
 		
 		if (isset($this->request->post['main_views_id'])) {
 			$data['main_views_id'] = $this->request->post['main_views_id'];
@@ -1336,7 +1336,7 @@ class ControllerCatalogView extends Controller {
 		$data['view_categories'] = array();
 
 		foreach ($categories as $views_id) {
-			$category_info = $this->model_catalog_category->getCategory($views_id);
+			$category_info = $this->model_catalog_views->getViews($views_id);
 
 			if ($category_info) {
 				$data['view_categories'][] = array(
@@ -1649,7 +1649,7 @@ class ControllerCatalogView extends Controller {
 
 			$data['variants'][] = array(
 				'name'     => $variant['name'],
-				'product_id'     => $variant['product_id'],
+				'offer_id'     => $variant['offer_id'],
 			);
 
 		}

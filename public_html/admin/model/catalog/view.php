@@ -929,7 +929,7 @@ class ModelCatalogView extends Model {
 
 		SELECT * FROM " . DB_PREFIX . "variants v
 
-		LEFT JOIN " . DB_PREFIX . "product_description pd ON (v.product_id = pd.product_id)
+		LEFT JOIN " . DB_PREFIX . "offer_description od ON (v.offer_id = od.offer_id)
 		
 		WHERE v.view_id = '". $view_id ."'
 
