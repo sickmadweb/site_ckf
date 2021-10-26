@@ -1204,6 +1204,14 @@ class ControllerCatalogProduct extends Controller {
 			$data['sort_order'] = 1;
 		}
 
+		$data['package_list'] = $this->model_catalog_product->getPackageList();;
+
+		if (isset($this->request->post['packages'])) {
+			$data['packages'] = $this->request->post['packages'];
+		} elseif (!empty($product_info)) {
+			$data['packages'] = $this->model_catalog_product->getPackage($this->request->get['product_id']);
+		} 
+
 		$this->load->model('localisation/stock_status');
 
 		$data['stock_statuses'] = $this->model_localisation_stock_status->getStockStatuses();

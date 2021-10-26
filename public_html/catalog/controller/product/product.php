@@ -481,6 +481,8 @@ class ControllerProductProduct extends Controller {
 				);
 	
 			}
+			
+			$data['packages'] = $this->model_catalog_product->getPackages($this->request->get['product_id']);
 
 			$data['recurrings'] = $this->model_catalog_product->getProfiles($this->request->get['product_id']);
 

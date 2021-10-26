@@ -341,6 +341,27 @@
                   </select>
                 </div>
               </div>
+            
+              <div class="form-group form-inline">
+                <label class="col-sm-2 control-label" for="input-packages">{{ entry_packages }}</label>
+                <div class="col-sm-10">
+                  {% for package in packages %}
+                          <span>
+                            <label for="packages_list-{{ product_id }}">{{ package.name }}</label><br>
+                            <input list="packages_list" id="parent_id-{{ product_id }}" name="parent_id" value="{{ package.package_id }}" class="form-control"/>
+
+                            <input type="text" name="parent_id" id="value-{{ product_id }}" value="{{ package.parent_value|round(4, 'floor')  }}" class="form-control" >
+                          <label for="packages_list-{{ product_id }}">{{ package.parent_name }}</label>
+                          <input list="packages_list" id="package_id-{{ product_id }}" name="package_id" value="{{ package.parent_id }}" class="form-control"/>
+
+                          <input type="text" name="parent_value" id="parent_value-{{ product_id }}" value="{{ package.value }}" class="form-control">
+                        </span>
+
+                  {% endfor %}
+                </div>
+              </div>
+
+
               <div class="form-group">
                 <label class="col-sm-2 control-label" for="input-weight">{{ entry_weight }}</label>
                 <div class="col-sm-10">
@@ -1195,6 +1216,13 @@
       </div>
     </div>
   </div>
+  <datalist id="packages_list">
+    {% for package in package_list %}
+    <option value="{{ package.package_id }}">{{ package.name }}</option>
+    {% endfor %}
+  </datalist>
+
+
   <link href="view/javascript/codemirror/lib/codemirror.css" rel="stylesheet"/>
   <link href="view/javascript/codemirror/theme/monokai.css" rel="stylesheet"/>
   <script type="text/javascript" src="view/javascript/codemirror/lib/codemirror.js"></script>

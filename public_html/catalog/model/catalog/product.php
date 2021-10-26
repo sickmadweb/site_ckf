@@ -541,4 +541,21 @@ class ModelCatalogProduct extends Model {
 			return 0;
 		}
 	}
+	
+	public function getPackages($product_id) {
+
+		$query = $this->db->query("
+
+				SELECT pp.product_id, pp.value, pp.parent_value, packd1.name AS package, packd1.package_id AS package_id, packd1.name AS parent, packd1.package_id AS parent_id 
+				
+				FROM " . DB_PREFIX . "product_package pp
+
+				LEFT JOIN " . DB_PREFIX . "package_description packd1 ON pp.package_id = packd1.package_id
+				LEFT JOIN " . DB_PREFIX . "package_description packd2 ON pp.parent_id = packd2.package_id
+				WHERE product_id='". $product_id ."'
+		
+		");
+
+		return $query->rows;
+	}
 }

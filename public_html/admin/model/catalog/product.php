@@ -12,6 +12,24 @@ class ModelCatalogProduct extends Model {
 			$this->db->query("UPDATE " . DB_PREFIX . "product SET image = '" . $this->db->escape($data['image']) . "' WHERE product_id = '" . (int)$product_id . "'");
 		}
 
+		if (isset($data['packages'])) {
+			$this->db->query("
+			DELETE FROM " . DB_PREFIX . "product_package WHERE product_id='" . (int)$product_id . "'
+			");
+
+			foreach ($data['packages'] as $package) {
+
+				$this->db->query("
+				INSERT INTO ckf_product_package (product_id, parent_id, value, package_id, parent_value, type) VALUES 
+				('" . (int)$product_id . "','" . $package['parent_id'] . "','" . $package['value'] . "','" . $package['package_id'] . "','" . $package['parent_value'] . "','" . $package['type'] . "')
+
+				");
+
+			}
+
+
+		}
+
 		foreach ($data['product_description'] as $language_id => $value) {
 			$this->db->query("INSERT INTO " . DB_PREFIX . "product_description SET product_id = '" . (int)$product_id . "', language_id = '" . (int)$language_id . "', name = '" . $this->db->escape($value['name']) . "', description = '" . $this->db->escape($value['description']) . "', tag = '" . $this->db->escape($value['tag']) . "', meta_title = '" . $this->db->escape($value['meta_title']) . "', meta_h1 = '" . $this->db->escape($value['meta_h1']) . "', meta_description = '" . $this->db->escape($value['meta_description']) . "', meta_keyword = '" . $this->db->escape($value['meta_keyword']) . "'");
 		}
@@ -165,6 +183,23 @@ class ModelCatalogProduct extends Model {
 
 		if (isset($data['image'])) {
 			$this->db->query("UPDATE " . DB_PREFIX . "product SET image = '" . $this->db->escape($data['image']) . "' WHERE product_id = '" . (int)$product_id . "'");
+		}
+
+		if (isset($data['packages'])) {
+			$this->db->query("
+			DELETE FROM " . DB_PREFIX . "product_package WHERE product_id='" . (int)$product_id . "'
+			");
+
+			foreach ($data['packages'] as $package) {
+
+				$this->db->query("
+				INSERT INTO ckf_product_package (product_id, parent_id, value, package_id, parent_value, type) VALUES 
+				('" . (int)$product_id . "','" . $package['parent_id'] . "','" . $package['value'] . "','" . $package['package_id'] . "','" . $package['parent_value'] . "','" . $package['type'] . "')
+
+				");
+
+			}
+
 		}
 
 		$this->db->query("DELETE FROM " . DB_PREFIX . "product_description WHERE product_id = '" . (int)$product_id . "'");
@@ -410,6 +445,7 @@ class ModelCatalogProduct extends Model {
 		$this->db->query("DELETE FROM " . DB_PREFIX . "review WHERE product_id = '" . (int)$product_id . "'");
 		$this->db->query("DELETE FROM " . DB_PREFIX . "seo_url WHERE query = 'product_id=" . (int)$product_id . "'");
 		$this->db->query("DELETE FROM " . DB_PREFIX . "coupon_product WHERE product_id = '" . (int)$product_id . "'");
+		$this->db->query("DELETE FROM " . DB_PREFIX . "product_package WHERE product_id='" . (int)$product_id . "'");
 
 		$this->cache->delete('product');
 		
@@ -922,33 +958,23 @@ class ModelCatalogProduct extends Model {
 
 		return $query->row['total'];
 	}
-
-	public function getWarehouse($product_id) {
-		$query = $this->db->query("
-
-		SELECT * , l.name AS location, ss.name AS status
-		
-		FROM " . DB_PREFIX . "product_to_warehouse pw
-		LEFT JOIN " . DB_PREFIX . "stock_status ss ON pw.stock_status_id = ss.stock_status_id 	
-		LEFT JOIN " . DB_PREFIX . "location l ON pw.location_id = l.location_id
-
-		WHERE `product_id`='" . (int)$product_id . "'
-
-		");
-
-		return $query->rows;
-	}
-
-	public function getPrices($product_id) {
-		
-		$query = $this->db->query("
-
-		SELECT * FROM " . DB_PREFIX . "product_location_price WHERE product_id='" . (int)$product_id . "'
-
-		");
-
-		return $query->rows;
-	}
 	
+	public function getPackage($product_id) {
+		$query = $this->db->query("
+		SELECT * FROM `" . DB_PREFIX . "product_package`
+		
+		WHERE product_id = '" . (int)$product_id . "'
+		
+		");
 
+		return $query->rows;
+	}
+
+	public function getPackageList() {
+		$query = $this->db->query("
+			SELECT * FROM `" . DB_PREFIX . "package_description` 
+		");
+
+		return $query->rows;
+	}
 }
