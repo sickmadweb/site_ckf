@@ -1,5 +1,5 @@
 <?php
-class ControllerCommonFooter extends Controller {
+class ControllerConfiguratorFooter extends Controller {
 	public function index() {
 		$this->load->language('common/footer');
 
@@ -28,24 +28,19 @@ class ControllerCommonFooter extends Controller {
 		$data['order'] = $this->url->link('account/order', '', true);
 		$data['wishlist'] = $this->url->link('account/wishlist', '', true);
 		$data['newsletter'] = $this->url->link('account/newsletter', '', true);
-		$data['location'] = $this->url->link('information/location', '', true);
-		$data['about_us'] = $this->url->link('information/about_us', '', true);
-		$data['deliverly'] = $this->url->link('information/deliverly', '', true);
-		$data['video_category'] = $this->url->link('information/video_category', '', true);		
-
-		$data['callback'] = $this->load->controller('extension/form/callback');
-		$data['query_price'] = $this->load->controller('extension/form/query_price');
-		$data['support'] = $this->load->controller('extension/form/support');
-	
-		$data['offers'] = $this->url->link('product/offers', '', true);
-		$data['views'] = $this->url->link('product/views', '', true);
-		
-		$data['location'] = $this->url->link('information/location', '', true);
-
-		$data['configurator'] = $this->url->link('configurator/configurator', '', true);
 
 		$data['powered'] = sprintf($this->language->get('text_powered'), $this->config->get('config_name'), date('Y', time()));
 
+		$data['video_category'] = $this->url->link('product/video_category');
+		$data['views'] = $this->url->link('product/views');
+		$data['offers'] = $this->url->link('product/offers');
+		$data['location'] = $this->url->link('information/location');
+		$data['configurator'] = $this->url->link('product/configurator');
+		// custom module
+		$data['support'] = $this->load->controller('extension/form/support');
+		$data['callback'] = $this->load->controller('extension/form/callback');
+		$data['about_us'] = $this->url->link('information/about_us');
+		$data['deliverly'] = $this->url->link('information/deliverly');
 		// Whos Online
 		if ($this->config->get('config_customer_online')) {
 			$this->load->model('tool/online');
@@ -72,8 +67,7 @@ class ControllerCommonFooter extends Controller {
 		}
 
 		$data['scripts'] = $this->document->getScripts('footer');
-		$data['styles'] = $this->document->getStyles('footer');
 		
-		return $this->load->view('common/footer', $data);
+		return $this->load->view('configurator/configurator_footer', $data);
 	}
 }

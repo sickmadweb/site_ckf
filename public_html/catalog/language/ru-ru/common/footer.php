@@ -27,3 +27,4 @@ $_['text_deliverly']    = 'Доставка';
 $_['text_video_category'] = 'Видео материалы';
 $_['text_offers']         = 'Каталог магазина';
 $_['text_views']          = 'Каталог материалов';
+$_['text_configurator']    = 'Конфигуратор дизайна дома';
