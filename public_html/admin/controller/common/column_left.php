@@ -19,11 +19,37 @@ class ControllerCommonColumnLeft extends Controller {
 			// Catalog
 			$catalog = array();
 
+			$categories  = array();
+
+			if ($this->user->hasPermission('access', 'catalog/category')) {
+				$categories[] = array(
+					'name'	   => $this->language->get('text_category'),
+					'href'     => $this->url->link('catalog/category', 'user_token=' . $this->session->data['user_token'], true),
+					'children' => array()		
+				);
+			}
+	
+			if ($this->user->hasPermission('access', 'catalog/views')) {
+				$categories[] = array(
+					'name'	   => $this->language->get('text_views'),
+					'href'     => $this->url->link('catalog/views', 'user_token=' . $this->session->data['user_token'], true),
+					'children' => array()		
+				);
+			}
+
+			if ($this->user->hasPermission('access', 'catalog/offers')) {
+				$categories[] = array(
+					'name'	   => $this->language->get('text_offers'),
+					'href'     => $this->url->link('catalog/offers', 'user_token=' . $this->session->data['user_token'], true),
+					'children' => array()		
+				);
+			}
+
 			if ($this->user->hasPermission('access', 'catalog/category')) {
 				$catalog[] = array(
 					'name'	   => $this->language->get('text_category'),
-					'href'     => $this->url->link('catalog/category', 'user_token=' . $this->session->data['user_token'], true),
-					'children' => array()
+					'href'     => '',
+					'children' => $categories	
 				);
 			}
 

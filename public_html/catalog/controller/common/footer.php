@@ -36,7 +36,10 @@ class ControllerCommonFooter extends Controller {
 		$data['callback'] = $this->load->controller('extension/form/callback');
 		$data['query_price'] = $this->load->controller('extension/form/query_price');
 		$data['support'] = $this->load->controller('extension/form/support');
-				
+	
+		$data['offers'] = $this->url->link('product/offers', '', true);
+		$data['location'] = $this->url->link('information/location', '', true);
+
 		$data['powered'] = sprintf($this->language->get('text_powered'), $this->config->get('config_name'), date('Y', time()));
 
 		// Whos Online
