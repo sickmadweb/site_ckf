@@ -3,7 +3,7 @@
   <div class="page-header">
     <div class="container-fluid">
       <div class="pull-right">
-        <button type="submit" form="form-category" data-toggle="tooltip" title="{{ button_save }}" class="btn btn-primary"><i class="fa fa-save"></i></button>
+        <button type="submit" form="form-offers" data-toggle="tooltip" title="{{ button_save }}" class="btn btn-primary"><i class="fa fa-save"></i></button>
         <a href="{{ cancel }}" data-toggle="tooltip" title="{{ button_cancel }}" class="btn btn-default"><i class="fa fa-reply"></i></a></div>
       <h1>{{ heading_title }}</h1>
       <ul class="breadcrumb">
@@ -24,7 +24,7 @@
         <h3 class="panel-title"><i class="fa fa-pencil"></i> {{ text_form }}</h3>
       </div>
       <div class="panel-body">
-        <form action="{{ action }}" method="post" enctype="multipart/form-data" id="form-category" class="form-horizontal">
+        <form action="{{ action }}" method="post" enctype="multipart/form-data" id="form-offers" class="form-horizontal">
           <ul class="nav nav-tabs">
             <li class="active"><a href="#tab-general" data-toggle="tab">{{ tab_general }}</a></li>
             <li><a href="#tab-data" data-toggle="tab">{{ tab_data }}</a></li>
@@ -45,7 +45,7 @@
                   <div class="form-group required">
                     <label class="col-sm-2 control-label" for="input-name{{ language.language_id }}">{{ entry_name }}</label>
                     <div class="col-sm-10">
-                      <input type="text" name="category_description[{{ language.language_id }}][name]" value="{{ category_description[language.language_id] ? category_description[language.language_id].name }}" placeholder="{{ entry_name }}" id="input-name{{ language.language_id }}" class="form-control" />
+                      <input type="text" name="offers_description[{{ language.language_id }}][name]" value="{{ offers_description[language.language_id] ? offers_description[language.language_id].name }}" placeholder="{{ entry_name }}" id="input-name{{ language.language_id }}" class="form-control" />
                       {% if error_name[language.language_id] %}
                       <div class="text-danger">{{ error_name[language.language_id] }}</div>
                       {% endif %}
@@ -54,31 +54,31 @@
 				  <div class="form-group">
                     <label class="col-sm-2 control-label" for="input-meta-h1{{ language.language_id }}">{{ entry_meta_h1 }}</label>
                     <div class="col-sm-10">
-                      <input type="text" name="category_description[{{ language.language_id }}][meta_h1]" value="{{ category_description[language.language_id] ? category_description[language.language_id].meta_h1 }}" placeholder="{{ entry_meta_h1 }}" id="input-meta-h1{{ language.language_id }}" class="form-control" />
+                      <input type="text" name="offers_description[{{ language.language_id }}][meta_h1]" value="{{ offers_description[language.language_id] ? offers_description[language.language_id].meta_h1 }}" placeholder="{{ entry_meta_h1 }}" id="input-meta-h1{{ language.language_id }}" class="form-control" />
                     </div>
 				  </div>
                   <div class="form-group">
                     <label class="col-sm-2 control-label" for="input-meta-title{{ language.language_id }}">{{ entry_meta_title }}</label>
                     <div class="col-sm-10">
-                      <input type="text" name="category_description[{{ language.language_id }}][meta_title]" value="{{ category_description[language.language_id] ? category_description[language.language_id].meta_title }}" placeholder="{{ entry_meta_title }}" id="input-meta-title{{ language.language_id }}" class="form-control" />
+                      <input type="text" name="offers_description[{{ language.language_id }}][meta_title]" value="{{ offers_description[language.language_id] ? offers_description[language.language_id].meta_title }}" placeholder="{{ entry_meta_title }}" id="input-meta-title{{ language.language_id }}" class="form-control" />
                     </div>
                   </div>
                   <div class="form-group">
                     <label class="col-sm-2 control-label" for="input-meta-description{{ language.language_id }}">{{ entry_meta_description }}</label>
                     <div class="col-sm-10">
-                      <textarea name="category_description[{{ language.language_id }}][meta_description]" rows="5" placeholder="{{ entry_meta_description }}" id="input-meta-description{{ language.language_id }}" class="form-control">{{ category_description[language.language_id] ? category_description[language.language_id].meta_description }}</textarea>
+                      <textarea name="offers_description[{{ language.language_id }}][meta_description]" rows="5" placeholder="{{ entry_meta_description }}" id="input-meta-description{{ language.language_id }}" class="form-control">{{ offers_description[language.language_id] ? offers_description[language.language_id].meta_description }}</textarea>
                     </div>
                   </div>
                   <div class="form-group">
                     <label class="col-sm-2 control-label" for="input-meta-keyword{{ language.language_id }}">{{ entry_meta_keyword }}</label>
                     <div class="col-sm-10">
-                      <textarea name="category_description[{{ language.language_id }}][meta_keyword]" rows="5" placeholder="{{ entry_meta_keyword }}" id="input-meta-keyword{{ language.language_id }}" class="form-control">{{ category_description[language.language_id] ? category_description[language.language_id].meta_keyword }}</textarea>
+                      <textarea name="offers_description[{{ language.language_id }}][meta_keyword]" rows="5" placeholder="{{ entry_meta_keyword }}" id="input-meta-keyword{{ language.language_id }}" class="form-control">{{ offers_description[language.language_id] ? offers_description[language.language_id].meta_keyword }}</textarea>
                     </div>
                   </div>
 				  <div class="form-group">
                     <label class="col-sm-2 control-label" for="input-description{{ language.language_id }}">{{ entry_description }}</label>
                     <div class="col-sm-10">
-                      <textarea name="category_description[{{ language.language_id }}][description]" placeholder="{{ entry_description }}" id="input-description{{ language.language_id }}" data-toggle="summernote" data-lang="{{ summernote }}" class="form-control">{{ category_description[language.language_id] ? category_description[language.language_id].description }}</textarea>
+                      <textarea name="offers_description[{{ language.language_id }}][description]" placeholder="{{ entry_description }}" id="input-description{{ language.language_id }}" data-toggle="summernote" data-lang="{{ summernote }}" class="form-control">{{ offers_description[language.language_id] ? offers_description[language.language_id].description }}</textarea>
                     </div>
                   </div>
                 </div>
@@ -100,10 +100,10 @@
                 <label class="col-sm-2 control-label" for="input-filter"><span data-toggle="tooltip" title="{{ help_filter }}">{{ entry_filter }}</span></label>
                 <div class="col-sm-10">
                   <input type="text" name="filter" value="" placeholder="{{ entry_filter }}" id="input-filter" class="form-control" />
-                  <div id="category-filter" class="well well-sm" style="height: 150px; overflow: auto;">
-                    {% for category_filter in category_filters %}
-                    <div id="category-filter{{ category_filter.filter_id }}"><i class="fa fa-minus-circle"></i> {{ category_filter.name }}
-                      <input type="hidden" name="category_filter[]" value="{{ category_filter.filter_id }}" />
+                  <div id="offers-filter" class="well well-sm" style="height: 150px; overflow: auto;">
+                    {% for offers_filter in offers_filters %}
+                    <div id="offers-filter{{ offers_filter.filter_id }}"><i class="fa fa-minus-circle"></i> {{ offers_filter.name }}
+                      <input type="hidden" name="offers_filter[]" value="{{ offers_filter.filter_id }}" />
                     </div>
                     {% endfor %}
                   </div>
@@ -116,11 +116,11 @@
                     {% for store in stores %}
                     <div class="checkbox">
                       <label>
-                        {% if store.store_id in category_store %}
-                        <input type="checkbox" name="category_store[]" value="{{ store.store_id }}" checked="checked" />
+                        {% if store.store_id in offers_store %}
+                        <input type="checkbox" name="offers_store[]" value="{{ store.store_id }}" checked="checked" />
                         {{ store.name }}
                         {% else %}
-                        <input type="checkbox" name="category_store[]" value="{{ store.store_id }}" />
+                        <input type="checkbox" name="offers_store[]" value="{{ store.store_id }}" />
                         {{ store.name }}
                         {% endif %}
                       </label>
@@ -192,7 +192,7 @@
                     <td class="text-left">{{ store.name }}</td>
                     <td class="text-left">{% for language in languages %}
                       <div class="input-group"><span class="input-group-addon"><img src="language/{{ language.code }}/{{ language.code }}.png" title="{{ language.name }}" /></span>
-                        <input type="text" name="category_seo_url[{{ store.store_id }}][{{ language.language_id }}]" value="{% if category_seo_url[store.store_id][language.language_id] %}{{ category_seo_url[store.store_id][language.language_id] }}{% endif %}" placeholder="{{ entry_keyword }}" class="form-control" />
+                        <input type="text" name="offers_seo_url[{{ store.store_id }}][{{ language.language_id }}]" value="{% if offers_seo_url[store.store_id][language.language_id] %}{{ offers_seo_url[store.store_id][language.language_id] }}{% endif %}" placeholder="{{ entry_keyword }}" class="form-control" />
                       </div>
                       {% if error_keyword[store.store_id][language.language_id] %}
                       <div class="text-danger">{{ error_keyword[store.store_id][language.language_id] }}</div>
@@ -220,28 +220,7 @@
               </div>
 			</div>
 			<div class="tab-pane" id="tab-related">
-			   <div class="form-group">
-                <label class="col-sm-2 control-label" for="input-product-related"><span data-toggle="tooltip" title="{{ help_related }}">{{ entry_related_wb }}</span></label>
-                <div class="col-sm-10">
-                  <input type="text" name="product_related_input" value="" placeholder="{{ entry_related_wb }}" id="input-product-related" class="form-control" />
-                  <div id="product-related" class="well well-sm" style="height: 150px; overflow: auto;"> {% for product_related in product_related %}
-                    <div id="product-related{{ product_related.product_id }}"><i class="fa fa-minus-circle"></i> {{ product_related.name }}
-                      <input type="hidden" name="product_related[]" value="{{ product_related.product_id }}" />
-                    </div>
-                    {% endfor %}</div>
-                </div>
-               </div>
-			   <div class="form-group">
-                <label class="col-sm-2 control-label" for="input-article-related"><span data-toggle="tooltip" title="{{ help_related }}">{{ entry_related_article }}</span></label>
-                <div class="col-sm-10">
-                  <input type="text" name="article_related_input" value="" placeholder="{{ entry_related_article }}" id="input-article-related" class="form-control" />
-                  <div id="article-related" class="well well-sm" style="height: 150px; overflow: auto;"> {% for article_related in article_related %}
-                    <div id="article-related{{ article_related.article_id }}"><i class="fa fa-minus-circle"></i> {{ article_related.name }}
-                      <input type="hidden" name="article_related[]" value="{{ article_related.article_id }}" />
-                    </div>
-                    {% endfor %}</div>
-                </div>
-               </div>
+
             </div>
             <div class="tab-pane" id="tab-design">
               <div class="table-responsive">
@@ -257,10 +236,10 @@
                     {% for store in stores %}
                     <tr>
                       <td class="text-left">{{ store.name }}</td>
-                      <td class="text-left"><select name="category_layout[{{ store.store_id }}]" class="form-control">
+                      <td class="text-left"><select name="offers_layout[{{ store.store_id }}]" class="form-control">
                           <option value=""></option>
                           {% for layout in layouts %}
-                          {% if category_layout[store.store_id] and category_layout[store.store_id] == layout.layout_id %}
+                          {% if offers_layout[store.store_id] and offers_layout[store.store_id] == layout.layout_id %}
                           <option value="{{ layout.layout_id }}" selected="selected">{{ layout.name }}</option>
                           {% else %}
                           <option value="{{ layout.layout_id }}">{{ layout.name }}</option>
@@ -293,18 +272,18 @@
 $('input[name=\'path\']').autocomplete({
 	'source': function(request, response) {
 		$.ajax({
-			url: 'index.php?route=catalog/category/autocomplete&user_token={{ user_token }}&filter_name=' +  encodeURIComponent(request),
+			url: 'index.php?route=catalog/offers/autocomplete&user_token={{ user_token }}&filter_name=' +  encodeURIComponent(request),
 			dataType: 'json',
 			success: function(json) {
 				json.unshift({
-					category_id: 0,
+					offers_id: 0,
 					name: '{{ text_none }}'
 				});
 
 				response($.map(json, function(item) {
 					return {
 						label: item['name'],
-						value: item['category_id']
+						value: item['offers_id']
 					}
 				}));
 			}
@@ -335,13 +314,13 @@ $('input[name=\'filter\']').autocomplete({
 	'select': function(item) {
 		$('input[name=\'filter\']').val('');
 
-		$('#category-filter' + item['value']).remove();
+		$('#offers-filter' + item['value']).remove();
 
-		$('#category-filter').append('<div id="category-filter' + item['value'] + '"><i class="fa fa-minus-circle"></i> ' + item['label'] + '<input type="hidden" name="category_filter[]" value="' + item['value'] + '" /></div>');
+		$('#offers-filter').append('<div id="offers-filter' + item['value'] + '"><i class="fa fa-minus-circle"></i> ' + item['label'] + '<input type="hidden" name="offers_filter[]" value="' + item['value'] + '" /></div>');
 	}
 });
 
-$('#category-filter').delegate('.fa-minus-circle', 'click', function() {
+$('#offers-filter').delegate('.fa-minus-circle', 'click', function() {
 	$(this).parent().remove();
 });
 //--></script>
