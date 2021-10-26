@@ -35,7 +35,10 @@ $_['text_month']               = 'Месяц';
 $_['text_year']                = 'Год';
 $_['text_benefits']            = 'Преимущества:';
 $_['text_category']            = 'Каталог';
-
+$_['text_next']            = 'Следующий';
+$_['text_prev']            = 'Преведущий';
+$_['text_firts']           = 'Начальный';
+$_['text_last']            = 'Последний';
 
 // Entry
 $_['entry_qty']                = 'Кол-во';

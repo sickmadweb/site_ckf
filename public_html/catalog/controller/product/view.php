@@ -445,6 +445,17 @@ class ControllerProductView extends Controller {
 	
 			}
 
+			$data['navigat'] = array();
+			
+			$navigat = $this->model_catalog_view->getNavigat((int)$this->request->get['view_id']);
+
+			$data['navigat'] = array(
+				'firts'     => $this->url->link('product/view', 'view_id=' . $navigat['firts']),
+				'prev'     => $this->url->link('product/view', 'view_id=' . $navigat['prev']),
+				'next'     => $this->url->link('product/view', 'view_id=' . $navigat['next']),	
+				'last'     => $this->url->link('product/view', 'view_id=' . $navigat['last'])
+			);		
+			
 			$data['recurrings'] = $this->model_catalog_view->getProfiles($this->request->get['view_id']);
 
 			$this->model_catalog_view->updateViewed($this->request->get['view_id']);

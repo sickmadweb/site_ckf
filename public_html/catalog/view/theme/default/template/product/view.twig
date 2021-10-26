@@ -73,6 +73,16 @@
             <button type="button" data-toggle="tooltip" class="btn btn-default" title="{{ button_compare }}" onclick="compare.add('{{ view_id }}');"><i class="fa fa-exchange"></i></button>
           </div>
 
+          <div class="btn-group" role="group" aria-label="...">
+
+<a href="{{ navigat.firts }}" class="btn btn-default">{{ text_firts }}</a>
+<a href="{{ navigat.prev }}" class="btn btn-default">{{ text_prev }}</a>
+<a href="{{ navigat.next }}" class="btn btn-default">{{ text_next }}</a>
+<a href="{{ navigat.last }}" class="btn btn-default">{{ text_last }}</a>
+
+          </div>
+
+
           <table id="variants" class="table table-striped table-bordered table-hover">
             <thead>
               <tr>

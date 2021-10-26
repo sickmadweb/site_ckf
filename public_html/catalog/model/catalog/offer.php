@@ -552,4 +552,24 @@ class ModelCatalogOffer extends Model {
 
 		return $query->rows;
 	}
+
+	public function getNavigat($offer_id) {
+		
+		$query = $this->db->query("
+
+		SELECT 
+		offer_id AS id, 
+		(SELECT MIN(offer_id) FROM " . DB_PREFIX . "offer) AS firts, 
+		(SELECT MAX(offer_id) FROM " . DB_PREFIX . "offer) AS last,
+		(SELECT offer_id FROM " . DB_PREFIX . "offer WHERE offer_id > id ORDER BY offer_id ASC  LIMIT 1) AS next,
+		(SELECT offer_id FROM " . DB_PREFIX . "offer WHERE offer_id < id ORDER BY offer_id DESC LIMIT 1) AS prev
+		
+		FROM " . DB_PREFIX . "offer
+		
+		WHERE offer_id = '". $offer_id ."'
+		");
+
+		return $query->row;
+	}
+
 }

@@ -445,6 +445,17 @@ class ControllerProductOffer extends Controller {
 	
 			}
 
+			$data['navigat'] = array();
+			
+			$navigat = $this->model_catalog_offer->getNavigat((int)$this->request->get['offer_id']);
+
+			$data['navigat'] = array(
+				'firts'     => $this->url->link('product/offer', 'offer_id=' . $navigat['firts']),
+				'prev'     => $this->url->link('product/offer', 'offer_id=' . $navigat['prev']),
+				'next'     => $this->url->link('product/offer', 'offer_id=' . $navigat['next']),	
+				'last'     => $this->url->link('product/offer', 'offer_id=' . $navigat['last'])
+			);	
+
 			$data['recurrings'] = $this->model_catalog_offer->getProfiles($this->request->get['offer_id']);
 
 			$this->model_catalog_offer->updateViewed($this->request->get['offer_id']);

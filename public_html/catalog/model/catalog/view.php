@@ -552,4 +552,23 @@ class ModelCatalogView extends Model {
 
 		return $query->rows;
 	}
+
+	public function getNavigat($view_id) {
+		
+		$query = $this->db->query("
+
+		SELECT 
+		view_id AS id, 
+		(SELECT MIN(view_id) FROM " . DB_PREFIX . "view) AS firts, 
+		(SELECT MAX(view_id) FROM " . DB_PREFIX . "view) AS last,
+		(SELECT view_id FROM " . DB_PREFIX . "view WHERE view_id > id ORDER BY view_id ASC  LIMIT 1) AS next,
+		(SELECT view_id FROM " . DB_PREFIX . "view WHERE view_id < id ORDER BY view_id DESC LIMIT 1) AS prev
+		
+		FROM " . DB_PREFIX . "view
+		
+		WHERE view_id = '". $view_id ."'
+		");
+
+		return $query->row;
+	}
 }
