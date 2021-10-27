@@ -439,8 +439,11 @@ class ControllerProductView extends Controller {
 			foreach ($variants as $variant) {
 		
 				$data['variants'][] = array(
-					'name'     => $variant['name'],		
-					'offer_id'       => $variant['offer_id']
+					'offer_id'  => $variant['offer_id'],
+					'name'      => $variant['name'],		
+					'thumb'  => !empty($variant['image']) ? $this->model_tool_image->resize($variant['image'], $this->config->get('theme_' . $this->config->get('config_theme') . '_image_thumb_width'), $this->config->get('theme_' . $this->config->get('config_theme') . '_image_thumb_height')) : $this->model_tool_image->resize('placeholder.png', $this->config->get('theme_' . $this->config->get('config_theme') . '_image_related_width'), $this->config->get('theme_' . $this->config->get('config_theme') . '_image_related_height')),
+					'price'  => $this->currency->format($this->tax->calculate($variant['price'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']),	
+					
 				);
 	
 			}

@@ -542,11 +542,17 @@ class ModelCatalogView extends Model {
 		
 		$query = $this->db->query("
 
-		SELECT * FROM " . DB_PREFIX . "variants v
+			SELECT * FROM " . DB_PREFIX . "variants v
 
-		LEFT JOIN " . DB_PREFIX . "offer_description pd ON (v.offer_id = pd.offer_id)
-		
-		WHERE v.view_id = '". $view_id ."'
+			LEFT JOIN " . DB_PREFIX . "offer_description pd ON (v.offer_id = pd.offer_id)
+			LEFT JOIN " . DB_PREFIX . "offer p ON (v.offer_id = p.offer_id)
+			LEFT JOIN " . DB_PREFIX . "offer_location_cache olc ON (v.offer_id = olc.offer_id)
+
+
+			WHERE v.view_id = '". $view_id ."'
+			AND olc.location_id ='". $this->session->data['location_id'] ."'
+
+			GROUP BY v.offer_id
 
 		");
 
