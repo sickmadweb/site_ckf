@@ -231,6 +231,9 @@ class ModelExtensionExchange1c extends Model {
 		$this->query('TRUNCATE TABLE `' . DB_PREFIX . 'product_special`');
 		$this->query('TRUNCATE TABLE `' . DB_PREFIX . 'product_to_1c`');
 		$this->query('TRUNCATE TABLE `' . DB_PREFIX . 'product_category`');
+		$this->query('TRUNCATE TABLE `' . DB_PREFIX . 'product_package`');
+		$this->query('TRUNCATE TABLE `' . DB_PREFIX . 'product_to_warehouse`');
+		$this->query('TRUNCATE TABLE `' . DB_PREFIX . 'product_location_price`');
 		$result .=  "Товары\n";
 
 		$this->query('TRUNCATE TABLE `' . DB_PREFIX . 'product_to_category`');
@@ -2044,6 +2047,34 @@ class ModelExtensionExchange1c extends Model {
 			if ($this->ERROR) return false;
 
 		}
+
+		//Упаковка
+
+		// найти ид упаковки
+		if(!empty($data['package_name'])) {
+
+			$package = $this->query("SELECT * FROM " . DB_PREFIX ."package_description WHERE name = '" . $data['package_name'] . "'");
+	
+		} else {
+
+			$package = $this->query("SELECT * FROM " . DB_PREFIX ."package_description WHERE name = 'Штука'");
+		}
+
+		$this->query("
+			DELETE FROM `ckf_product_package` WHERE `product_id`= '" . $product_id . "'
+		");
+
+		$this->log("ID Упаковки: " . $package_id->row['package_id']);
+
+		$this->query("INSERT INTO " . DB_PREFIX ."product_package SET
+
+			product_id =  '" . $product_id . "',
+			package_id = '". (int)$package->row['package_id'] . "', 
+			parent_id = '". (int)$package->row['package_id'] . "', 
+			parent_value = 1,
+			value = 1;
+
+		");
 
 		// Очистим кэш товаров
 		//$this->cache->delete('product');
@@ -4812,10 +4843,71 @@ class ModelExtensionExchange1c extends Model {
 		if ($xml->Количество) {
 			$quantity = (float)$xml->Количество;
 
+
+			if (isset($xml->Наименование)) {
+				
+				$stock_status_id = 5;
+
+				if (preg_match("/заказ/iu", $xml->Наименование)) {
+					$stock_status_id = 8;
+				}
+				if (preg_match("/брак/iu", $xml->Наименование)) {
+					$stock_status_id = 6;
+				}
+				if (preg_match("/кондиция/iu", $xml->Наименование)) {
+					$stock_status_id = 6;
+				}
+			
+				// товар из категории под заказ
+				$category_availability = $this->query("
+			
+					SELECT * FROM " . DB_PREFIX . "category_availability, " . DB_PREFIX . "product_to_category
+
+					WHERE " . DB_PREFIX . "product_to_category.product_id = '". $product_id ."'
+					AND  " . DB_PREFIX . "category_availability.category_id = " . DB_PREFIX . "product_to_category.category_id
+					AND " . DB_PREFIX . "category_availability.preorder > 0
+
+				");
+
+				if (count($category_availability->rows) > ) {
+					$stock_status_id = 8;	
+				}
+
+			}
+
+			// очиста складов пере добавлением
+			$this->query("
+		
+			DELETE FROM `" . DB_PREFIX . "product_to_warehouse` WHERE `product_id` ='". $product_id ."'
+			
+			");
+
+			foreach ($xml->Склад as $product_quantity) {
+				$quantity += (float)$product_quantity['КоличествоНаСкладе'];
+
+					// установка остатков по складам
+					$this->query("
+					
+						INSERT INTO `" . DB_PREFIX . "product_to_warehouse`(`product_id`, `location_id`, `quantity`, `stock_status_id`) VALUES 
+						('". $product_id ."',(SELECT `location_id`  FROM `" . DB_PREFIX . "location` WHERE `warehouse_guid` ='". $product_quantity['ИдСклада'] ."'),'". $product_quantity['КоличествоНаСкладе'] ."', '". $stock_status_id ."')
+					
+					");	
+
+			} // foreach
+
 		} elseif ($xml->Склад) {
 			// Секция с остатками по складам, читаем если нет секции Количество
 			foreach ($xml->Склад as $product_quantity) {
 				$quantity += (float)$product_quantity['КоличествоНаСкладе'];
+				
+				// установка остатков по складам
+				$this->query("
+					
+					INSERT INTO `" . DB_PREFIX . "product_to_warehouse`(`product_id`, `location_id`, `quantity`, `stock_status_id`) VALUES 
+					('". $product_id ."',(SELECT `location_id`  FROM `" . DB_PREFIX . "location` WHERE `warehouse_guid` ='". $product_quantity['ИдСклада'] ."'),'". $product_quantity['КоличествоНаСкладе'] ."', '". $stock_status_id ."')
+				
+				");	
+
 			} // foreach
 
 		}
@@ -5109,6 +5201,42 @@ class ModelExtensionExchange1c extends Model {
 			if (!isset($config_price_type['guid'])) {
 				$config_price_type['guid'] = "";
 			}
+			// Очистка скидок и акций перед добавлением цен
+			$this->query("
+
+				DELETE FROM " . DB_PREFIX . "product_discount WHERE product_id =" . $product_id . "
+
+			");
+			$this->query("
+
+				DELETE FROM " . DB_PREFIX . "product_special WHERE product_id =" . $product_id . "
+				
+			");
+
+			$this->query("
+			
+			DELETE FROM `". DB_PREFIX . "product_location_price` WHERE `product_id` ='". $product_id ."'
+
+			");
+
+			// Очистка скидок и акций перед добавлением цен
+
+			// цена прайс листа
+			$price_list_data = $this->query("
+
+
+				SELECT ". DB_PREFIX . "product_package.parent_value * ". DB_PREFIX . "product_pricelist_groups.price AS price
+							
+				FROM ". DB_PREFIX . "hand_price_products, 
+				". DB_PREFIX . "product_pricelist_groups,
+				". DB_PREFIX . "product_package
+
+				WHERE ". DB_PREFIX . "hand_price_products.product_id='". $product_id ."'
+				AND ". DB_PREFIX . "hand_price_products.group_id = ". DB_PREFIX . "product_pricelist_groups.group_id
+				AND ". DB_PREFIX . "product_package.product_id = ". DB_PREFIX . "hand_price_products.product_id
+							
+			");
+			// цена прайс листа
 
 			foreach ($xml->Цена as $price_data) {
 
@@ -5119,7 +5247,37 @@ class ModelExtensionExchange1c extends Model {
 					continue;
 				}
 
-				$this->log("Найдена цена " . $price . " (" . $config_price_type['keyword'] . ")");
+				
+
+				
+				if (isset($price_list_data->row['price'])) {
+					
+					// устаноска цены прайса  при наличии
+					
+					$this->log("Цена по прайсу" . $price_list_data->row['price'] . " (" . $config_price_type['keyword'] . ")");
+
+					$this->query("
+
+						INSERT INTO ". DB_PREFIX . "product_location_price ( product_id, location_id, price) VALUES 
+						('". $product_id ."', (SELECT `location_id` FROM `". DB_PREFIX . "location` WHERE `price_guid` ='". $guid ."'),'". $price_list_data->row['price'] ."')
+
+					");
+
+				} else {
+
+					// устаноска цены из 1С
+
+					$this->log("Найдена цена " . $price . " (" . $config_price_type['keyword'] . ")");
+
+					$this->query("
+
+						INSERT INTO ". DB_PREFIX . "product_location_price ( product_id, location_id, price) VALUES 
+						('". $product_id ."', (SELECT `location_id` FROM `". DB_PREFIX . "location` WHERE `price_guid` ='". $guid ."'),'". $price ."')
+
+					");
+
+				}
+
 
 				// КУРС ВАЛЮТЫ
 //				$rate = 1;
