@@ -167,7 +167,7 @@ class Currency {
 
 		SELECT ss.name AS status, pw.quantity, 
 		(
-			SELECT SUM(" . DB_PREFIX . "product_to_warehouse.quantity) FROM " . DB_PREFIX . "product_to_warehouse, ckf_location
+			SELECT SUM(" . DB_PREFIX . "product_to_warehouse.quantity) FROM " . DB_PREFIX . "product_to_warehouse, " . DB_PREFIX . "location
 			WHERE 
 			" . DB_PREFIX . "product_to_warehouse.location_id = " . DB_PREFIX . "location.location_id 
 			AND product_id='" . (int)$product_id . "' AND " . DB_PREFIX . "location.area = 'ABK'
@@ -181,6 +181,24 @@ class Currency {
 		");		
 		
 		return $query->row;
+
+	}
+	public function pricelist($product_id ) {
+
+		$query = $this->db->query("
+
+		SELECT " . DB_PREFIX . "product_pricelist_groups.group_id, " . DB_PREFIX . "product_pricelist_groups.price*" . DB_PREFIX . "product_package.parent_value AS pricelist_price 
+		
+		FROM " . DB_PREFIX . "hand_price_products, " . DB_PREFIX . "product_pricelist_groups, " . DB_PREFIX . "product_package
+
+
+		WHERE " . DB_PREFIX . "hand_price_products.product_id = '" . (int)$product_id . "'
+		AND " . DB_PREFIX . "product_package.product_id = " . DB_PREFIX . "hand_price_products.product_id
+		AND " . DB_PREFIX . "hand_price_products.group_id = " . DB_PREFIX . "product_pricelist_groups.group_id
+
+		");		
+		
+		return $query->rows;
 
 	}
 
@@ -197,12 +215,16 @@ class Currency {
 				 
 		$status = $this->local_status($product_id, $location_id);
 
+		$pricelist = $this->pricelist($product_id);
+
 		$data = array(
 			'price'          => $price['price'],	
 			'abk_price'      => $price['abk_price'],			
 			'quantity'       => $status['quantity'],
 			'status'         => $status['status'],
 			'abk_quantity'   => $status['abk_quantity'],
+			'pricelist'      => isset($pricelist['pricelist_price']) ? $pricelist['pricelist_price'] : 0,
+			'pricelist_group_id'      => isset($pricelist['group_id']) ? $pricelist['group_id'] : 0,
 		);
 
 		return $data;

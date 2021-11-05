@@ -29,6 +29,8 @@ $_['text_trial_description'] 	              	= 'Стоимость: %s; Пери
 $_['text_payment_description'] 	              	= 'Стоимость: %s; Периодичность: %d %s; Кол-во платежей: %d';
 $_['text_payment_until_canceled_description'] 	= 'Стоимость: %s; Периодичность: %d %s; Кол-во платежей: до отмены';
 $_['text_confirm']   					        = 'Оформить заказ';
+$_['text_on_request']   					    = 'Товары доступные под заказ';
+$_['text_query_prices']   					    = 'Цена по запросу';
 
 
 // Column

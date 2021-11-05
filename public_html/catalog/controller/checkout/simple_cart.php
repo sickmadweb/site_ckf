@@ -114,6 +114,21 @@ class ControllerCheckoutSimpleCart extends Controller {
 					$total = false;
 				}
 
+				// замена цены по место положению
+				$local_data = $this->currency->local_data($product['product_id'], $this->session->data['location_id']);			
+
+				$price = $local_data['price'] > 0 ? $this->currency->format($local_data['price'], $this->config->get('config_currency')) : $this->language->get('text_query_prices');
+				
+				$total = $local_data['price'] > 0 ? $this->currency->format($local_data['price'] * $product['quantity'], $this->session->data['currency']) : $this->language->get('text_query_prices');
+
+
+
+				if ($local_data['quantity'] > 0 or $local_data['abk_quantity'] > 0) {
+					$on_request   = true;
+				} else {
+					$on_request   = false;
+				}
+
 				$recurring = '';
 
 				if ($product['recurring']) {
@@ -148,6 +163,7 @@ class ControllerCheckoutSimpleCart extends Controller {
 					'reward'    => ($product['reward'] ? sprintf($this->language->get('text_points'), $product['reward']) : ''),
 					'price'     => $price,
 					'total'     => $total,
+					'on_request'=> $on_request,
 					'href'      => $this->url->link('product/product', 'product_id=' . $product['product_id'])
 				);
 			}

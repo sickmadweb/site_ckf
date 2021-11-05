@@ -10,6 +10,8 @@ class Cart {
 		$this->db = $registry->get('db');
 		$this->tax = $registry->get('tax');
 		$this->weight = $registry->get('weight');
+		$this->currency = $registry->get('currency');
+		
 
 		// Remove all the expired carts with no customer ID
 		$this->db->query("DELETE FROM " . DB_PREFIX . "cart WHERE (api_id > '0' OR customer_id = '0') AND date_added < DATE_SUB(NOW(), INTERVAL 1 HOUR)");
@@ -187,6 +189,12 @@ class Cart {
 					$price = $product_special_query->row['price'];
 				}
 
+
+				// замена цены по место положению
+				$local_data = $this->currency->local_data($cart['product_id'], $this->session->data['location_id']);			
+
+				$price = $local_data['price'] > 0 ? $local_data['price'] : 0;
+	
 				// Reward Points
 				$product_reward_query = $this->db->query("SELECT points FROM " . DB_PREFIX . "product_reward WHERE product_id = '" . (int)$cart['product_id'] . "' AND customer_group_id = '" . (int)$this->config->get('config_customer_group_id') . "'");
 

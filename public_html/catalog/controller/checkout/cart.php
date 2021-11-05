@@ -101,6 +101,8 @@ class ControllerCheckoutCart extends Controller {
 					);
 				}
 
+
+
 				// Display prices
 				if ($this->customer->isLogged() || !$this->config->get('config_customer_price')) {
 					$unit_price = $this->tax->calculate($product['price'], $product['tax_class_id'], $this->config->get('config_tax'));
@@ -111,6 +113,12 @@ class ControllerCheckoutCart extends Controller {
 					$price = false;
 					$total = false;
 				}
+				// замена цены по место положению
+				$local_data = $this->currency->local_data($product['product_id'], $this->session->data['location_id']);			
+
+				$price = $local_data['price'] > 0 ? $this->currency->format($local_data['price'], $this->config->get('config_currency')) : $this->language->get('text_query_prices');
+				
+				$total = $this->currency->format($local_data['price'] * $product['quantity'], $this->session->data['currency']);
 
 				$recurring = '';
 
