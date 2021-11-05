@@ -552,10 +552,33 @@ class ControllerCheckoutSimpleCart extends Controller {
 		$json['order_data'] = $order_data;
 
 
-//		$this->session->data['order_id'] = $this->model_checkout_order->addOrder($order_data);
+		$order_id = $this->session->data['order_id'] = $this->model_checkout_order->addOrder($order_data);
+
+		// отправка почты  о заказе
+		$this->load->model('checkout/order');
+
+		
+
+		$this->load->model('localisation/location');
+
+		$location = $this->model_localisation_location->getLocationsContacts($this->session->data['location_id']);
+
+		$to_customer     = $data['mail'];
+		$to_admin     = $location['mail'];
+		$subject = 'Заказ №'. $order_id .'оформлен';
+		$message_customer = $this->load->view('mail/order_add', $order_data);
+		$message_admin = $this->load->view('mail/order_alert', $order_data);				
+		$headers = array(
+			'From' => 'pro_kolr@mail.ru',
+			'Reply-To' => 'pro_kolr@mail.ru',
+			'X-Mailer' => 'PHP/' . phpversion()
+		);
+		// отправка письма покупателю
+		mail($to_customer, $subject, $message_customer, $headers);
+		// отправка письма менеджеру
+		mail($to_admin, $subject, $message_admin, $headers);
 
 		$json['success'] = true;
-
 
 		$this->response->addHeader('Content-Type: application/json');
 		$this->response->setOutput(json_encode($json));
