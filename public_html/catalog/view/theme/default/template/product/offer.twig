@@ -88,14 +88,31 @@
               <tr>
                 <td class="text-left">{{ text_product_id }}</td>
                 <td class="text-left">{{ text_name }}</td>
+                <td class="text-left">{{ text_price }}</td>
+                <td class="text-left">{{ text_status }}</td>
+                <td class="text-left">{{ text_quantity }}</td>
+                <td class="text-left">abk_quantity</td>
+                <td class="text-left">abk_price</td>
+                
+                
               </tr>
             </thead>
             <tbody>
                 {% for variant in variants %}
                     <tr>
                       <td class="text-left">{{ variant.product_id }}</td>
-                      <td class="text-left">{{ variant.name }}</td>
-
+                      <td class="text-left">
+                        {{ variant.name }}
+                        <hr>
+                          {% for package in variant.packages %}
+                          <p>{{ package.value }} - {{ package.abbr }} = {{ package.parent_value }} - {{ package.parent_abbr }}</p>
+                          {% endfor %}
+                      </td>
+                      <td class="text-left">{{ variant.price }}</td>
+                      <td class="text-left">{{ variant.status }}</td>
+                      <td class="text-left">{{ variant.quantity }}</td>
+                      <td class="text-left">{{ variant.abk_quantity }}</td>
+                      <td class="text-left">{{ variant.abk_price }}</td>
                     </tr>
                 {% endfor %}
             </tbody>

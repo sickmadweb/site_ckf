@@ -437,10 +437,24 @@ class ControllerProductOffer extends Controller {
 			$variants = $this->model_catalog_offer->getVariants((int)$this->request->get['offer_id']);
 	
 			foreach ($variants as $variant) {
-		
+				 
+				$local_data = $this->currency->local_data($variant['product_id'], $this->session->data['location_id']);			
+
+				print_r('<pre>');	
+				print_r($local_data);	
+				print_r('</pre>');	
+
 				$data['variants'][] = array(
-					'name'     => $variant['name'],		
-					'product_id'       => $variant['product_id']
+					'name'       	=> $variant['name'],		
+					'product_id' 	=> $variant['product_id'],
+					'status'    	=> $local_data['status'],	
+					'quantity'      => $local_data['quantity'],
+					'abk_quantity'  => $local_data['abk_quantity'],
+					'price'      	=> $local_data['price'] > 0 ? $this->currency->format($local_data['price'], $this->config->get('config_currency')) : $this->language->get('text_query_prices'), 
+					'abk_price'     => $local_data['abk_price'] > 0 ? $this->currency->format($local_data['abk_price'], $this->config->get('config_currency')) : $this->language->get('text_query_prices'),
+					'packages'   	=> $this->currency->product_package($variant['product_id'])
+					
+
 				);
 	
 			}

@@ -113,6 +113,25 @@ class Currency {
 		return isset($this->currencies[$currency]);
 	}
 
+	public function product_package($product_id ) {
+
+
+		$query = $this->db->query("
+
+		SELECT p.product_id, p.value, d1.name, d1.abbr, p.parent_value, d2.name AS parent_name, d2.abbr AS parent_abbr 
+		
+		FROM " . DB_PREFIX . "product_package p
+
+		LEFT JOIN " . DB_PREFIX . "package_description d1 ON (p.parent_id = d1.package_id)
+		LEFT JOIN " . DB_PREFIX . "package_description d2 ON (p.package_id = d2.package_id)
+		WHERE product_id= '" . (int)$product_id . "'
+
+		");
+
+		return $query->rows;
+
+	}
+
 	public function local_price($product_id, $location_id = false ) {
 
 
@@ -122,7 +141,16 @@ class Currency {
 
 		$query = $this->db->query("
 
-		SELECT price, location_id FROM " . DB_PREFIX . "product_location_price 
+		SELECT price ,
+		(
+			SELECT MIN(price ) 
+			FROM " . DB_PREFIX . "product_location_price, " . DB_PREFIX . "location 
+			WHERE 
+			" . DB_PREFIX . "product_location_price.location_id = " . DB_PREFIX . "location.location_id 
+			AND " . DB_PREFIX . "product_location_price.product_id='" . (int)$product_id . "' AND " . DB_PREFIX . "location.area = 'ABK'
+		) AS abk_price
+		
+		FROM " . DB_PREFIX . "product_location_price 
 		
 		WHERE product_id='" . (int)$product_id . "'
 		AND   location_id = '".$location_id."'
@@ -135,17 +163,18 @@ class Currency {
 
 	public function local_status($product_id, $location_id = false ) {
 
-		if ($location_id == false ) {
-			$location_id = $this->session->data['location_id']['location_id'];
-		}
-
 		$query = $this->db->query("
 
-		SELECT ss.name AS status, pw.quantity
-		
+		SELECT ss.name AS status, pw.quantity, 
+		(
+			SELECT SUM(" . DB_PREFIX . "product_to_warehouse.quantity) FROM " . DB_PREFIX . "product_to_warehouse, ckf_location
+			WHERE 
+			" . DB_PREFIX . "product_to_warehouse.location_id = " . DB_PREFIX . "location.location_id 
+			AND product_id='" . (int)$product_id . "' AND " . DB_PREFIX . "location.area = 'ABK'
+		) AS abk_quantity
+
 		FROM " . DB_PREFIX . "product_to_warehouse pw
 		LEFT JOIN " . DB_PREFIX . "stock_status ss ON pw.stock_status_id = ss.stock_status_id 	
-
 
 		WHERE product_id='" . (int)$product_id . "' AND pw.location_id = '".$location_id."'
 
@@ -154,6 +183,33 @@ class Currency {
 		return $query->row;
 
 	}
+
+
+	public function local_data($product_id, $location_id = false ) {
+
+		if ($location_id == false ) {
+			$location_id = $this->session->data['location_id']['location_id'];
+		}
+
+		$data = array();
+
+		$price = $this->local_price($product_id, $location_id);
+				 
+		$status = $this->local_status($product_id, $location_id);
+
+		$data = array(
+			'price'          => $price['price'],	
+			'abk_price'      => $price['abk_price'],			
+			'quantity'       => $status['quantity'],
+			'status'         => $status['status'],
+			'abk_quantity'   => $status['abk_quantity'],
+		);
+
+		return $data;
+
+	}
+
+	
 	
 
 

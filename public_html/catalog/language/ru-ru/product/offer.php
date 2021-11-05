@@ -35,10 +35,11 @@ $_['text_month']               = 'Месяц';
 $_['text_year']                = 'Год';
 $_['text_benefits']            = 'Преимущества:';
 $_['text_category']            = 'Каталог';
-$_['text_next']            = 'Следующий';
-$_['text_prev']            = 'Преведущий';
-$_['text_firts']           = 'Начальный';
-$_['text_last']            = 'Последний';
+$_['text_next']                = 'Следующий';
+$_['text_prev']                = 'Преведущий';
+$_['text_firts']               = 'Начальный';
+$_['text_last']                = 'Последний';
+$_['text_query_prices']        = 'Цена по запросу';
 
 // Entry
 $_['entry_qty']                = 'Кол-во';
