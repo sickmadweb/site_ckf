@@ -2250,6 +2250,15 @@ class ModelExtensionExchange1c extends Model {
 
 		$no_update = array();
 
+		//  проверяем изменение имени
+		(if ($old_data['name']) != $data['name']) {
+
+			$this->query("
+				INSERT INTO `" . DB_PREFIX . "exchange1c_history`(`type_data`, `item`, `new_value`, `old_value`) VALUES ('product_name'," . $product_id . "," . $data['name'] . "," . $old_data['name'] . ")		
+			");		
+		}jr  f
+
+
 		// Перед загрузкой товара, нужно удалить все старые характеристики, цены, остатки и опции в товаре
 		if (!$data['delete']) {
 			$this->query("UPDATE `" . DB_PREFIX . "product_feature` SET `status` = 0 WHERE `product_id` = " . $product_id);
