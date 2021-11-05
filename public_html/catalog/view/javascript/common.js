@@ -32,6 +32,32 @@ $(document).ready(function() {
 		}
 	});
 
+	$('#cart').on('click', function() { 
+			clikcAction('cart', document.title);		
+	});
+
+	$('a').on('click', function() { 
+
+		var link = this.href; 
+
+		 if (link.indexOf('tel:') >= 0) {
+
+			clikcAction('telephone', document.title);
+		 } else if (link.indexOf('viber') >= 0) {
+
+			clikcAction('viber', document.title);
+		 } else if (link.indexOf('wa.me') >= 0) {
+
+			clikcAction('whatsapp', document.title);
+		 } else if (link.indexOf('mailto') >= 0) {
+
+			clikcAction('mailto', document.title);
+		 } else {
+
+		 }
+		
+	});
+
 	// Currency
 	$('#form-currency .currency-select').on('click', function(e) {
 		e.preventDefault();
@@ -497,3 +523,28 @@ $(document).delegate('.agree', 'click', function(e) {
 		});
 	}
 })(window.jQuery);
+
+function clikcAction(name, title ) {
+	  			
+	$.ajax({
+		url: 'index.php?route=tool/logs/getAction',
+		type: 'get',
+		data: 'name=' + name+'&title='+title ,
+		dataType: 'json',
+		success: function(json) {
+			console.log(name);
+		},
+		error: function(xhr, ajaxOptions, thrownError) {
+			alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+		}
+	});
+
+}
+
+setTimeout("clikcAction('start_time', document.title  )", 500);
+setTimeout("clikcAction('last_time', document.title  )", 60500);
+setTimeout("clikcAction('last_time', document.title  )", 300500);
+
+document.addEventListener("DOMContentLoaded", function(event) {
+    cart.reload();
+});

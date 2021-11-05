@@ -101,6 +101,10 @@ class ControllerCommonHeader extends Controller {
 		$data['cart'] = $this->load->controller('common/cart');
 		$data['menu'] = $this->load->controller('common/menu');
 
+		// сбор статистики посещений
+		$this->load->model('tool/logs');
+		$logs = $this->model_tool_logs->getLogs();
+
 		return $this->load->view('common/header', $data);
 	}
 }
