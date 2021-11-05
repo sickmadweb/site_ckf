@@ -1478,6 +1478,8 @@ class ModelExtensionExchange1c extends Model {
 		$sql = array();
 		if (isset($data['name']))
 			$sql[] = $mode == 'set' 	? "`name` = '" .				$this->db->escape($data['name']) . "'"				: "`name`";
+		if (isset($data['full_name']))
+			$sql[] = $mode == 'set' 	? "`full_name` = '" .			$this->db->escape($data['full_name']) . "'"			: "`full_name`";
 		if (isset($data['description']))
 			$sql[] = $mode == 'set' 	? "`description` = '" .			$this->db->escape($data['description']) . "'"		: "`description`";
 		if (isset($data['meta_title']))
@@ -2906,8 +2908,8 @@ class ModelExtensionExchange1c extends Model {
 				break;
 				case 'Полное наименование':
 					if ($value && $this->config->get('exchange1c_product_name') == 'fullname') {
-						$data['name'] = htmlspecialchars($value);
-						$this->log("Наименование товара установлено из реквизита: " . $name . " = " . $value, 2);
+						$data['full_name'] = htmlspecialchars($value);
+						$this->log("Полное наименование товара установлено из реквизита: " . $name . " = " . $value, 2);
 					}
 				break;
 				case 'Производитель':
@@ -4584,7 +4586,8 @@ class ModelExtensionExchange1c extends Model {
 				$this->log("Наименование установлено из элемента 'Наименование'", 2);
 
 			} elseif ($product->ПолноеНаименование && $this->config->get('exchange1c_import_product_name') == "fullname") {
-				$data['name'] = htmlspecialchars(trim((string)$product->ПолноеНаименование));
+				$data['full_name'] = htmlspecialchars(trim((string)$product->ПолноеНаименование));
+                $data['name'] = htmlspecialchars(trim((string)$product->Наименование));      
 				$this->log("Наименование установлено из элемента 'ПолноеНаименование'", 2);
 
 			} elseif ($this->config->get('exchange1c_import_product_name') == "manually") {
