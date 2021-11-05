@@ -147,7 +147,7 @@ class ControllerProductViews extends Controller {
 			);
 
 			if ($views_info['image']) {
-				$data['thumb'] = $this->model_tool_image->resize($views_info['image'], $this->config->get('theme_' . $this->config->get('config_theme') . '_image_views_width'), $this->config->get('theme_' . $this->config->get('config_theme') . '_image_views_height'));
+				$data['thumb'] = $this->model_tool_image->resize($views_info['image'], $this->config->get('theme_' . $this->config->get('config_theme') . '_image_category_width'), $this->config->get('theme_' . $this->config->get('config_theme') . '_image_category_height'));
 			} else {
 				$data['thumb'] = '';
 			}
@@ -161,10 +161,7 @@ class ControllerProductViews extends Controller {
 			$this->request->get['path'] = '';
 		}
 
-
 			$data['text_compare'] = sprintf($this->language->get('text_compare'), (isset($this->session->data['compare']) ? count($this->session->data['compare']) : 0));
-
-
 
 
 			$data['compare'] = $this->url->link('product/compare');

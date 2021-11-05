@@ -147,7 +147,7 @@ class ControllerProductOffers extends Controller {
 			);
 
 			if ($offers_info['image']) {
-				$data['thumb'] = $this->model_tool_image->resize($offers_info['image'], $this->config->get('theme_' . $this->config->get('config_theme') . '_image_offers_width'), $this->config->get('theme_' . $this->config->get('config_theme') . '_image_offers_height'));
+				$data['thumb'] = $this->model_tool_image->resize($offers_info['image'], $this->config->get('theme_' . $this->config->get('config_theme') . '_image_category_width'), $this->config->get('theme_' . $this->config->get('config_theme') . '_image_category_height'));
 			} else {
 				$data['thumb'] = '';
 			}
