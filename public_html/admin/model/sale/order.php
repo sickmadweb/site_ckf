@@ -168,6 +168,11 @@ class ModelSaleOrder extends Model {
 			$sql .= " WHERE o.order_status_id > '0'";
 		}
 
+		if (isset( $data['location_id']) and $data['location_id'] !=0 ) {
+			$sql .= " AND o.location_id IN ( ". $data['location_id'] .") ";
+		}
+
+
 		if (!empty($data['filter_order_id'])) {
 			$sql .= " AND o.order_id = '" . (int)$data['filter_order_id'] . "'";
 		}

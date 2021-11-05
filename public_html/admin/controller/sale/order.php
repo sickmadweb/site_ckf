@@ -206,6 +206,13 @@ class ControllerSaleOrder extends Controller {
 
 		$data['orders'] = array();
 
+		$this->load->model('user/user');
+
+		$suid = $this->session->data['user_id'];
+
+		$user_info = $this->model_user_user->getUser($suid);
+
+
 		$filter_data = array(
 			'filter_order_id'        => $filter_order_id,
 			'filter_customer'	     => $filter_customer,
@@ -217,8 +224,10 @@ class ControllerSaleOrder extends Controller {
 			'sort'                   => $sort,
 			'order'                  => $order,
 			'start'                  => ($page - 1) * $this->config->get('config_limit_admin'),
-			'limit'                  => $this->config->get('config_limit_admin')
+			'limit'                  => $this->config->get('config_limit_admin'),
+			'location_id'            => $user_info['location_id'],
 		);
+
 
 		$order_total = $this->model_sale_order->getTotalOrders($filter_data);
 
