@@ -28,6 +28,8 @@ $_['text_payment_recurring']                    = 'Платежный профи
 $_['text_trial_description'] 	              	= 'Стоимость: %s; Периодичность: %d %s; Кол-во платежей: %d;  Далее,  ';
 $_['text_payment_description'] 	              	= 'Стоимость: %s; Периодичность: %d %s; Кол-во платежей: %d';
 $_['text_payment_until_canceled_description'] 	= 'Стоимость: %s; Периодичность: %d %s; Кол-во платежей: до отмены';
+$_['text_confirm']   					        = 'Оформить заказ';
+
 
 // Column
 $_['column_image']          					= 'Изображение';
