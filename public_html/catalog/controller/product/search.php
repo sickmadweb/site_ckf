@@ -414,7 +414,7 @@ class ControllerProductSearch extends Controller {
 
 			$data['results'] = sprintf($this->language->get('text_pagination'), ($product_total) ? (($page - 1) * $limit) + 1 : 0, ((($page - 1) * $limit) > ($product_total - $limit)) ? $product_total : ((($page - 1) * $limit) + $limit), $product_total, ceil($product_total / $limit));
 
-			if (isset($this->request->get['search']) && $this->config->get('config_customer_search')) {
+
 				$this->load->model('account/search');
 
 				if ($this->customer->isLogged()) {
@@ -440,7 +440,7 @@ class ControllerProductSearch extends Controller {
 				);
 
 				$this->model_account_search->addSearch($search_data);
-			}
+			
 		}
 
 		$data['search'] = $search;

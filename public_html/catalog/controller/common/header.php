@@ -105,6 +105,8 @@ class ControllerCommonHeader extends Controller {
 		$this->load->model('tool/logs');
 		$logs = $this->model_tool_logs->getLogs();
 
+
+		
 		return $this->load->view('common/header', $data);
 	}
 }
