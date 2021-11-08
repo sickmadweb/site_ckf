@@ -1,0 +1,23 @@
+<div class="panel-conf-items">
+<button onclick="backToElements()" class="btn btn-primary">Назад</button>
+
+<a href="{{ href }}" target="_blank" class="btn btn-default pull-right">Перейти к товару</a>
+<div id="materilas_info"> 
+
+</div>
+
+<div class="col-xs-12">
+  {% if items %}
+  {% for item in items %}
+  <div class="thumbnail col-xs-6 ">
+    <img src="{{ item.prewiev }}"  class="image-full-width" alt="">
+    <div class="caption">
+      <p>{{ item.name }}</p>
+      <button onclick="setImages({{ item.element_id }} , '{{ item.image }}', {{ item.item_id }})">Применить</button>
+    </div>
+  </div>
+  {% endfor %}
+{% endif  %}
+</div>
+
+</div>

@@ -1,0 +1,32 @@
+{{ header }}
+<div id="product-category" class="container">
+  <ul class="breadcrumb">
+    {% for breadcrumb in breadcrumbs %}
+    <li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+    {% endfor %}
+  </ul>
+  <div class="row">
+
+    <div id="content" class="{{ class }}">
+      <h1>{{ heading_title }}</h1>
+
+      {% if houses %}
+      {% for house in houses %}
+     
+      <a href=" {{ house.href}}" class="col-xs-6 thumbnail  text-center"> 
+        <img src="{{ house.images.popup }}" alt="" class="img-responsive">
+        <div class="caption bg-primary ">
+          <strong class="text-white">{{ house.name}}</strong>
+        </div>
+
+      </a>
+
+      {% endfor %}
+      {% endif  %}
+
+
+  </div>
+
+  </div>
+</div>
+{{ footer }} 

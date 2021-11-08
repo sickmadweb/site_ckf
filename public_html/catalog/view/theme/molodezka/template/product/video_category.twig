@@ -1,0 +1,53 @@
+{{ header }}
+<div id="product-video_category" class="container">
+  <ul class="breadcrumb">
+    {% for breadcrumb in breadcrumbs %}
+    <li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+    {% endfor %}
+  </ul>
+  <div class="row">{{ column_left }}
+    {% if column_left and column_right %}
+    {% set class = 'col-sm-6' %}
+    {% elseif column_left or column_right %}
+    {% set class = 'col-sm-9' %}
+    {% else %}
+    {% set class = 'col-sm-12' %}
+    {% endif %}
+    <div id="content" class="{{ class }}">{{ content_top }}
+      <h1>{{ heading_title }}</h1>
+      {% if categories %}
+      <h3>{{ text_refine }}</h3>
+      {% if categories %}
+      <div class="row">
+        <div class="col-sm-12">
+          <ul class="list-unstyled list-inline">
+            {% for video_category in categories %}
+            <li class="col-xs-6 col-sm-4 views-category  ">
+              <a href="{{ video_category.href }}">
+                <video src="video/videos/{{ video_category.video_preview }}" class="img-responsive img-thumbnail"></video>
+                <span class="caption views-category-text">{{ video_category.name }}</span>
+              </a>
+            </li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+      {% endif %}
+      {% endif %}
+      
+      {% if videos %}
+      <div class="row"> 
+        {% for video in videos %}
+          <div class=" col-xs-6 col-sm-4">
+            <div class="product-thumb caption text-center">
+              <iframe width="100%" height="auto" class="img-responsive img-thumbnail" src="{{ video.link }}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+              <span class="">{{video.name }}</span>
+            </div>
+          </div>
+        {% endfor %} 
+      </div>
+      {% endif %}
+      {{ content_bottom }}</div>
+    {{ column_right }}</div>
+</div>
+{{ footer }} 
