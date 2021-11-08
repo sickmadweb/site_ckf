@@ -2,23 +2,25 @@
   <div class="container">
     <div class="row">
       {% if informations %}
-      <div class="col-sm-3">
+      <div class="col-sm-5">
         <h5>{{ text_information }}</h5>
         <ul class="list-unstyled">
          {% for information in informations %}
           <li><a href="{{ information.href }}">{{ information.title }}</a></li>
+
           {% endfor %}
+          <li><a href="{{ manufacturer }}">{{ text_manufacturer }}</a></li>
+          <li><a href="{{ about_us }}">{{ text_about_us }}</a></li>
+          <li><a href="{{ contact }}">{{ text_contact }}</a></li>
         </ul>
       </div>
       {% endif %}
-      <div class="col-sm-3">
-        <h5>{{ text_service }}</h5>
+      <div class="col-sm-5">
+        <h5>{{ text_extra }}</h5>
         <ul class="list-unstyled">
-          <li><a href="{{ contact }}">{{ text_contact }}</a></li>
-          <li><a href="{{ return }}">{{ text_return }}</a></li>
+
           <li><a href="{{ sitemap }}">{{ text_sitemap }}</a></li>
-          <li><a href="{{ location }}">{{ text_location }}</a></li>
-          <li><a href="{{ about_us }}">{{ text_about_us }}</a></li>
+
           <li><a href="{{ deliverly }}">{{ text_deliverly }}</a></li>
           <li><a href="{{ video_category }}">{{ text_video_category }}</a></li>
           <li><a href="{{ offers }}">{{ text_offers }}</a></li>
@@ -26,31 +28,15 @@
           <li><a href="{{ configurator }}">{{ text_configurator }}</a></li>
         </ul>
       </div>
-      <div class="col-sm-3">
-        <h5>{{ text_extra }}</h5>
-        <ul class="list-unstyled">
-          <li><a href="{{ manufacturer }}">{{ text_manufacturer }}</a></li>
-          <li><a href="{{ voucher }}">{{ text_voucher }}</a></li>
-          <li><a href="{{ affiliate }}">{{ text_affiliate }}</a></li>
-          <li><a href="{{ special }}">{{ text_special }}</a></li>
-        </ul>
-      </div>
-      <div class="col-sm-3">
+      <div class="col-sm-2">
         <h5>{{ text_account }}</h5>
         <ul class="list-unstyled">
-          <li><a href="{{ account }}">{{ text_account }}</a></li>
-          <li><a href="{{ order }}">{{ text_order }}</a></li>
-          <li><a href="{{ wishlist }}">{{ text_wishlist }}</a></li>
-          <li><a href="{{ newsletter }}">{{ text_newsletter }}</a></li>
+          <li>{{ callback }}</li>
+          <li>{{ support }}</li>
         </ul>
       </div>
     </div>
     <hr>
-    <p>{{ powered }}
-      {{ callback }}
-      {{ query_price }}
-      {{ support }}
-    </p>
   </div>
 </footer>
 {% for style in styles %}

@@ -30,6 +30,7 @@ class ControllerCommonPhone extends Controller {
 
 		}
 
+		$data['address'] = $this->url->link('information/contact');
 		return $this->load->view('common/phone', $data);
 		
 	}
@@ -46,6 +47,7 @@ class ControllerCommonPhone extends Controller {
 
 	$data['phone'] = $phone[array_rand($phone, 1)]['phone'] ;
 	$data['email'] = $phone[array_rand($phone, 1)]['email'] ;
+	$data['address'] = $this->url->link('information/contact');
 //	print_r($data['phone']['phone']);
 	$data['href_phone']= preg_replace("/[^,.0-9]/", '', $data['phone']);
 	setcookie('phone', $data['phone'], time() + 60 * 60 * 24 * 30, '/', $this->request->server['HTTP_HOST']);
