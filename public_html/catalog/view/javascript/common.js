@@ -266,7 +266,31 @@ var cart = {
 				alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
 			}
 		});
+	},
+	'reload': function() {
+		
+		$.ajax({
+			url: 'index.php?route=checkout/cart/reload',
+			type: 'post',
+			dataType: 'json',
+			beforeSend: function() {
+				$('#cart > button').button('loading');
+			},
+			complete: function() {
+				$('#cart > button').button('reset');
+			},
+			success: function(json) {
+
+			document.getElementById("cart").innerHTML = json;
+
+			},
+			error: function(xhr, ajaxOptions, thrownError) {
+				alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+			}
+		});
+		
 	}
+
 }
 
 var voucher = {
@@ -548,3 +572,84 @@ setTimeout("clikcAction('last_time', document.title  )", 300500);
 document.addEventListener("DOMContentLoaded", function(event) {
     cart.reload();
 });
+
+function plus_quantity( product_id, package_id ) {
+    
+
+		
+	let input_value = parseFloat(document.getElementById("package_"+product_id+"_"+package_id).value) ;
+	let input_step = parseFloat(document.getElementById("package_"+product_id+"_"+package_id).step) ;
+	let input_ratio = parseFloat(document.getElementById("package_"+product_id+"_"+package_id).dataset.ratio) ; 
+	let input_parent = parseFloat(document.getElementById("package_"+product_id+"_"+package_id).dataset.parent) ; 
+	var input_parent_value = input_value;
+
+		
+
+	if ( typeof(document.getElementById("package_"+product_id+"_"+input_parent)) != "undefined" && document.getElementById("package_"+product_id+"_"+input_parent) !== null  ) {
+
+		let input_parent_value = parseFloat(document.getElementById("package_"+product_id+"_"+input_parent).value) ;
+
+	}
+
+	document.getElementById("package_"+product_id+"_"+package_id).value = input_value+input_step;
+	document.getElementById("package_"+product_id+"_"+input_parent).value = input_parent_value+input_ratio;
+	
+	if ( input_value+input_step > 0 ) {
+	document.getElementById("package_"+product_id+"_"+package_id).value = input_value+input_step;
+	document.getElementById("package_"+product_id+"_"+input_parent).value = ((input_value+input_step)*input_ratio);
+	} else {
+	document.getElementById("package_"+product_id+"_"+package_id).value = 0;
+	document.getElementById("package_"+product_id+"_"+input_parent).value = 0;
+	zero_quantity(product_id);
+	}
+  }
+
+function minus_quantity( product_id, package_id ) {
+	console.log(document.getElementById("package_"+product_id+"_"+package_id).value) ;
+	let input_value = parseFloat(document.getElementById("package_"+product_id+"_"+package_id).value) ;
+	let input_step = parseFloat(document.getElementById("package_"+product_id+"_"+package_id).step) ;
+	let input_ratio = parseFloat(document.getElementById("package_"+product_id+"_"+package_id).dataset.ratio) ; 
+	let input_parent = parseFloat(document.getElementById("package_"+product_id+"_"+package_id).dataset.parent) ; 
+	let input_parent_value = input_value;
+
+	if ( typeof(document.getElementById("package_"+product_id+"_"+input_parent)) != "undefined" && document.getElementById("package_"+product_id+"_"+input_parent) !== null  ) {
+
+		let input_parent_value = parseFloat(document.getElementById("package_"+product_id+"_"+input_parent).value) ;
+
+	}
+
+	if ( input_value-input_step > 0 ) {
+	document.getElementById("package_"+product_id+"_"+package_id).value = input_value-input_step;
+	document.getElementById("package_"+product_id+"_"+input_parent).value = ((input_value+input_step)*input_ratio);
+	} else {
+	document.getElementById("package_"+product_id+"_"+package_id).value = 0;
+	document.getElementById("package_"+product_id+"_"+input_parent).value = 0;
+	zero_quantity(product_id);
+	}
+ }
+  function update_quantity( product_id, package_id ) {
+let input_value = parseFloat(document.getElementById("package_"+product_id+"_"+package_id).value) ;
+let input_step = parseFloat(document.getElementById("package_"+product_id+"_"+package_id).step) ;
+let input_ratio = parseFloat(document.getElementById("package_"+product_id+"_"+package_id).dataset.ratio) ; 
+let input_parent = parseFloat(document.getElementById("package_"+product_id+"_"+package_id).dataset.parent) ; 
+let input_parent_value = input_value;
+
+if ( typeof(document.getElementById("package_"+product_id+"_"+input_parent)) != "undefined" && document.getElementById("package_"+product_id+"_"+input_parent) !== null  ) {
+
+	let input_parent_value = parseFloat(document.getElementById("package_"+product_id+"_"+input_parent).value) ;
+
+}
+
+if ( input_value > 0 ) {
+  document.getElementById("package_"+product_id+"_"+package_id).value = input_value;
+  document.getElementById("package_"+product_id+"_"+input_parent).value = input_ratio*input_value;
+} else {
+  document.getElementById("package_"+product_id+"_"+package_id).value = 0;
+  document.getElementById("package_"+product_id+"_"+input_parent).value = 0;
+  zero_quantity(product_id);
+}
+  }
+function zero_quantity(product_id) {
+document.getElementById('error_quantity_'+product_id).innerHTML = '<span class="bg-warning row"><strong>Значение меньше 0 нельзя указывать!</strong></span>';
+
+}

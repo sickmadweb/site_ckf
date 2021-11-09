@@ -432,15 +432,16 @@ class ControllerProductView extends Controller {
 			}
 
 
-			$data['variants'] = array();
+			$data['offers'] = array();
 	
 			$variants = $this->model_catalog_view->getVariants((int)$this->request->get['view_id']);
 	
 			foreach ($variants as $variant) {
 		
-				$data['variants'][] = array(
+				$data['offers'][] = array(
 					'offer_id'  => $variant['offer_id'],
-					'name'      => $variant['name'],		
+					'name'      => $variant['name'],
+					'href'      => $this->url->link('product/offer', 'offer_id=' . $variant['offer_id']),					
 					'thumb'  => !empty($variant['image']) ? $this->model_tool_image->resize($variant['image'], $this->config->get('theme_' . $this->config->get('config_theme') . '_image_thumb_width'), $this->config->get('theme_' . $this->config->get('config_theme') . '_image_thumb_height')) : $this->model_tool_image->resize('placeholder.png', $this->config->get('theme_' . $this->config->get('config_theme') . '_image_related_width'), $this->config->get('theme_' . $this->config->get('config_theme') . '_image_related_height')),
 					'price'  => $this->currency->format($this->tax->calculate($variant['price'], $variant['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']),	
 					
@@ -469,6 +470,8 @@ class ControllerProductView extends Controller {
 			$data['content_bottom'] = $this->load->controller('common/content_bottom');
 			$data['footer'] = $this->load->controller('common/footer');
 			$data['header'] = $this->load->controller('common/header');
+
+			$data['query_price'] = $this->load->controller('extension/form/query_price');
 
 			$this->response->setOutput($this->load->view('product/view', $data));
 		} else {

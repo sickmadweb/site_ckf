@@ -100,7 +100,9 @@ class ControllerCommonHeader extends Controller {
 		$data['search'] = $this->load->controller('common/search');
 		$data['cart'] = $this->load->controller('common/cart');
 		$data['menu'] = $this->load->controller('common/menu');
-
+		$data['about_us'] = $this->url->link('information/about_us', '', true);
+		$data['views'] = $this->url->link('product/views');
+		
 		// сбор статистики посещений
 		$this->load->model('tool/logs');
 		$logs = $this->model_tool_logs->getLogs();

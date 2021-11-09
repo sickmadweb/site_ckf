@@ -12,6 +12,9 @@ class ControllerProductViews extends Controller {
 
 		$this->load->model('tool/image');
 
+		$this->document->addStyle('catalog/view/javascript/jquery/swiper/css/swiper.min.css');
+		$this->document->addStyle('catalog/view/javascript/jquery/swiper/css/opencart.css');
+		$this->document->addScript('catalog/view/javascript/jquery/swiper/js/swiper.jquery.js');
 
 		$data['text_empty'] = $this->language->get('text_empty');
 
@@ -185,7 +188,8 @@ class ControllerProductViews extends Controller {
 			}
 
 			if (isset($views_info['offers_id'])) {
-				$data['offers_id'] = $views_info['offers_id'];
+				$data['offers'] = $this->url->link('product/offers', 'path=' . $views_info['offers_id'] );
+
 			}
 
 
@@ -212,6 +216,8 @@ class ControllerProductViews extends Controller {
 				);
 			}
 
+			if ($views_id != 0) {
+
 			$data['products'] = array();
 
 			$filter_data = array(
@@ -228,6 +234,9 @@ class ControllerProductViews extends Controller {
 			$results = $this->model_catalog_view->getViews($filter_data);
 
 			foreach ($results as $result) {
+
+				$images = array();
+
 				if ($result['image']) {
 					$image = $this->model_tool_image->resize($result['image'], $this->config->get('theme_' . $this->config->get('config_theme') . '_image_product_width'), $this->config->get('theme_' . $this->config->get('config_theme') . '_image_product_height'));
 				} else {
@@ -239,20 +248,11 @@ class ControllerProductViews extends Controller {
 				} else {
 					$price = false;
 				}
+				foreach ($result['images'] as $img) {
 
-				if (!is_null($result['special']) && (float)$result['special'] >= 0) {
-					$special = $this->currency->format($this->tax->calculate($result['special'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
-					$tax_price = (float)$result['special'];
-				} else {
-					$special = false;
-					$tax_price = (float)$result['price'];
+					$images[] = $this->model_tool_image->resize($img['image'], $this->config->get('theme_' . $this->config->get('config_theme') . '_image_product_width'), $this->config->get('theme_' . $this->config->get('config_theme') . '_image_product_height'));
 				}
-
-				if ($this->config->get('config_tax')) {
-					$tax = $this->currency->format($tax_price, $this->session->data['currency']);
-				} else {
-					$tax = false;
-				}
+				
 
 
 
@@ -262,11 +262,14 @@ class ControllerProductViews extends Controller {
 					'name'        => $result['name'],
 					'description' => utf8_substr(trim(strip_tags(html_entity_decode($result['description'], ENT_QUOTES, 'UTF-8'))), 0, $this->config->get('theme_' . $this->config->get('config_theme') . '_product_description_length')) . '..',
 					'price'       => $price,
-					'special'     => $special,
-					'tax'         => $tax,
+					'images'     => $images,
 					'minimum'     => $result['minimum'] > 0 ? $result['minimum'] : 1,
 					'href'        => $this->url->link('product/view', 'path=' . $this->request->get['path'] . '&view_id=' . $result['view_id'] . $url)
 				);
+			}
+
+			} else {
+				$product_total = 0;
 			}
 
 			$url = '';

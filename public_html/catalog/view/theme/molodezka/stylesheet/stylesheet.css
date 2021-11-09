@@ -421,7 +421,7 @@ footer h5 {
     color: #fff;
     background-color: #c70000;
     border-color: #dddddd #dddddd #b3b3b3 #b7b7b7;
-    margin: 2px;
+    margin: 0px;
 }
 .btn-primary {
 	color: #ffffff;
@@ -802,3 +802,9 @@ h2.price {
     margin-top: 7px;
     margin-bottom: 10px;
 }
+
+td > a , b, strong {
+	color: black;
+}
+
+white-space: nowrap;

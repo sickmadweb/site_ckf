@@ -418,6 +418,22 @@ class ControllerCheckoutCart extends Controller {
 		$this->response->setOutput(json_encode($json));
 	}
 
+	public function update() {
+		
+		$this->load->language('checkout/cart');
+
+		$json = array();
+
+		$this->cart->update($this->request->post['product_id'], $this->request->post['quantity']);
+		$this->session->data['success'] = $this->language->get('text_remove');
+
+
+
+		$this->response->addHeader('Content-Type: application/json');
+		$this->response->setOutput(json_encode($json));
+		
+	}
+	
 	public function remove() {
 		$this->load->language('checkout/cart');
 
@@ -487,4 +503,16 @@ class ControllerCheckoutCart extends Controller {
 		$this->response->addHeader('Content-Type: application/json');
 		$this->response->setOutput(json_encode($json));
 	}
+
+	public function reload() {
+		
+		$this->load->language('checkout/cart');
+
+		$json = $this->load->controller('common/cart');
+
+		$this->response->addHeader('Content-Type: application/json');
+		$this->response->setOutput(json_encode($json));
+		
+	}
+
 }
