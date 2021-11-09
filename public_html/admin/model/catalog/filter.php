@@ -176,4 +176,21 @@ class ModelCatalogFilter extends Model {
 
 		return $query->row['total'];
 	}
+	
+	public function getFilterGroupsId() {
+		$query = $this->db->query("SELECT filter_group_id FROM " . DB_PREFIX . "filter_group");
+
+		return $query->rows;
+	}
+
+	public function getFiltersById($filter_group_id) {
+
+		$query =  $this->db->query("SELECT fg.name as filter_group_name, f.filter_id, fd.name as filter_name FROM ckf_filter f 
+		LEFT JOIN ckf_filter_description fd ON fd.filter_id = f.filter_id 
+		LEFT JOIN ckf_filter_group_description fg ON f.filter_group_id = fg.filter_group_id 
+		WHERE f.filter_group_id = '" . $filter_group_id . "' ORDER BY fd.name");	
+
+		return $query->rows;
+	}
+
 }

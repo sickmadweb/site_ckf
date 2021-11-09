@@ -60,17 +60,28 @@ class ModelCatalogOffer extends Model {
 	}
 
 	public function getOffers($data = array()) {
-		$sql = "SELECT p.offer_id, (SELECT price FROM " . DB_PREFIX . "offer_discount pd2 WHERE pd2.offer_id = p.offer_id AND pd2.customer_group_id = '" . (int)$this->config->get('config_customer_group_id') . "' AND pd2.quantity = '1' AND ((pd2.date_start = '0000-00-00' OR pd2.date_start < NOW()) AND (pd2.date_end = '0000-00-00' OR pd2.date_end > NOW())) ORDER BY pd2.priority ASC, pd2.price ASC LIMIT 1) AS discount, (SELECT price FROM " . DB_PREFIX . "offer_special ps WHERE ps.offer_id = p.offer_id AND ps.customer_group_id = '" . (int)$this->config->get('config_customer_group_id') . "' AND ((ps.date_start = '0000-00-00' OR ps.date_start < NOW()) AND (ps.date_end = '0000-00-00' OR ps.date_end > NOW())) ORDER BY ps.priority ASC, ps.price ASC LIMIT 1) AS special";
+		$sql = "SELECT p.offer_id ";
 
-		if (!empty($data['filter_category_id'])) {
+		if (!empty($data['filter_offers_id'])) {
 			if (!empty($data['filter_sub_category'])) {
-				$sql .= " FROM " . DB_PREFIX . "category_path cp LEFT JOIN " . DB_PREFIX . "offer_to_category p2c ON (cp.category_id = p2c.category_id)";
+				$sql .= " FROM " . DB_PREFIX . "category_path cp LEFT JOIN " . DB_PREFIX . "offer_to_category p2c ON (cp.offers_id = p2c.offers_id)";
 			} else {
-				$sql .= " FROM " . DB_PREFIX . "offer_to_category p2c";
+				$sql .= " FROM " . DB_PREFIX . "offer_to_category p2c LEFT JOIN " . DB_PREFIX . "variants v ON p2c.offer_id = v.offer_id ";
 			}
 
 			if (!empty($data['filter_filter'])) {
-				$sql .= " LEFT JOIN " . DB_PREFIX . "offer_filter pf ON (p2c.offer_id = pf.offer_id) LEFT JOIN " . DB_PREFIX . "offer p ON (pf.offer_id = p.offer_id)";
+				$sql .= " 
+				LEFT JOIN " . DB_PREFIX . "product_filter pf ON (v.product_id = pf.product_id) 
+				";
+
+				$sql .= " LEFT JOIN " . DB_PREFIX . "offer p ON (v.offer_id = p.offer_id)";				
+				
+				$grouped_filters = $this->getGroupedFilters($data['filter_filter']);
+
+				foreach ($grouped_filters as $filter_group_id => $filters) {
+					$sql .= " LEFT JOIN " . DB_PREFIX . "product_filter pf" . $filter_group_id . " ON (v.product_id = pf" . $filter_group_id . ".product_id)";					
+				}
+
 			} else {
 				$sql .= " LEFT JOIN " . DB_PREFIX . "offer p ON (p2c.offer_id = p.offer_id)";
 			}
@@ -80,14 +91,15 @@ class ModelCatalogOffer extends Model {
 
 		$sql .= " LEFT JOIN " . DB_PREFIX . "offer_description pd ON (p.offer_id = pd.offer_id) LEFT JOIN " . DB_PREFIX . "offer_to_store p2s ON (p.offer_id = p2s.offer_id) WHERE pd.language_id = '" . (int)$this->config->get('config_language_id') . "' AND p.status = '1' AND p.date_available <= NOW() AND p2s.store_id = '" . (int)$this->config->get('config_store_id') . "'";
 
-		if (!empty($data['filter_category_id'])) {
+		if (!empty($data['filter_offers_id'])) {
 			if (!empty($data['filter_sub_category'])) {
-				$sql .= " AND cp.path_id = '" . (int)$data['filter_category_id'] . "'";
+				$sql .= " AND cp.path_id = '" . (int)$data['filter_offers_id'] . "'";
 			} else {
-				$sql .= " AND p2c.category_id = '" . (int)$data['filter_category_id'] . "'";
+				$sql .= " AND p2c.offers_id = '" . (int)$data['filter_offers_id'] . "'";
 			}
 
 			if (!empty($data['filter_filter'])) {
+				
 				$implode = array();
 
 				$filters = explode(',', $data['filter_filter']);
@@ -97,57 +109,35 @@ class ModelCatalogOffer extends Model {
 				}
 
 				$sql .= " AND pf.filter_id IN (" . implode(',', $implode) . ")";
+				
+
 			}
 		}
 
 		if (!empty($data['filter_name']) || !empty($data['filter_tag'])) {
+			
 			$sql .= " AND (";
 
 			if (!empty($data['filter_name'])) {
+
 				$implode = array();
 
 				$words = explode(' ', trim(preg_replace('/\s+/', ' ', $data['filter_name'])));
+				
+				$pdname = "REPLACE((REPLACE(REPLACE(pd.name, '(', ''), '-', ' ')), '\"', '')";
 
 				foreach ($words as $word) {
-					$implode[] = "pd.name LIKE '%" . $this->db->escape($word) . "%'";
+	
+					$implode[] = " ( ".$pdname." LIKE '" . $this->db->escape($word) . "%' OR ".$pdname." LIKE '% " . $this->db->escape($word) . "%' )";					
+					
 				}
 
 				if ($implode) {
 					$sql .= " " . implode(" AND ", $implode) . "";
 				}
 
-				if (!empty($data['filter_description'])) {
-					$sql .= " OR pd.description LIKE '%" . $this->db->escape($data['filter_name']) . "%'";
-				}
 			}
 
-			if (!empty($data['filter_name']) && !empty($data['filter_tag'])) {
-				$sql .= " OR ";
-			}
-
-			if (!empty($data['filter_tag'])) {
-				$implode = array();
-
-				$words = explode(' ', trim(preg_replace('/\s+/', ' ', $data['filter_tag'])));
-
-				foreach ($words as $word) {
-					$implode[] = "pd.tag LIKE '%" . $this->db->escape($word) . "%'";
-				}
-
-				if ($implode) {
-					$sql .= " " . implode(" AND ", $implode) . "";
-				}
-			}
-
-			if (!empty($data['filter_name'])) {
-				$sql .= " OR LCASE(p.model) = '" . $this->db->escape(utf8_strtolower($data['filter_name'])) . "'";
-				$sql .= " OR LCASE(p.sku) = '" . $this->db->escape(utf8_strtolower($data['filter_name'])) . "'";
-				$sql .= " OR LCASE(p.upc) = '" . $this->db->escape(utf8_strtolower($data['filter_name'])) . "'";
-				$sql .= " OR LCASE(p.ean) = '" . $this->db->escape(utf8_strtolower($data['filter_name'])) . "'";
-				$sql .= " OR LCASE(p.jan) = '" . $this->db->escape(utf8_strtolower($data['filter_name'])) . "'";
-				$sql .= " OR LCASE(p.isbn) = '" . $this->db->escape(utf8_strtolower($data['filter_name'])) . "'";
-				$sql .= " OR LCASE(p.mpn) = '" . $this->db->escape(utf8_strtolower($data['filter_name'])) . "'";
-			}
 
 			$sql .= ")";
 		}
@@ -417,29 +407,41 @@ class ModelCatalogOffer extends Model {
 	public function getTotalOffers($data = array()) {
 		$sql = "SELECT COUNT(DISTINCT p.offer_id) AS total";
 
-		if (!empty($data['filter_category_id'])) {
+		if (!empty($data['filter_offers_id'])) {
 			if (!empty($data['filter_sub_category'])) {
-				$sql .= " FROM " . DB_PREFIX . "category_path cp LEFT JOIN " . DB_PREFIX . "offer_to_category p2c ON (cp.category_id = p2c.category_id)";
+				$sql .= " FROM " . DB_PREFIX . "category_path cp LEFT JOIN " . DB_PREFIX . "offer_to_category p2c ON (cp.offers_id = p2c.offers_id)";
 			} else {
-				$sql .= " FROM " . DB_PREFIX . "offer_to_category p2c";
+				$sql .= " FROM " . DB_PREFIX . "offer_to_category p2c LEFT JOIN " . DB_PREFIX . "variants v ON p2c.offer_id = v.offer_id";
 			}
 
 			if (!empty($data['filter_filter'])) {
-				$sql .= " LEFT JOIN " . DB_PREFIX . "offer_filter pf ON (p2c.offer_id = pf.offer_id) LEFT JOIN " . DB_PREFIX . "offer p ON (pf.offer_id = p.offer_id)";
+				$sql .= " 
+				LEFT JOIN " . DB_PREFIX . "product_filter pf ON (v.product_id = pf.product_id) 
+				";
+
+				$sql .= " LEFT JOIN " . DB_PREFIX . "offer p ON (v.offer_id = p.offer_id)";				
+				
+				$grouped_filters = $this->getGroupedFilters($data['filter_filter']);
+
+				foreach ($grouped_filters as $filter_group_id => $filters) {
+					$sql .= " LEFT JOIN " . DB_PREFIX . "product_filter pf" . $filter_group_id . " ON (v.product_id = pf" . $filter_group_id . ".product_id)";					
+				}
+
 			} else {
 				$sql .= " LEFT JOIN " . DB_PREFIX . "offer p ON (p2c.offer_id = p.offer_id)";
 			}
+
 		} else {
 			$sql .= " FROM " . DB_PREFIX . "offer p";
 		}
 
 		$sql .= " LEFT JOIN " . DB_PREFIX . "offer_description pd ON (p.offer_id = pd.offer_id) LEFT JOIN " . DB_PREFIX . "offer_to_store p2s ON (p.offer_id = p2s.offer_id) WHERE pd.language_id = '" . (int)$this->config->get('config_language_id') . "' AND p.status = '1' AND p.date_available <= NOW() AND p2s.store_id = '" . (int)$this->config->get('config_store_id') . "'";
 
-		if (!empty($data['filter_category_id'])) {
+		if (!empty($data['filter_offers_id'])) {
 			if (!empty($data['filter_sub_category'])) {
-				$sql .= " AND cp.path_id = '" . (int)$data['filter_category_id'] . "'";
+				$sql .= " AND cp.path_id = '" . (int)$data['filter_offers_id'] . "'";
 			} else {
-				$sql .= " AND p2c.category_id = '" . (int)$data['filter_category_id'] . "'";
+				$sql .= " AND p2c.offers_id = '" . (int)$data['filter_offers_id'] . "'";
 			}
 
 			if (!empty($data['filter_filter'])) {
@@ -456,52 +458,27 @@ class ModelCatalogOffer extends Model {
 		}
 
 		if (!empty($data['filter_name']) || !empty($data['filter_tag'])) {
+			
 			$sql .= " AND (";
 
 			if (!empty($data['filter_name'])) {
+
 				$implode = array();
 
 				$words = explode(' ', trim(preg_replace('/\s+/', ' ', $data['filter_name'])));
+				
+				$pdname = "REPLACE((REPLACE(REPLACE(pd.name, '(', ''), '-', ' ')), '\"', '')";
 
 				foreach ($words as $word) {
-					$implode[] = "pd.name LIKE '%" . $this->db->escape($word) . "%'";
+	
+					$implode[] = " ( ".$pdname." LIKE '" . $this->db->escape($word) . "%' OR ".$pdname." LIKE '% " . $this->db->escape($word) . "%' )";					
+					
 				}
 
 				if ($implode) {
 					$sql .= " " . implode(" AND ", $implode) . "";
 				}
 
-				if (!empty($data['filter_description'])) {
-					$sql .= " OR pd.description LIKE '%" . $this->db->escape($data['filter_name']) . "%'";
-				}
-			}
-
-			if (!empty($data['filter_name']) && !empty($data['filter_tag'])) {
-				$sql .= " OR ";
-			}
-
-			if (!empty($data['filter_tag'])) {
-				$implode = array();
-
-				$words = explode(' ', trim(preg_replace('/\s+/', ' ', $data['filter_tag'])));
-
-				foreach ($words as $word) {
-					$implode[] = "pd.tag LIKE '%" . $this->db->escape($word) . "%'";
-				}
-
-				if ($implode) {
-					$sql .= " " . implode(" AND ", $implode) . "";
-				}
-			}
-
-			if (!empty($data['filter_name'])) {
-				$sql .= " OR LCASE(p.model) = '" . $this->db->escape(utf8_strtolower($data['filter_name'])) . "'";
-				$sql .= " OR LCASE(p.sku) = '" . $this->db->escape(utf8_strtolower($data['filter_name'])) . "'";
-				$sql .= " OR LCASE(p.upc) = '" . $this->db->escape(utf8_strtolower($data['filter_name'])) . "'";
-				$sql .= " OR LCASE(p.ean) = '" . $this->db->escape(utf8_strtolower($data['filter_name'])) . "'";
-				$sql .= " OR LCASE(p.jan) = '" . $this->db->escape(utf8_strtolower($data['filter_name'])) . "'";
-				$sql .= " OR LCASE(p.isbn) = '" . $this->db->escape(utf8_strtolower($data['filter_name'])) . "'";
-				$sql .= " OR LCASE(p.mpn) = '" . $this->db->escape(utf8_strtolower($data['filter_name'])) . "'";
 			}
 
 			$sql .= ")";
@@ -557,19 +534,64 @@ class ModelCatalogOffer extends Model {
 		
 		$query = $this->db->query("
 
-		SELECT 
-		offer_id AS id, 
-		(SELECT MIN(offer_id) FROM " . DB_PREFIX . "offer) AS firts, 
-		(SELECT MAX(offer_id) FROM " . DB_PREFIX . "offer) AS last,
-		(SELECT offer_id FROM " . DB_PREFIX . "offer WHERE offer_id > id ORDER BY offer_id ASC  LIMIT 1) AS next,
-		(SELECT offer_id FROM " . DB_PREFIX . "offer WHERE offer_id < id ORDER BY offer_id DESC LIMIT 1) AS prev
-		
-		FROM " . DB_PREFIX . "offer
-		
-		WHERE offer_id = '". $offer_id ."'
+			SELECT 
+			offer_id AS id, 
+			(SELECT MIN(offer_id) FROM " . DB_PREFIX . "offer) AS firts, 
+			(SELECT MAX(offer_id) FROM " . DB_PREFIX . "offer) AS last,
+			(SELECT offer_id FROM " . DB_PREFIX . "offer WHERE offer_id > id ORDER BY offer_id ASC  LIMIT 1) AS next,
+			(SELECT offer_id FROM " . DB_PREFIX . "offer WHERE offer_id < id ORDER BY offer_id DESC LIMIT 1) AS prev
+			
+			FROM " . DB_PREFIX . "offer
+			
+			WHERE offer_id = '". $offer_id ."'
 		");
 
 		return $query->row;
+	}
+
+	public function getFilters($offer_id) {
+
+		$query = $this->db->query("
+
+			SELECT pf.product_id, pf.filter_id, fd.name AS filter_name, fgd.filter_group_id, fgd.name AS group_name
+
+			FROM " . DB_PREFIX . "product_filter pf
+			
+			LEFT JOIN " . DB_PREFIX . "variants v ON pf.product_id = v.product_id
+			
+			LEFT JOIN " . DB_PREFIX . "filter_description fd ON pf.filter_id = fd.filter_id
+			LEFT JOIN " . DB_PREFIX . "filter_group_description fgd ON  fgd.filter_group_id =fd.filter_group_id
+			
+			WHERE v.offer_id = '". $offer_id ."'
+			AND fgd.language_id = 1
+			AND fd.language_id = 1
+			
+			GROUP BY pf.filter_id
+
+		");
+
+		return $query->rows;
+
+	}
+	
+	private function getGroupedFilters ($filters) {
+        
+		$implode = array();
+
+		$filters = explode(',', $filters);
+
+		foreach ($filters as $filter_id) {
+			$implode[] = (int)$filter_id;
+		}
+						
+		$query = $this->db->query("SELECT `filter_id`, `filter_group_id` FROM `" . DB_PREFIX . "filter` WHERE `filter_id` IN (" . implode(',', $implode) . ")");
+
+		$grouped_filters = array();
+		foreach ($query->rows as $row) {
+			$grouped_filters[$row['filter_group_id']][] = $row['filter_id'];
+		}
+
+		return $grouped_filters;
 	}
 
 }

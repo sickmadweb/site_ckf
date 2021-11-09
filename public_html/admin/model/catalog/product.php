@@ -977,4 +977,40 @@ class ModelCatalogProduct extends Model {
 
 		return $query->rows;
 	}
+
+	public function addFilterForProduct($data) {
+
+		foreach($data['selected'] as $key => $value) {
+
+			$query = $this->db->query("SELECT * FROM ". DB_PREFIX . "product_filter WHERE product_id='". $value ."' AND filter_id='". $data['filter'] ."'");
+
+			if(!$query->rows) $this->db->query("INSERT INTO " . DB_PREFIX . "product_filter SET product_id='". $value ."', filter_id='". $data['filter'] ."'");
+			
+		}
+
+
+	}
+
+	public function addAttribute($data) {
+
+		foreach($data as $key => $value) {
+
+			$this->db->query("DELETE FROM ". DB_PREFIX ."product_attribute WHERE product_id = '". $value['product_id'] ."' AND attribute_id = '". $value['attribute_id'] ."' ");
+			$this->db->query("INSERT INTO ". DB_PREFIX ."product_attribute SET 
+							  
+							  product_id   = '". $value['product_id'] ."',
+							  attribute_id = '". $value['attribute_id'] ."',
+							  language_id  = 1,
+							  text 		   = '". $value['value'] ."'");
+		}
+	}
+
+	public function deleteAttribute($data) {
+
+		foreach($data as $key => $value) {
+
+			$this->db->query("DELETE FROM ". DB_PREFIX ."product_attribute WHERE product_id = '". $value['product_id'] ."' AND attribute_id = '". $value['attribute_id'] ."' ");
+		}
+	}
+	
 }

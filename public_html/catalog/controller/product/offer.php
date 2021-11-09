@@ -430,7 +430,15 @@ class ControllerProductOffer extends Controller {
 					);
 				}
 			}
+			
+/*  Фильтры offer-а
+			$data['filters'] = array();
 
+			$filters = $this->model_catalog_offer->getFilters((int)$this->request->get['offer_id']);
+			print_r('<pre>');	
+			print_r($filters);	
+			print_r('</pre>');	
+*/
 
 			$data['variants'] = array();
 	
@@ -439,11 +447,11 @@ class ControllerProductOffer extends Controller {
 			foreach ($variants as $variant) {
 				 
 				$local_data = $this->currency->local_data($variant['product_id'], $this->session->data['location_id']);			
-
+/*
 				print_r('<pre>');	
 				print_r($local_data);	
 				print_r('</pre>');	
-
+*/
 				$data['variants'][] = array(
 					'name'       	=> $variant['name'],		
 					'product_id' 	=> $variant['product_id'],

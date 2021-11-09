@@ -60,11 +60,11 @@ class ModelCatalogView extends Model {
 	}
 
 	public function getViews($data = array()) {
-		$sql = "SELECT p.view_id, (SELECT price FROM " . DB_PREFIX . "view_discount pd2 WHERE pd2.view_id = p.view_id AND pd2.customer_group_id = '" . (int)$this->config->get('config_customer_group_id') . "' AND pd2.quantity = '1' AND ((pd2.date_start = '0000-00-00' OR pd2.date_start < NOW()) AND (pd2.date_end = '0000-00-00' OR pd2.date_end > NOW())) ORDER BY pd2.priority ASC, pd2.price ASC LIMIT 1) AS discount, (SELECT price FROM " . DB_PREFIX . "view_special ps WHERE ps.view_id = p.view_id AND ps.customer_group_id = '" . (int)$this->config->get('config_customer_group_id') . "' AND ((ps.date_start = '0000-00-00' OR ps.date_start < NOW()) AND (ps.date_end = '0000-00-00' OR ps.date_end > NOW())) ORDER BY ps.priority ASC, ps.price ASC LIMIT 1) AS special";
+		$sql = "SELECT p.view_id";
 
-		if (!empty($data['filter_category_id'])) {
+		if (!empty($data['filter_views_id'])) {
 			if (!empty($data['filter_sub_category'])) {
-				$sql .= " FROM " . DB_PREFIX . "category_path cp LEFT JOIN " . DB_PREFIX . "view_to_category p2c ON (cp.category_id = p2c.category_id)";
+				$sql .= " FROM " . DB_PREFIX . "category_path cp LEFT JOIN " . DB_PREFIX . "view_to_category p2c ON (cp.views_id = p2c.views_id)";
 			} else {
 				$sql .= " FROM " . DB_PREFIX . "view_to_category p2c";
 			}
@@ -80,11 +80,11 @@ class ModelCatalogView extends Model {
 
 		$sql .= " LEFT JOIN " . DB_PREFIX . "view_description pd ON (p.view_id = pd.view_id) LEFT JOIN " . DB_PREFIX . "view_to_store p2s ON (p.view_id = p2s.view_id) WHERE pd.language_id = '" . (int)$this->config->get('config_language_id') . "' AND p.status = '1' AND p.date_available <= NOW() AND p2s.store_id = '" . (int)$this->config->get('config_store_id') . "'";
 
-		if (!empty($data['filter_category_id'])) {
+		if (!empty($data['filter_views_id'])) {
 			if (!empty($data['filter_sub_category'])) {
-				$sql .= " AND cp.path_id = '" . (int)$data['filter_category_id'] . "'";
+				$sql .= " AND cp.path_id = '" . (int)$data['filter_views_id'] . "'";
 			} else {
-				$sql .= " AND p2c.category_id = '" . (int)$data['filter_category_id'] . "'";
+				$sql .= " AND p2c.views_id = '" . (int)$data['filter_views_id'] . "'";
 			}
 
 			if (!empty($data['filter_filter'])) {
@@ -199,6 +199,9 @@ class ModelCatalogView extends Model {
 
 		$view_data = array();
 
+
+
+
 		$query = $this->db->query($sql);
 
 		foreach ($query->rows as $result) {
@@ -206,6 +209,8 @@ class ModelCatalogView extends Model {
 		}
 
 		return $view_data;
+
+
 	}
 
 	public function getViewSpecials($data = array()) {
@@ -310,12 +315,48 @@ class ModelCatalogView extends Model {
 	public function getViewAttributes($view_id) {
 		$view_attribute_group_data = array();
 
-		$view_attribute_group_query = $this->db->query("SELECT ag.attribute_group_id, agd.name FROM " . DB_PREFIX . "view_attribute pa LEFT JOIN " . DB_PREFIX . "attribute a ON (pa.attribute_id = a.attribute_id) LEFT JOIN " . DB_PREFIX . "attribute_group ag ON (a.attribute_group_id = ag.attribute_group_id) LEFT JOIN " . DB_PREFIX . "attribute_group_description agd ON (ag.attribute_group_id = agd.attribute_group_id) WHERE pa.view_id = '" . (int)$view_id . "' AND agd.language_id = '" . (int)$this->config->get('config_language_id') . "' GROUP BY ag.attribute_group_id ORDER BY ag.sort_order, agd.name");
+		$view_attribute_group_query = $this->db->query("
+		SELECT ag.attribute_group_id, agd.name 
+		
+		FROM " . DB_PREFIX . "product_attribute pa 
+		LEFT JOIN " . DB_PREFIX . "variants v ON pa.product_id =v.product_id
+		LEFT JOIN " . DB_PREFIX . "attribute a ON (pa.attribute_id = a.attribute_id) 
+		LEFT JOIN " . DB_PREFIX . "attribute_group ag ON (a.attribute_group_id = ag.attribute_group_id) 
+		LEFT JOIN " . DB_PREFIX . "attribute_group_description agd ON (ag.attribute_group_id = agd.attribute_group_id) 
+		
+		WHERE v.view_id = '" . (int)$view_id . "' 
+		AND agd.language_id = '" . (int)$this->config->get('config_language_id') . "' 
+		
+		GROUP BY ag.attribute_group_id 
+		
+		ORDER BY ag.sort_order, agd.name
+		
+		
+		");
 
 		foreach ($view_attribute_group_query->rows as $view_attribute_group) {
 			$view_attribute_data = array();
 
-			$view_attribute_query = $this->db->query("SELECT a.attribute_id, ad.name, pa.text FROM " . DB_PREFIX . "view_attribute pa LEFT JOIN " . DB_PREFIX . "attribute a ON (pa.attribute_id = a.attribute_id) LEFT JOIN " . DB_PREFIX . "attribute_description ad ON (a.attribute_id = ad.attribute_id) WHERE pa.view_id = '" . (int)$view_id . "' AND a.attribute_group_id = '" . (int)$view_attribute_group['attribute_group_id'] . "' AND ad.language_id = '" . (int)$this->config->get('config_language_id') . "' AND pa.language_id = '" . (int)$this->config->get('config_language_id') . "' ORDER BY a.sort_order, ad.name");
+			$view_attribute_query = $this->db->query("
+			
+				SELECT a.attribute_id,ad.name, GROUP_CONCAT( DISTINCT(pa.text) SEPARATOR ', ' ) AS text
+
+				FROM " . DB_PREFIX . "product_attribute pa 
+
+				LEFT JOIN " . DB_PREFIX . "variants v ON pa.product_id =v.product_id 
+				LEFT JOIN " . DB_PREFIX . "attribute a ON (pa.attribute_id = a.attribute_id) 
+				LEFT JOIN " . DB_PREFIX . "attribute_description ad ON (a.attribute_id = ad.attribute_id) 
+				
+				WHERE v.view_id = '" . (int)$view_id . "' 
+				AND a.attribute_group_id = '" . (int)$view_attribute_group['attribute_group_id'] . "' 
+				AND ad.language_id = '" . (int)$this->config->get('config_language_id') . "' 
+				AND pa.language_id = '" . (int)$this->config->get('config_language_id') . "' 
+				
+				GROUP BY  a.attribute_id
+
+				ORDER BY a.sort_order, ad.name
+			
+			");
 
 			foreach ($view_attribute_query->rows as $view_attribute) {
 				$view_attribute_data[] = array(
@@ -331,6 +372,8 @@ class ModelCatalogView extends Model {
 				'attribute'          => $view_attribute_data
 			);
 		}
+
+
 
 		return $view_attribute_group_data;
 	}
@@ -417,9 +460,9 @@ class ModelCatalogView extends Model {
 	public function getTotalViews($data = array()) {
 		$sql = "SELECT COUNT(DISTINCT p.view_id) AS total";
 
-		if (!empty($data['filter_category_id'])) {
+		if (!empty($data['filter_views_id'])) {
 			if (!empty($data['filter_sub_category'])) {
-				$sql .= " FROM " . DB_PREFIX . "category_path cp LEFT JOIN " . DB_PREFIX . "view_to_category p2c ON (cp.category_id = p2c.category_id)";
+				$sql .= " FROM " . DB_PREFIX . "category_path cp LEFT JOIN " . DB_PREFIX . "view_to_category p2c ON (cp.views_id = p2c.views_id)";
 			} else {
 				$sql .= " FROM " . DB_PREFIX . "view_to_category p2c";
 			}
@@ -435,11 +478,11 @@ class ModelCatalogView extends Model {
 
 		$sql .= " LEFT JOIN " . DB_PREFIX . "view_description pd ON (p.view_id = pd.view_id) LEFT JOIN " . DB_PREFIX . "view_to_store p2s ON (p.view_id = p2s.view_id) WHERE pd.language_id = '" . (int)$this->config->get('config_language_id') . "' AND p.status = '1' AND p.date_available <= NOW() AND p2s.store_id = '" . (int)$this->config->get('config_store_id') . "'";
 
-		if (!empty($data['filter_category_id'])) {
+		if (!empty($data['filter_views_id'])) {
 			if (!empty($data['filter_sub_category'])) {
-				$sql .= " AND cp.path_id = '" . (int)$data['filter_category_id'] . "'";
+				$sql .= " AND cp.path_id = '" . (int)$data['filter_views_id'] . "'";
 			} else {
-				$sql .= " AND p2c.category_id = '" . (int)$data['filter_category_id'] . "'";
+				$sql .= " AND p2c.views_id = '" . (int)$data['filter_views_id'] . "'";
 			}
 
 			if (!empty($data['filter_filter'])) {

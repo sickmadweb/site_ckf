@@ -3,14 +3,23 @@
 // *	@license	GNU General Public License version 3; see LICENSE.txt
 
 // Heading
-$_['heading_title']          = 'Товары';
+$_['heading_title']          = 'Products';
+$_['heading_title_offer']    = 'Offer';
+$_['heading_title_view']     = 'View';
 
 // Text
 $_['text_success']           = 'Настройки успешно изменены!';
+$_['text_email_success']     = 'Письмо успешно отправлено на Email';
 $_['text_list']              = 'Список товаров';
 $_['text_add']               = 'Добавить';
+$_['text_add_from_excel']    = 'Добавить товары из Excel';
+$_['text_add_the_package']   = 'Добавить упаковку для товаров';
+$_['text_update_configurator']            = 'Обновить данные для конфигуратора';
+$_['text_send_info_about_configurator']   = 'Отправить данные об конфигураторе на Email';
 $_['text_edit']              = 'Редактирование';
 $_['text_filter']            = 'Фильтр';
+$_['text_filters']           = 'Фильтры';
+$_['text_add_filter']        = 'Добавление фильтра';
 $_['text_plus']              = '+';
 $_['text_minus']             = '-';
 $_['text_default']           = 'По умолчанию';
@@ -21,8 +30,6 @@ $_['text_amount']            = 'Фиксированная сумма';
 $_['text_keyword']           = 'Должен быть уникальным на всю систему, без пробелов и спецсимволов';
 $_['text_none_category']            	= ' --- Без Категории --- ';
 $_['text_none_manufacturer']            = ' --- Без Производителя --- ';
-$_['text_image']             = 'Только с изоброжением';
-$_['text_no_image']          = 'Без изоброжения';
 
 // Column
 $_['column_name']            = 'Название';
@@ -35,9 +42,13 @@ $_['column_quantity']        = 'Количество';
 $_['column_status']          = 'Статус';
 $_['column_noindex']         = 'Индекс';
 $_['column_action']          = 'Действие';
+$_['column_store']           = 'Магазин/склад';
+$_['column_location']        = 'Местоположение';
+$_['column_attribute']       = 'Характеристика';
 
 // Entry
 $_['entry_name']             = 'Название товара';
+$_['entry_name_configurator']= 'Наименование';
 $_['entry_description']      = 'Описание';
 $_['entry_description_mini'] = 'Краткое Описание:';
 $_['entry_meta_title'] 	     = 'Мета-тег Title';
@@ -80,6 +91,8 @@ $_['entry_date_end']         = 'Дата окончания';
 $_['entry_priority']         = 'Приоритет';
 $_['entry_attribute']        = 'Характеристики';
 $_['entry_attribute_group']  = 'Группа характеристик';
+$_['entry_attribute_list']   = 'Выберите характеристику';
+$_['entry_attribute_value']  = 'Значение характеристики';
 $_['entry_text']             = 'Текст';
 $_['entry_option']           = 'Опции';
 $_['entry_option_value']     = 'Значение опции';
@@ -97,13 +110,13 @@ $_['entry_related_article']  = 'Рекомендуем почитать';
 $_['entry_tag']          	 = 'Теги товара';
 $_['entry_reward']           = 'Бонусные баллы';
 $_['entry_layout']           = 'Изменить макет';
-$_['entry_recurring']        = 'Регулярный платеж';
+$_['entry_recurring']        = 'Профиль периодичности';
 $_['entry_heading']     	 = 'Название';
 $_['entry_min']              = 'От';
 $_['entry_max']              = 'До';
-$_['entry_image']            = 'Изоброжение';
-$_['entry_packages']         = 'Упаковка товара';
-
+//$_['entry_name']           = 'Имя изображения';
+$_['entry_alt']              = 'ALT изоброжения';
+$_['entry_filter']           = 'Наименование фильтра';
 
 // Help
 $_['help_keyword']           = 'Должно быть уникальным на всю систему, без пробелов и спецсимволов';
@@ -132,13 +145,6 @@ $_['text_corner2']           = 'Нижний левый';
 $_['text_corner3']           = 'Нижний правый';
 $_['entry_sticker']          = 'Промо Стикеры';
 $_['text_benefits']          = 'Преимущества';
-$_['tab_sales_data']         = 'Данные продажи';
-$_['text_price']             = 'Цена на складе';
-$_['text_name']              = 'Местоположение';
-$_['text_quantity']          = 'Количество на складе';
-$_['text_status']            = 'Статус товара';
-
-
 
 // Error
 $_['error_warning']          = 'Внимательно проверьте форму на ошибки!';
@@ -149,3 +155,5 @@ $_['error_meta_h1'] 	     = 'HTML-тег H1 должен содержать от
 $_['error_model']            = 'Код Товара товара должна содержать от 3 до 64 символов!';
 $_['error_keyword']          = 'SEO URL уже используется!';
 $_['error_tab']              = 'Необходимо название таба!';
+$_['error_file_not_found']   = 'Файл не найден';
+$_['error_email']            = 'Письмо не было отправлено';

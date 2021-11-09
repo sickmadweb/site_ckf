@@ -7,9 +7,12 @@ class ControllerProductSearch extends Controller {
 		$this->load->language('product/search');
 
 		$this->load->model('catalog/category');
+		$this->load->model('catalog/offers');
+		$this->load->model('catalog/views');
 
 		$this->load->model('catalog/product');
-
+		$this->load->model('catalog/offer');
+		$this->load->model('catalog/view');
 		$this->load->model('tool/image');
 
 		if (isset($this->request->get['search'])) {
@@ -193,7 +196,9 @@ class ControllerProductSearch extends Controller {
 
 			$product_total = $this->model_catalog_product->getTotalProducts($filter_data);
 
-			$results = $this->model_catalog_product->getProducts($filter_data);
+//			$results = $this->model_catalog_product->getProducts($filter_data);
+
+			$results = $this->model_catalog_offer->getOffers($filter_data);
 
 			foreach ($results as $result) {
 				if ($result['image']) {
@@ -216,29 +221,16 @@ class ControllerProductSearch extends Controller {
 					$tax_price = (float)$result['price'];
 				}
 	
-				if ($this->config->get('config_tax')) {
-					$tax = $this->currency->format($tax_price, $this->session->data['currency']);
-				} else {
-					$tax = false;
-				}
 
-				if ($this->config->get('config_review_status')) {
-					$rating = (int)$result['rating'];
-				} else {
-					$rating = false;
-				}
 
 				$data['products'][] = array(
-					'product_id'  => $result['product_id'],
+					'offer_id'  => $result['offer_id'],
 					'thumb'       => $image,
 					'name'        => $result['name'],
 					'description' => utf8_substr(trim(strip_tags(html_entity_decode($result['description'], ENT_QUOTES, 'UTF-8'))), 0, $this->config->get('theme_' . $this->config->get('config_theme') . '_product_description_length')) . '..',
 					'price'       => $price,
-					'special'     => $special,
-					'tax'         => $tax,
 					'minimum'     => $result['minimum'] > 0 ? $result['minimum'] : 1,
-					'rating'      => $result['rating'],
-					'href'        => $this->url->link('product/product', 'product_id=' . $result['product_id'] . $url)
+					'href'        => $this->url->link('product/offer', 'offer_id=' . $result['offer_id'] . $url)
 				);
 			}
 
@@ -414,7 +406,7 @@ class ControllerProductSearch extends Controller {
 
 			$data['results'] = sprintf($this->language->get('text_pagination'), ($product_total) ? (($page - 1) * $limit) + 1 : 0, ((($page - 1) * $limit) > ($product_total - $limit)) ? $product_total : ((($page - 1) * $limit) + $limit), $product_total, ceil($product_total / $limit));
 
-			if (isset($this->request->get['search']) && $this->config->get('config_customer_search')) {
+
 				$this->load->model('account/search');
 
 				if ($this->customer->isLogged()) {
@@ -440,7 +432,7 @@ class ControllerProductSearch extends Controller {
 				);
 
 				$this->model_account_search->addSearch($search_data);
-			}
+			
 		}
 
 		$data['search'] = $search;

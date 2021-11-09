@@ -27,6 +27,7 @@ class ControllerProductOffers extends Controller {
 			if (!in_array('filter', $disallow_params, true) && $this->config->get('config_noindex_status')){
                 $this->document->setRobots('noindex,follow');
             }
+			
 		} else {
 			$filter = '';
 		}
@@ -186,6 +187,8 @@ class ControllerProductOffers extends Controller {
 			if (isset($this->request->get['limit'])) {
 				$url .= '&limit=' . $this->request->get['limit'];
 			}
+
+			$data['views_id'] = $offers_info['views_id'];
 
 			$data['categories'] = array();
 
@@ -450,6 +453,9 @@ class ControllerProductOffers extends Controller {
 			$data['content_bottom'] = $this->load->controller('common/content_bottom');
 			$data['footer'] = $this->load->controller('common/footer');
 			$data['header'] = $this->load->controller('common/header');
+
+			$data['offer_filter'] = $this->load->controller('extension/module/offer_filter');
+			
 
 			$this->response->setOutput($this->load->view('product/offers', $data));
 		
