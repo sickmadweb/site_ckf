@@ -310,12 +310,48 @@ class ModelCatalogView extends Model {
 	public function getViewAttributes($view_id) {
 		$view_attribute_group_data = array();
 
-		$view_attribute_group_query = $this->db->query("SELECT ag.attribute_group_id, agd.name FROM " . DB_PREFIX . "view_attribute pa LEFT JOIN " . DB_PREFIX . "attribute a ON (pa.attribute_id = a.attribute_id) LEFT JOIN " . DB_PREFIX . "attribute_group ag ON (a.attribute_group_id = ag.attribute_group_id) LEFT JOIN " . DB_PREFIX . "attribute_group_description agd ON (ag.attribute_group_id = agd.attribute_group_id) WHERE pa.view_id = '" . (int)$view_id . "' AND agd.language_id = '" . (int)$this->config->get('config_language_id') . "' GROUP BY ag.attribute_group_id ORDER BY ag.sort_order, agd.name");
+		$view_attribute_group_query = $this->db->query("
+		SELECT ag.attribute_group_id, agd.name 
+		
+		FROM " . DB_PREFIX . "product_attribute pa 
+		LEFT JOIN " . DB_PREFIX . "variants v ON pa.product_id =v.product_id
+		LEFT JOIN " . DB_PREFIX . "attribute a ON (pa.attribute_id = a.attribute_id) 
+		LEFT JOIN " . DB_PREFIX . "attribute_group ag ON (a.attribute_group_id = ag.attribute_group_id) 
+		LEFT JOIN " . DB_PREFIX . "attribute_group_description agd ON (ag.attribute_group_id = agd.attribute_group_id) 
+		
+		WHERE v.view_id = '" . (int)$view_id . "' 
+		AND agd.language_id = '" . (int)$this->config->get('config_language_id') . "' 
+		
+		GROUP BY ag.attribute_group_id 
+		
+		ORDER BY ag.sort_order, agd.name
+		
+		
+		");
 
 		foreach ($view_attribute_group_query->rows as $view_attribute_group) {
 			$view_attribute_data = array();
 
-			$view_attribute_query = $this->db->query("SELECT a.attribute_id, ad.name, pa.text FROM " . DB_PREFIX . "view_attribute pa LEFT JOIN " . DB_PREFIX . "attribute a ON (pa.attribute_id = a.attribute_id) LEFT JOIN " . DB_PREFIX . "attribute_description ad ON (a.attribute_id = ad.attribute_id) WHERE pa.view_id = '" . (int)$view_id . "' AND a.attribute_group_id = '" . (int)$view_attribute_group['attribute_group_id'] . "' AND ad.language_id = '" . (int)$this->config->get('config_language_id') . "' AND pa.language_id = '" . (int)$this->config->get('config_language_id') . "' ORDER BY a.sort_order, ad.name");
+			$view_attribute_query = $this->db->query("
+			
+				SELECT a.attribute_id,ad.name, GROUP_CONCAT( DISTINCT(pa.text) SEPARATOR ', ' ) AS text
+
+				FROM " . DB_PREFIX . "product_attribute pa 
+
+				LEFT JOIN " . DB_PREFIX . "variants v ON pa.product_id =v.product_id 
+				LEFT JOIN " . DB_PREFIX . "attribute a ON (pa.attribute_id = a.attribute_id) 
+				LEFT JOIN " . DB_PREFIX . "attribute_description ad ON (a.attribute_id = ad.attribute_id) 
+				
+				WHERE v.view_id = '" . (int)$view_id . "' 
+				AND a.attribute_group_id = '" . (int)$view_attribute_group['attribute_group_id'] . "' 
+				AND ad.language_id = '" . (int)$this->config->get('config_language_id') . "' 
+				AND pa.language_id = '" . (int)$this->config->get('config_language_id') . "' 
+				
+				GROUP BY  a.attribute_id
+
+				ORDER BY a.sort_order, ad.name
+			
+			");
 
 			foreach ($view_attribute_query->rows as $view_attribute) {
 				$view_attribute_data[] = array(
@@ -331,6 +367,8 @@ class ModelCatalogView extends Model {
 				'attribute'          => $view_attribute_data
 			);
 		}
+
+
 
 		return $view_attribute_group_data;
 	}
