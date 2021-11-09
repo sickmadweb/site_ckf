@@ -617,6 +617,11 @@ class ControllerCatalogProduct extends Controller {
 		$data['enabled'] = $this->url->link('catalog/product/enable', 'user_token=' . $this->session->data['user_token'] . $url, true);
 		$data['disabled'] = $this->url->link('catalog/product/disable', 'user_token=' . $this->session->data['user_token'] . $url, true);
 
+		$data['add_filter_for_product'] = $this->url->link('catalog/product/addFilterForProduct', 'user_token=' . $this->session->data['user_token'] . $url, true);
+		$data['add_attribute_for_product'] = $this->url->link('catalog/product/addAttributeForProduct', 'user_token=' . $this->session->data['user_token'] . $url, true);
+		$data['delete_attribute_for_product'] = $this->url->link('catalog/product/deleteAttributeForProduct', 'user_token=' . $this->session->data['user_token'] . $url, true);
+
+
 		$data['products'] = array();
 
 		$filter_data = array(
@@ -841,6 +846,68 @@ class ControllerCatalogProduct extends Controller {
 		if (isset($this->request->get['order'])) {
 			$url .= '&order=' . $this->request->get['order'];
 		}
+
+		//Attributes data
+		$this->load->model('catalog/attribute');
+		
+		$data['attributes_data'] = array();
+
+		$attribute_groups = $this->model_catalog_attribute->getAttributesGroupsId();
+
+		foreach ($attribute_groups as $key => $attribute_id) {
+			
+			$attributes = $this->model_catalog_attribute->getAttributesByGroupId($attribute_id['attribute_group_id']);
+			foreach ($attributes as $key => $value) {
+	
+				$data['attributes_data'][$value['attribute_group_name']][] = array(
+	
+					'attribute_id'   => $value['attribute_id'],
+					'attribute_name' => $value['attribute_name']
+				);
+			}
+		}
+	
+				// Filters
+		$this->load->model('catalog/filter');
+
+		if (isset($this->request->post['product_filter'])) {
+			$filters = $this->request->post['product_filter'];
+		} elseif (isset($this->request->get['product_id'])) {
+			$filters = $this->model_catalog_product->getProductFilters($this->request->get['product_id']);
+		} else {
+			$filters = array();
+		}
+
+		$data['product_filters'] = array();
+
+		foreach ($filters as $filter_id) {
+			$filter_info = $this->model_catalog_filter->getFilter($filter_id);
+
+			if ($filter_info) {
+				$data['product_filters'][] = array(
+					'filter_id' => $filter_info['filter_id'],
+					'name'      => $filter_info['group'] . ' &gt; ' . $filter_info['name']
+				);
+			}
+		}
+		//Filters data 
+		$filter_groups = $this->model_catalog_filter->getFilterGroupsId();
+
+		foreach ($filter_groups as $key => $group_id) {
+			
+			$filters = $this->model_catalog_filter->getFiltersById($group_id['filter_group_id']);
+			foreach ($filters as $key => $value) {
+	
+				$data['filters_data'][$value['filter_group_name']][] = array(
+	
+					'filter_id'   => $value['filter_id'],
+					'filter_name' => $value['filter_name']
+				);
+			}
+		}
+
+		ksort($data['filters_data']);	
+
 
 		$pagination = new Pagination();
 		$pagination->total = $product_total;
@@ -1897,5 +1964,84 @@ class ControllerCatalogProduct extends Controller {
 
 		$this->response->addHeader('Content-Type: application/json');
 		$this->response->setOutput(json_encode($json));
+	}
+
+
+	public function addFilterForProduct() {
+
+		$this->load->model('catalog/product');
+		$this->load->language('catalog/product');
+		$url = '';
+		
+		$this->session->data['success'] = $this->language->get('text_success');
+		$this->model_catalog_product->addFilterForProduct($this->request->post);
+
+		$this->response->redirect($this->url->link('catalog/product', 'user_token=' . $this->session->data['user_token'] . $url, true));
+	}
+
+	public function addAttributeForProduct() {
+
+		$this->load->model('catalog/product');
+		$this->load->language('catalog/product');
+
+		$url = '';
+		$data = array();
+		
+		if (isset($this->request->post['selected'])) {
+
+			$attribute_products = $this->request->post['attribute_product'];
+			
+			foreach($this->request->post['selected'] as $product_id) {
+				
+				if ($attribute_products[$product_id]) {
+					
+					$data[] = array(
+						'product_id'   => $product_id,
+						'attribute_id' => $this->request->post['attribute_id'],
+						'value' 	   => $attribute_products[$product_id]);
+				} else {
+
+					if (!empty($this->request->post['attribute_value'])) {
+						
+						$data[] = array(
+							'product_id'   => $product_id,
+							'attribute_id' => $this->request->post['attribute_id'],
+							'value' 	   => $this->request->post['attribute_value']);
+					}
+				}
+			}
+			if (!empty($data)) {
+
+				$this->model_catalog_product->addAttribute($data);
+				$this->session->data['success'] = $this->language->get('text_success');	
+			}
+		}
+
+		$this->response->redirect($this->url->link('catalog/product', 'user_token=' . $this->session->data['user_token'] . $url, true));
+	}
+
+	public function deleteAttributeForProduct() {
+		
+		$this->load->model('catalog/product');
+		$this->load->language('catalog/product');
+
+		$url = '';
+		$data = array();
+		
+		if (isset($this->request->post['selected'])) {
+
+			foreach($this->request->post['selected'] as $product_id) {
+				
+				$data[] = array(
+					'product_id'   => $product_id,
+					'attribute_id' => $this->request->post['attribute_id']);
+			}
+
+			$this->model_catalog_product->deleteAttribute($data);
+			$this->session->data['success'] = $this->language->get('text_success');	
+		
+		}
+
+		$this->response->redirect($this->url->link('catalog/product', 'user_token=' . $this->session->data['user_token'] . $url, true));
 	}
 }
