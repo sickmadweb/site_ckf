@@ -528,6 +528,7 @@ class ControllerCheckoutSimpleCart extends Controller {
 		$order_data['customer_id'] = $customer_id;
 		$order_data['location_id'] = $this->session->data['location_id'];
 
+		$order_data['link_to_order'] = $this->url->link('sale/order/info', 'order_id=' . $this->session->data['order_id']);
 
 		$order_data['products'] = array();
 
@@ -568,6 +569,7 @@ class ControllerCheckoutSimpleCart extends Controller {
 		$json['order_data'] = $order_data;
 
 
+		
 		$order_id = $this->session->data['order_id'] = $this->model_checkout_order->addOrder($order_data);
 
 		// отправка почты  о заказе
@@ -583,7 +585,7 @@ class ControllerCheckoutSimpleCart extends Controller {
 		$to_admin     = $location['mail'];
 		$subject = 'Заказ №'. $order_id .'оформлен';
 		$message_customer = $this->load->view('mail/order_add', $order_data);
-		$message_admin = $this->load->view('mail/order_alert', $order_data);				
+		$message_admin = $this->load->view('mail/order_to_meneger', $order_data);				
 		$headers = array(
 			'From' => 'pro_kolr@mail.ru',
 			'Reply-To' => 'pro_kolr@mail.ru',

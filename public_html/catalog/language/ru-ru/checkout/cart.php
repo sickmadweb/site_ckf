@@ -31,7 +31,7 @@ $_['text_payment_until_canceled_description'] 	= 'Стоимость: %s; Пер
 $_['text_confirm']   					        = 'Оформить заказ';
 $_['text_on_request']   					    = 'Товары доступные под заказ';
 $_['text_query_prices']   					    = 'Цена по запросу';
-
+$_['text_go_to_order']   					    = 'Перейти к заказу';
 
 // Column
 $_['column_image']          					= 'Изображение';
