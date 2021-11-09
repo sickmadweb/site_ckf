@@ -451,6 +451,9 @@ class ControllerProductOffers extends Controller {
 			$data['footer'] = $this->load->controller('common/footer');
 			$data['header'] = $this->load->controller('common/header');
 
+			$data['offer_filter'] = $this->load->controller('extension/module/offer_filter');
+			
+
 			$this->response->setOutput($this->load->view('product/offers', $data));
 		
 	}

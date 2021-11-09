@@ -557,19 +557,45 @@ class ModelCatalogOffer extends Model {
 		
 		$query = $this->db->query("
 
-		SELECT 
-		offer_id AS id, 
-		(SELECT MIN(offer_id) FROM " . DB_PREFIX . "offer) AS firts, 
-		(SELECT MAX(offer_id) FROM " . DB_PREFIX . "offer) AS last,
-		(SELECT offer_id FROM " . DB_PREFIX . "offer WHERE offer_id > id ORDER BY offer_id ASC  LIMIT 1) AS next,
-		(SELECT offer_id FROM " . DB_PREFIX . "offer WHERE offer_id < id ORDER BY offer_id DESC LIMIT 1) AS prev
-		
-		FROM " . DB_PREFIX . "offer
-		
-		WHERE offer_id = '". $offer_id ."'
+			SELECT 
+			offer_id AS id, 
+			(SELECT MIN(offer_id) FROM " . DB_PREFIX . "offer) AS firts, 
+			(SELECT MAX(offer_id) FROM " . DB_PREFIX . "offer) AS last,
+			(SELECT offer_id FROM " . DB_PREFIX . "offer WHERE offer_id > id ORDER BY offer_id ASC  LIMIT 1) AS next,
+			(SELECT offer_id FROM " . DB_PREFIX . "offer WHERE offer_id < id ORDER BY offer_id DESC LIMIT 1) AS prev
+			
+			FROM " . DB_PREFIX . "offer
+			
+			WHERE offer_id = '". $offer_id ."'
 		");
 
 		return $query->row;
 	}
+
+	public function getFilters($offer_id) {
+
+		$query = $this->db->query("
+
+			SELECT pf.product_id, pf.filter_id, fd.name AS filter_name, fgd.filter_group_id, fgd.name AS group_name
+
+			FROM " . DB_PREFIX . "product_filter pf
+			
+			LEFT JOIN " . DB_PREFIX . "variants v ON pf.product_id = v.product_id
+			
+			LEFT JOIN " . DB_PREFIX . "filter_description fd ON pf.filter_id = fd.filter_id
+			LEFT JOIN " . DB_PREFIX . "filter_group_description fgd ON  fgd.filter_group_id =fd.filter_group_id
+			
+			WHERE v.offer_id = '". $offer_id ."'
+			AND fgd.language_id = 1
+			AND fd.language_id = 1
+			
+			GROUP BY pf.filter_id
+
+		");
+
+		return $query->rows;
+
+	}
+	
 
 }
