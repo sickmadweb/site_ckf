@@ -184,6 +184,11 @@ class ControllerProductViews extends Controller {
 				$url .= '&limit=' . $this->request->get['limit'];
 			}
 
+			if (isset($views_info['offers_id'])) {
+				$data['offers_id'] = $views_info['offers_id'];
+			}
+
+
 			$data['categories'] = array();
 
 			$results = $this->model_catalog_views->getCategories($views_id);

@@ -1,7 +1,18 @@
 <?php
 class ModelCatalogOffers extends Model {
 	public function getOffers($offers_id) {
-		$query = $this->db->query("SELECT DISTINCT * FROM " . DB_PREFIX . "offers c LEFT JOIN " . DB_PREFIX . "offers_description cd ON (c.offers_id = cd.offers_id) LEFT JOIN " . DB_PREFIX . "offers_to_store c2s ON (c.offers_id = c2s.offers_id) WHERE c.offers_id = '" . (int)$offers_id . "' AND cd.language_id = '" . (int)$this->config->get('config_language_id') . "' AND c2s.store_id = '" . (int)$this->config->get('config_store_id') . "' AND c.status = '1'");
+		$query = $this->db->query("
+		SELECT DISTINCT * , (SELECT views_id FROM " . DB_PREFIX . "views WHERE offers_id = '" . (int)$offers_id . "') AS views_id
+		
+		FROM " . DB_PREFIX . "offers c 
+		
+		LEFT JOIN " . DB_PREFIX . "offers_description cd ON (c.offers_id = cd.offers_id) 
+		LEFT JOIN " . DB_PREFIX . "offers_to_store c2s ON (c.offers_id = c2s.offers_id) 
+		
+		WHERE c.offers_id = '" . (int)$offers_id . "' 
+		AND cd.language_id = '" . (int)$this->config->get('config_language_id') . "' AND c2s.store_id = '" . (int)$this->config->get('config_store_id') . "' AND c.status = '1'
+		
+		");
 
 		return $query->row;
 	}

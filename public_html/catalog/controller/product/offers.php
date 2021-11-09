@@ -188,6 +188,8 @@ class ControllerProductOffers extends Controller {
 				$url .= '&limit=' . $this->request->get['limit'];
 			}
 
+			$data['views_id'] = $offers_info['views_id'];
+
 			$data['categories'] = array();
 
 			$results = $this->model_catalog_offers->getCategories($offers_id);
