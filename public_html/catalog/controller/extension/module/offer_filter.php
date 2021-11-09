@@ -42,14 +42,16 @@ class ControllerExtensionModuleOfferFilter extends Controller {
 
 			$this->load->model('catalog/product');
 
+			if (isset($this->request->get['filter'])) {
+				$data['filter_category'] = explode(',', $this->request->get['filter']);
+			} else {
+				$data['filter_category'] = array();
+			}
+
 			$data['filter_groups'] = array();
 
 			$filter_groups = $this->model_catalog_offers->getProductsFilters($offers_id);
-/*
-			echo'<pre>';
-			print_r ($filter_groups);	
-			echo'</pre>';
-*/
+
 			if ($filter_groups) {
 				foreach ($filter_groups as $filter_group) {
 					$childen_data = array();

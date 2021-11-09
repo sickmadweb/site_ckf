@@ -94,7 +94,8 @@ class ModelCatalogOffers extends Model {
 
 		foreach ($query->rows as $result) {
 	
-			$filter_data[] = array(
+			
+			$filter_data[$result['filter_group_id']][] = array(
 				'filter_id' => $result['filter_id'],
 				'color'            => $result['color'],
 				'url'            => $result['url'],
@@ -104,7 +105,7 @@ class ModelCatalogOffers extends Model {
 			$filter_group_data[] = array(
 				'filter_group_id' => $result['filter_group_id'],
 				'name'            => $result['group_name'],
-				'filter'          => $filter_data
+				'filter'          => $filter_data[$result['filter_group_id']]
 			);
 
 		}

@@ -66,11 +66,22 @@ class ModelCatalogOffer extends Model {
 			if (!empty($data['filter_sub_category'])) {
 				$sql .= " FROM " . DB_PREFIX . "category_path cp LEFT JOIN " . DB_PREFIX . "offer_to_category p2c ON (cp.offers_id = p2c.offers_id)";
 			} else {
-				$sql .= " FROM " . DB_PREFIX . "offer_to_category p2c";
+				$sql .= " FROM " . DB_PREFIX . "offer_to_category p2c LEFT JOIN " . DB_PREFIX . "variants v ON p2c.offer_id = v.offer_id ";
 			}
 
 			if (!empty($data['filter_filter'])) {
-				$sql .= " LEFT JOIN " . DB_PREFIX . "offer_filter pf ON (p2c.offer_id = pf.offer_id) LEFT JOIN " . DB_PREFIX . "offer p ON (pf.offer_id = p.offer_id)";
+				$sql .= " 
+				LEFT JOIN " . DB_PREFIX . "product_filter pf ON (v.product_id = pf.product_id) 
+				";
+
+				$sql .= " LEFT JOIN " . DB_PREFIX . "offer p ON (v.offer_id = p.offer_id)";				
+				
+				$grouped_filters = $this->getGroupedFilters($data['filter_filter']);
+
+				foreach ($grouped_filters as $filter_group_id => $filters) {
+					$sql .= " LEFT JOIN " . DB_PREFIX . "product_filter pf" . $filter_group_id . " ON (v.product_id = pf" . $filter_group_id . ".product_id)";					
+				}
+
 			} else {
 				$sql .= " LEFT JOIN " . DB_PREFIX . "offer p ON (p2c.offer_id = p.offer_id)";
 			}
@@ -88,6 +99,7 @@ class ModelCatalogOffer extends Model {
 			}
 
 			if (!empty($data['filter_filter'])) {
+				
 				$implode = array();
 
 				$filters = explode(',', $data['filter_filter']);
@@ -97,57 +109,35 @@ class ModelCatalogOffer extends Model {
 				}
 
 				$sql .= " AND pf.filter_id IN (" . implode(',', $implode) . ")";
+				
+
 			}
 		}
 
 		if (!empty($data['filter_name']) || !empty($data['filter_tag'])) {
+			
 			$sql .= " AND (";
 
 			if (!empty($data['filter_name'])) {
+
 				$implode = array();
 
 				$words = explode(' ', trim(preg_replace('/\s+/', ' ', $data['filter_name'])));
+				
+				$pdname = "REPLACE((REPLACE(REPLACE(pd.name, '(', ''), '-', ' ')), '\"', '')";
 
 				foreach ($words as $word) {
-					$implode[] = "pd.name LIKE '%" . $this->db->escape($word) . "%'";
+	
+					$implode[] = " ( ".$pdname." LIKE '" . $this->db->escape($word) . "%' OR ".$pdname." LIKE '% " . $this->db->escape($word) . "%' )";					
+					
 				}
 
 				if ($implode) {
 					$sql .= " " . implode(" AND ", $implode) . "";
 				}
 
-				if (!empty($data['filter_description'])) {
-					$sql .= " OR pd.description LIKE '%" . $this->db->escape($data['filter_name']) . "%'";
-				}
 			}
 
-			if (!empty($data['filter_name']) && !empty($data['filter_tag'])) {
-				$sql .= " OR ";
-			}
-
-			if (!empty($data['filter_tag'])) {
-				$implode = array();
-
-				$words = explode(' ', trim(preg_replace('/\s+/', ' ', $data['filter_tag'])));
-
-				foreach ($words as $word) {
-					$implode[] = "pd.tag LIKE '%" . $this->db->escape($word) . "%'";
-				}
-
-				if ($implode) {
-					$sql .= " " . implode(" AND ", $implode) . "";
-				}
-			}
-
-			if (!empty($data['filter_name'])) {
-				$sql .= " OR LCASE(p.model) = '" . $this->db->escape(utf8_strtolower($data['filter_name'])) . "'";
-				$sql .= " OR LCASE(p.sku) = '" . $this->db->escape(utf8_strtolower($data['filter_name'])) . "'";
-				$sql .= " OR LCASE(p.upc) = '" . $this->db->escape(utf8_strtolower($data['filter_name'])) . "'";
-				$sql .= " OR LCASE(p.ean) = '" . $this->db->escape(utf8_strtolower($data['filter_name'])) . "'";
-				$sql .= " OR LCASE(p.jan) = '" . $this->db->escape(utf8_strtolower($data['filter_name'])) . "'";
-				$sql .= " OR LCASE(p.isbn) = '" . $this->db->escape(utf8_strtolower($data['filter_name'])) . "'";
-				$sql .= " OR LCASE(p.mpn) = '" . $this->db->escape(utf8_strtolower($data['filter_name'])) . "'";
-			}
 
 			$sql .= ")";
 		}
@@ -204,11 +194,6 @@ class ModelCatalogOffer extends Model {
 		foreach ($query->rows as $result) {
 			$offer_data[$result['offer_id']] = $this->getOffer($result['offer_id']);
 		}
-
-		echo '<pre>';
-		print_r($sql);
-		echo '</pre>';
-
 
 		return $offer_data;
 	}
@@ -426,14 +411,26 @@ class ModelCatalogOffer extends Model {
 			if (!empty($data['filter_sub_category'])) {
 				$sql .= " FROM " . DB_PREFIX . "category_path cp LEFT JOIN " . DB_PREFIX . "offer_to_category p2c ON (cp.offers_id = p2c.offers_id)";
 			} else {
-				$sql .= " FROM " . DB_PREFIX . "offer_to_category p2c";
+				$sql .= " FROM " . DB_PREFIX . "offer_to_category p2c LEFT JOIN " . DB_PREFIX . "variants v ON p2c.offer_id = v.offer_id";
 			}
 
 			if (!empty($data['filter_filter'])) {
-				$sql .= " LEFT JOIN " . DB_PREFIX . "offer_filter pf ON (p2c.offer_id = pf.offer_id) LEFT JOIN " . DB_PREFIX . "offer p ON (pf.offer_id = p.offer_id)";
+				$sql .= " 
+				LEFT JOIN " . DB_PREFIX . "product_filter pf ON (v.product_id = pf.product_id) 
+				";
+
+				$sql .= " LEFT JOIN " . DB_PREFIX . "offer p ON (v.offer_id = p.offer_id)";				
+				
+				$grouped_filters = $this->getGroupedFilters($data['filter_filter']);
+
+				foreach ($grouped_filters as $filter_group_id => $filters) {
+					$sql .= " LEFT JOIN " . DB_PREFIX . "product_filter pf" . $filter_group_id . " ON (v.product_id = pf" . $filter_group_id . ".product_id)";					
+				}
+
 			} else {
 				$sql .= " LEFT JOIN " . DB_PREFIX . "offer p ON (p2c.offer_id = p.offer_id)";
 			}
+
 		} else {
 			$sql .= " FROM " . DB_PREFIX . "offer p";
 		}
@@ -461,52 +458,27 @@ class ModelCatalogOffer extends Model {
 		}
 
 		if (!empty($data['filter_name']) || !empty($data['filter_tag'])) {
+			
 			$sql .= " AND (";
 
 			if (!empty($data['filter_name'])) {
+
 				$implode = array();
 
 				$words = explode(' ', trim(preg_replace('/\s+/', ' ', $data['filter_name'])));
+				
+				$pdname = "REPLACE((REPLACE(REPLACE(pd.name, '(', ''), '-', ' ')), '\"', '')";
 
 				foreach ($words as $word) {
-					$implode[] = "pd.name LIKE '%" . $this->db->escape($word) . "%'";
+	
+					$implode[] = " ( ".$pdname." LIKE '" . $this->db->escape($word) . "%' OR ".$pdname." LIKE '% " . $this->db->escape($word) . "%' )";					
+					
 				}
 
 				if ($implode) {
 					$sql .= " " . implode(" AND ", $implode) . "";
 				}
 
-				if (!empty($data['filter_description'])) {
-					$sql .= " OR pd.description LIKE '%" . $this->db->escape($data['filter_name']) . "%'";
-				}
-			}
-
-			if (!empty($data['filter_name']) && !empty($data['filter_tag'])) {
-				$sql .= " OR ";
-			}
-
-			if (!empty($data['filter_tag'])) {
-				$implode = array();
-
-				$words = explode(' ', trim(preg_replace('/\s+/', ' ', $data['filter_tag'])));
-
-				foreach ($words as $word) {
-					$implode[] = "pd.tag LIKE '%" . $this->db->escape($word) . "%'";
-				}
-
-				if ($implode) {
-					$sql .= " " . implode(" AND ", $implode) . "";
-				}
-			}
-
-			if (!empty($data['filter_name'])) {
-				$sql .= " OR LCASE(p.model) = '" . $this->db->escape(utf8_strtolower($data['filter_name'])) . "'";
-				$sql .= " OR LCASE(p.sku) = '" . $this->db->escape(utf8_strtolower($data['filter_name'])) . "'";
-				$sql .= " OR LCASE(p.upc) = '" . $this->db->escape(utf8_strtolower($data['filter_name'])) . "'";
-				$sql .= " OR LCASE(p.ean) = '" . $this->db->escape(utf8_strtolower($data['filter_name'])) . "'";
-				$sql .= " OR LCASE(p.jan) = '" . $this->db->escape(utf8_strtolower($data['filter_name'])) . "'";
-				$sql .= " OR LCASE(p.isbn) = '" . $this->db->escape(utf8_strtolower($data['filter_name'])) . "'";
-				$sql .= " OR LCASE(p.mpn) = '" . $this->db->escape(utf8_strtolower($data['filter_name'])) . "'";
 			}
 
 			$sql .= ")";
@@ -602,5 +574,24 @@ class ModelCatalogOffer extends Model {
 
 	}
 	
+	private function getGroupedFilters ($filters) {
+        
+		$implode = array();
+
+		$filters = explode(',', $filters);
+
+		foreach ($filters as $filter_id) {
+			$implode[] = (int)$filter_id;
+		}
+						
+		$query = $this->db->query("SELECT `filter_id`, `filter_group_id` FROM `" . DB_PREFIX . "filter` WHERE `filter_id` IN (" . implode(',', $implode) . ")");
+
+		$grouped_filters = array();
+		foreach ($query->rows as $row) {
+			$grouped_filters[$row['filter_group_id']][] = $row['filter_id'];
+		}
+
+		return $grouped_filters;
+	}
 
 }

@@ -27,6 +27,7 @@ class ControllerProductOffers extends Controller {
 			if (!in_array('filter', $disallow_params, true) && $this->config->get('config_noindex_status')){
                 $this->document->setRobots('noindex,follow');
             }
+			
 		} else {
 			$filter = '';
 		}
