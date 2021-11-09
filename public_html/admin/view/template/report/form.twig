@@ -1,0 +1,38 @@
+{{ header }}{{ column_left }}
+<div id="content">
+    {% if forms %}
+
+    <table class="table table-striped table-bordered">
+      <thead>
+        <tr>
+          <th>mail_to</th>
+          <th>forms</th>
+          <th>date</th>
+          <th>contact_from</th>
+          <th>comment</th>
+          <th>page</th>
+          <th>store_id</th>
+          <th>location_id</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for form in forms %}
+      <tr>
+        <th>{{ form.mail_to }}</th>
+        <th>{{ form.forms }}</th>
+        <th>{{ form.date }}</th>
+        <th>{{ form.contact_from }}</th>
+        <th>{{ form.comment }}</th>
+        <th>{{ form.page }}</th>
+        <th>{{ form.store_id }}</th>
+        <th>{{ form.location_id }}</th>
+      </tr>
+      {% endfor %}
+    </tbody>
+    </table>
+
+    {% else %}
+    
+    {% endif %}
+</div>
+{{ footer }}

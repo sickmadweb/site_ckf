@@ -1,0 +1,65 @@
+<div id="element_{{ element_id }}" class="  panel-conf-materials">
+ 
+
+
+
+  {% if series %}  
+  {% for serie in series %}
+  <h3>{{ serie.name }} - {{ serie.series_id }}</h3>
+  <div id="serie_{{ serie.series_id }}" class="configurator-series-block">
+
+
+
+    <div class="swiper-container mySwiper">
+      <div class="swiper-wrapper">
+        {% for view in views[ serie.series_id ] %}
+        <div class="swiper-slide">
+
+          <div id="view_{{ view.view_id }}" style="/*display: none;*/" class="material_id-{{ view.material_id }} configurator-series-view">
+            <div class="thumbnail">
+              <div class="col-xs-12">
+                {% for item in view.item|slice(0, 4)  %}
+                  <img src="{{ item.prewiev }}"  class="col-xs-6 img-responsive" alt="">
+                {% endfor %}   
+              </div>
+              <div class="caption">
+                <p><span>{{ view.name}} {{ view.view_id }} -- {{ view.material_id }}</span></p>
+                <button onclick="getitems({{ view.view_id }},{{ house_id }}, {{  element_id }})" class="btn btn-block btn-default" role="button">{{ text_open }}</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {% endfor %}
+      </div>
+      <div class="swiper-button-next"></div>
+      <div class="swiper-button-prev"></div>
+      <div class="swiper-pagination"></div>
+    </div>
+    
+
+
+
+ 
+
+  </div>
+  {% endfor %}
+{% endif  %}
+
+</div>
+    <!-- Initialize Swiper -->
+    <script>
+      var swiper = new Swiper(".mySwiper", {
+        slidesPerView: 3,
+        spaceBetween: 5,
+        loop: true,
+        pagination: {
+          el: ".swiper-pagination",
+          type: "progressbar",
+        },
+        navigation: {
+          nextEl: ".swiper-button-next",
+          prevEl: ".swiper-button-prev",
+        },
+      });
+    </script>

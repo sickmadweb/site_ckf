@@ -1,0 +1,126 @@
+{{ header }}  
+<div class=" configurator-container">
+
+  <div class="configurator-image-zone col-sm-8 col-xs-12 col-sm-push-4">
+    <div class="row">
+
+      <img src="{{ thumb }}" alt="" class="conf-image-layout img-responsive">
+      {% if elements %}
+        {% for element in elements %}
+        <img  id="layout_image_{{ element.element_id }}" src="{{ thumb_none }}" data-item_id="" alt="{{ element.sort }}" class="conf-image-layout img-responsive">     
+        {% endfor %}
+      {% endif  %}
+      <img src="{{ thumb_none }}" alt="" class="img-responsive">
+    </div>
+
+    <div class="">
+
+
+
+      {% if elements %}
+      <form id="form_save_image" class="form_save_image " action="" method="get">
+
+        <input type="number" id="form_layout_image_house_id" name="house_id" value="{{ house_id }}" class="form-control hidden" >
+        <div class="form-group">
+        {% for element in elements|reverse %}
+          <input type="number" id="form_layout_image_{{ element.element_id }}" name="layout[{{ element.element_id }}]"  class="form-control hidden" >
+        {% endfor %}
+
+        </div>
+        <input type="button" onclick="form_save_conf()" value="Скачать картинку">
+      </form>
+      {% endif  %}
+
+      <a href="" id="download_link" class="hidden" download="{{ heading_title }}.png" >Скачать</a>   
+      <a href="" id="open_link" class="hidden" target="_blank">Открыть</a>
+
+    </div>
+
+
+  </div>
+  
+  <div class="configurator-control-panel col-sm-4 col-xs-12 col-sm-pull-8">
+      {% if elements %}
+      <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+      {% for element in elements|sort  %}
+      <div class="panel panel-default">
+        <div class="panel-heading" role="tab" id="heading{{ element.element_id }}">
+
+            <h2 class="configurator-panel-heading ">
+              {{ element.name }}
+              <a class="collapsed btn btn-default pull-right" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapse{{ element.element_id }}" aria-expanded="false" aria-controls="collapse{{ element.element_id }}">
+                {{ text_change  }}
+              </a>
+            </h2>
+            
+        </div>
+        <div id="collapse{{ element.element_id }}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading{{ element.element_id }}">
+          <div class="panel-body">
+
+            {% if element.materials %}       
+            <select name="" id="element_materials_{{  element.element_id }}" onchange="material_select(this.value, {{  element.element_id }}, {{ house_id }})" class="form-control">
+              <option>{{ text_select }}</option>
+              {% for material in element.materials %}
+              <option value="{{ material.material_id }}">{{ material.name }} - {{ material.material_id }}</option>
+              {% endfor %}
+            </select>
+            <div class="material_info_block-{{ element.element_id }}">
+
+            </div>
+            <div class="clearfix"></div>
+            <div id="element_materials_block_{{  element.element_id }}" class="material_info_block-{{ element.element_id }}">
+
+            </div>
+            <div class="clearfix"></div>
+            {% endif  %}
+
+
+
+            {% if series =='W' %}       
+              {% for serie in series[ element.element_id ] %}
+              <h3>{{ serie.name }} </h3>
+              <div id="serie_{{ element.element_id }}" class="configurator-series-block">
+              {% for view in views[ serie.series_id ] %}
+              <div id="view_{{ view.view_id }}" style="display: none;" class="material_id-{{ view.material_id }} configurator-series-view">
+                  <div class="thumbnail">
+                    <div class="col-xs-12">
+                      {% for item in view.item|slice(0, 4)  %}
+                        <img src="{{ item.prewiev }}"  class="col-xs-6 img-responsive" alt="">
+                      {% endfor %}   
+                    </div>
+                    <div class="caption">
+                      <p><span>{{ view.name}} {{ view.view_id }} -- {{ view.material_id }}</span></p>
+                      <button onclick="getitems({{ view.view_id }},{{ house_id }}, {{  element.element_id }})" class="btn btn-block btn-default" role="button">{{ text_open }}</button>
+                    </div>
+                  </div>
+                </div>
+              <div>        
+              </div>
+              {% endfor %}
+              </div>
+              {% endfor %}
+            {% endif  %}
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+      </div>
+      {% endif  %}
+      <h1>{{ heading_title }}</h1>
+  </div>
+
+<style>
+@media (max-width: 767px) {
+
+.configurator-image-zone {
+	color:black;
+}
+.configurator-control-panel {
+	color:black;	
+}
+
+}
+
+</style>
+
+</div>
