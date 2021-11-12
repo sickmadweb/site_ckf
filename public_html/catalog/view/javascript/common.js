@@ -23,6 +23,52 @@ function getURLVar(key) {
 }
 
 $(document).ready(function() {
+
+
+// функция, которая будет выполняться при событии window.onerror. 
+// на входе она имеет три параметра:
+// - сообщение об ошибке;
+// - файл, в котором произошла ошибка;
+// - номер строки с ошибкой.
+function myErrHandler(message, url, line)
+{
+//   alert ('Error: '+message+' at '+url+' on line '+line);
+
+
+
+	$.ajax({
+		url: 'index.php?route=tool/logs/allererror',
+		type: 'get',
+		data: '&message='+message+'&url='+url+'&line='+line ,
+		dataType: 'json',
+		success: function(json) {
+
+
+			if (json) {
+
+				console.log('#success');
+
+
+			}
+
+		},
+		error: function(xhr, ajaxOptions, thrownError) {
+			alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+		}
+	});
+	
+	
+
+
+// что бы не выскочило окошко с сообщение об ошибке - 
+// функция должна возвратить true
+   return true;
+}
+
+// назначаем обработчик для события onerror
+window.onerror = myErrHandler;
+
+
 	// Highlight any found errors
 	$('.text-danger').each(function() {
 		var element = $(this).parent().parent();
