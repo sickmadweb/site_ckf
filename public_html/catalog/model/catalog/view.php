@@ -620,4 +620,22 @@ class ModelCatalogView extends Model {
 
 		return $query->row;
 	}
+
+	
+	public function getVariantImage($view_id) {
+		
+		$query = $this->db->query("
+
+		SELECT p.image FROM " . DB_PREFIX . "variants v
+
+		LEFT JOIN " . DB_PREFIX . "product p ON v.product_id = p.product_id
+		
+		WHERE v.view_id = '". $view_id ."'
+		 
+		");
+
+		return $query->rows;
+	}
+
+
 }
