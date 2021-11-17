@@ -53,7 +53,7 @@ class ModelCatalogView extends Model {
 				'date_added'       => $query->row['date_added'],
 				'date_modified'    => $query->row['date_modified'],
 				'viewed'           => $query->row['viewed'],
-				'images'           => $this->getImages($query->row['view_id']),	
+				'images'           => $this->getVariantImage($query->row['view_id']),	
 			);
 		} else {
 			return false;
@@ -586,12 +586,13 @@ class ModelCatalogView extends Model {
 		
 		$query = $this->db->query("
 
-			SELECT * FROM " . DB_PREFIX . "variants v
+			SELECT *, pd.name AS name FROM " . DB_PREFIX . "variants v
 
 			LEFT JOIN " . DB_PREFIX . "offer_description pd ON (v.offer_id = pd.offer_id)
 			LEFT JOIN " . DB_PREFIX . "offer p ON (v.offer_id = p.offer_id)
 			LEFT JOIN " . DB_PREFIX . "offer_location_cache olc ON (v.offer_id = olc.offer_id)
-
+			LEFT JOIN " . DB_PREFIX . "package_description pack ON olc.package_id = pack.package_id
+			
 
 			WHERE v.view_id = '". $view_id ."'
 			AND olc.location_id ='". $this->session->data['location_id'] ."'
@@ -623,7 +624,7 @@ class ModelCatalogView extends Model {
 	}
 
 
-	public function getVariantImage( $view_id ) {
+	public function getVariantImage( $offer_id ) {
 
 		$offers = $this->db->query("
 
@@ -633,7 +634,7 @@ class ModelCatalogView extends Model {
 			LEFT JOIN " . DB_PREFIX . "offer o ON (v.offer_id = o.offer_id)
 			LEFT JOIN " . DB_PREFIX . "view vw ON (v.view_id = vw.view_id)
 
-			WHERE v.view_id = '". $view_id ."' 
+			WHERE v.offer_id = '". $offer_id ."' 
 
 			AND p.image NOT IN ('','no_image.png','placeholder.png')
 		");

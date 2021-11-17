@@ -57,7 +57,7 @@
         <div id="collapse{{ element.element_id }}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading{{ element.element_id }}">
           <div class="panel-body">
 
-            {% if element.materials %}       
+            {% if element.materials and element.element_id != 5 %}       
             <select name="" id="element_materials_{{  element.element_id }}" onchange="material_select(this.value, {{  element.element_id }}, {{ house_id }})" class="form-control">
               <option>{{ text_select }}</option>
               {% for material in element.materials %}
@@ -73,7 +73,19 @@
             </div>
             <div class="clearfix"></div>
             {% endif  %}
+            {% if element.element_id == 5 %}       
+            <select name="" hidden id="element_materials_{{  element.element_id }}" onchange="material_select(this.value, {{  element.element_id }}, {{ house_id }})" class="form-control">
 
+            </select>
+            <div class="material_info_block-{{ element.element_id }}">
+
+            </div>
+            <div class="clearfix"></div>
+            <div id="element_materials_block_{{  element.element_id }}" class="material_info_block-{{ element.element_id }}">
+
+            </div>
+            <div class="clearfix"></div>
+            {% endif  %}
 
 
             {% if series =='W' %}       
@@ -122,5 +134,7 @@
 }
 
 </style>
+
+
 
 </div>

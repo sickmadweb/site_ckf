@@ -53,16 +53,16 @@
         {% endif %}
         <div class="{{ class }}"> 
 
-          {% if offers %}
-          {% for offer in offers %}
+          {% if variants %}
+          {% for offer in variants %}
           <div class="col-sm-6 " data-img="{{ offer.thumb }}" >
             <div class=" view-block">
               <a href="{{ offer.href }}">
                 <img src="{{ offer.thumb }}" alt="{{ offer.product_name }}" class="img-responsive img-thumbnail">         
               </a>
-              <div class="caption">
+              <div class="caption text-center">
                 <span  class="">
-                  {{ offer.offer_name }}          
+                  {{ offer.name }}          
                 </span>
                 <a href="{{ offer.href }}" class="btn btn-info btn-block">
                   {{ offer.price }}
@@ -369,35 +369,6 @@
           </div>
 
 
-          <table id="variants" hidden class="table table-striped table-bordered table-hover">
-            <thead>
-              <tr>
-                <td class="text-left">{{ text_offer_id }}</td>
-                <td class="text-left">{{ text_image }}</td>
-                <td class="text-left">{{ text_name }}</td>
-                <td class="text-left">{{ text_price }}</td>
-              </tr>
-            </thead>
-            <tbody>
-                {% for offer in offers %}
-                    <tr>
-                      <td class="text-left">{{ offer.offer_id }}</td>
-                      <td class="text-left">
-                        <img src="{{ offer.thumb }}" alt="{{ offer.name }}">
-                       </td>
-
-
-                      <td class="text-left"><a href="{{ variant.href }}">{{ variant.name }}</a></td>
-                      <td class="text-left">{{ variant.price }}</td>
-
-                    </tr>
-                {% endfor %}
-            </tbody>
-
-            <tfoot>
-
-            </tfoot>
-          </table>
 
 
             </div>
