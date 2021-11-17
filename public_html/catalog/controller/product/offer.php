@@ -7,6 +7,7 @@ class ControllerProductOffer extends Controller {
 
 	public function index() {
 		$this->load->language('product/offer');
+		
 
 		$data['breadcrumbs'] = array();
 
@@ -163,6 +164,7 @@ class ControllerProductOffer extends Controller {
 		}
 
 		$this->load->model('catalog/offer');
+		$this->load->model('catalog/product');
 
 		$offer_info = $this->model_catalog_offer->getOffer($offer_id);
 
@@ -449,21 +451,26 @@ class ControllerProductOffer extends Controller {
 					$image = $this->model_tool_image->resize('placeholder.png', $this->config->get('theme_' . $this->config->get('config_theme') . '_image_related_width'), $this->config->get('theme_' . $this->config->get('config_theme') . '_image_related_height'));
 				}
 
+
 				$data['elements'][] = array(
-					'name'       	=> $variant['name'],		
+					'name'       	=> $variant['name'],
+					'sku'       	=> $variant['sku'],			
 					'product_id' 	=> $variant['product_id'],
 					'minimum'       	=> $variant['minimum'],
 					'status'    	=> $local_data['status'],	
 					'thumb'         => $image,
+					'thumb'         => $this->model_catalog_product->getProductAttributes($variant['product_id']),
+					'thumb'         => $image,					
 					'quantity'      => $local_data['quantity'],
 					'abk_quantity'  => $local_data['abk_quantity'],
 					'price'      	=> $local_data['price'] > 0 ? $this->currency->format($local_data['price'], $this->config->get('config_currency')) : $this->language->get('text_query_prices'), 
 					'abk_price'     => $local_data['abk_price'] > 0 ? $this->currency->format($local_data['abk_price'], $this->config->get('config_currency')) : $this->language->get('text_query_prices'),
 					'packages'   	=> $this->currency->product_package($variant['product_id'])
 					
-				);
-	
+				);	
+				print_r($this->model_catalog_product->getProductAttributes($variant['product_id']));
 			}
+
 
 			$data['navigat'] = array();
 			

@@ -215,7 +215,7 @@
                         
                         <span id="error_quantity_{{ product.product_id }}"></span>
                         {% for package in product.packages %}
-                        {{ package.value|round(1, 'floor')  }} - {{ package.parent_abbr }} = {{ package.parent_value|round(4, 'floor') |round(4, 'floor') }} - {{ package.package_abbr  }}
+                        {{ package.value|round(1, 'floor')  }} - {{ package.abbr }} = {{ package.parent_value|round(4, 'floor') |round(4, 'floor') }} - {{ package.parent_abbr  }}
                           <div class="input-group">
                           <span class="input-group-btn">
                           <button type="button" onclick="minus_quantity({{ product.product_id }}, {{ package.package_id }})" class="button-minus btn btn-info btn-block"

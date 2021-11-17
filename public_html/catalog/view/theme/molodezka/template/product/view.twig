@@ -53,8 +53,8 @@
         {% endif %}
         <div class="{{ class }}"> 
 
-          {% if offers %}
-          {% for offer in offers %}
+          {% if variants %}
+          {% for offer in variants %}
           <div class="col-sm-6 " data-img="{{ offer.thumb }}" >
             <div class=" view-block">
               <a href="{{ offer.href }}">
@@ -379,7 +379,7 @@
               </tr>
             </thead>
             <tbody>
-                {% for offer in offers %}
+                {% for offer in variants %}
                     <tr>
                       <td class="text-left">{{ offer.offer_id }}</td>
                       <td class="text-left">

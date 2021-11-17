@@ -620,16 +620,12 @@ document.addEventListener("DOMContentLoaded", function(event) {
 });
 
 function plus_quantity( product_id, package_id ) {
-    
-
-		
+    	
 	let input_value = parseFloat(document.getElementById("package_"+product_id+"_"+package_id).value) ;
 	let input_step = parseFloat(document.getElementById("package_"+product_id+"_"+package_id).step) ;
 	let input_ratio = parseFloat(document.getElementById("package_"+product_id+"_"+package_id).dataset.ratio) ; 
 	let input_parent = parseFloat(document.getElementById("package_"+product_id+"_"+package_id).dataset.parent) ; 
 	var input_parent_value = input_value;
-
-		
 
 	if ( typeof(document.getElementById("package_"+product_id+"_"+input_parent)) != "undefined" && document.getElementById("package_"+product_id+"_"+input_parent) !== null  ) {
 
