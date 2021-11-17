@@ -807,4 +807,15 @@ td > a , b, strong {
 	color: black;
 }
 
-white-space: nowrap;
+.caption > span {
+    text-align: center;
+    display: block;
+    height: 60px;
+    overflow-y: hidden;
+}
+
+.view-block {
+    border: 1px solid #de5a37;
+    margin-bottom: 15px;
+    border-radius: 5px;
+}

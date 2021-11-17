@@ -447,9 +447,11 @@ class ControllerProductView extends Controller {
 				} else {
 
 					$image = $this->model_catalog_view->getVariantImage($variant['offer_id']);
+/*
 print_r('<pre>');
 print_r($variant);
 print_r('</pre>');
+*/
 					if (count($image) > 0) {
 						$thumb = $this->model_tool_image->resize($image[rand(0, count($image)-1)]['image'], $this->config->get('theme_' . $this->config->get('config_theme') . '_image_thumb_width'), $this->config->get('theme_' . $this->config->get('config_theme') . '_image_thumb_height')) ;
 					}
@@ -461,7 +463,7 @@ print_r('</pre>');
 					'name'      => $variant['name'],
 					'href'      => $this->url->link('product/offer', 'offer_id=' . $variant['offer_id']),		
 					'thumb'  => $thumb,
-					'price'  => $this->currency->format($this->tax->calculate($variant['price'], $variant['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']),	
+					'price'  => $variant['price'] > 0 ? $this->currency->format($this->tax->calculate($variant['price'], $variant['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']). '/ ' .$variant['abbr'] : $this->language->get('text_product_order'),	
 					
 				);
 	

@@ -10,7 +10,7 @@
 
 
 
-    <div class="swiper-container mySwiper">
+    <div class="swiper-container mySwiper mySwiper_{{ serie.series_id }}">
       <div class="swiper-wrapper">
         {% for view in views[ serie.series_id ] %}
         <div class="swiper-slide">
@@ -43,13 +43,9 @@
  
 
   </div>
-  {% endfor %}
-{% endif  %}
-
-</div>
     <!-- Initialize Swiper -->
     <script>
-      var swiper = new Swiper(".mySwiper", {
+      var swiper = new Swiper(".mySwiper_{{ serie.series_id }}", {
         slidesPerView: 3,
         spaceBetween: 5,
         loop: true,
@@ -61,5 +57,11 @@
           nextEl: ".swiper-button-next",
           prevEl: ".swiper-button-prev",
         },
+        observer: true,  
+        observeParents: true,
       });
     </script>
+  {% endfor %}
+{% endif  %}
+
+</div>

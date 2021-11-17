@@ -695,3 +695,166 @@ function zero_quantity(product_id) {
 document.getElementById('error_quantity_'+product_id).innerHTML = '<span class="bg-warning row"><strong>Значение меньше 0 нельзя указывать!</strong></span>';
 
 }
+
+
+//  configurator
+function backToElements( layout_image_id, image ) {
+
+
+	$('.panel-conf-materials').removeClass("hidden");
+
+
+	$('.panel-conf-items').remove();
+	
+}
+
+function getitems(view_id, house_id , element_id) {
+
+	$.ajax({
+		url: '/index.php?route=configurator/configurator/item',
+		type: 'get',
+		data: 'house_id=' + house_id+'&catalog_id='+view_id ,
+		dataType: 'json',
+		success: function(json) {
+
+			$('#element_'+element_id).addClass("hidden");
+
+			if (json['success']) {
+				$('.panel-conf-items').remove();
+
+				$('#views').parent().before('<div class="alert alert-success alert-dismissible"><i class="fa fa-check-circle"></i> ' + json['success'] + ' <button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+				$('#element_materials_block_'+element_id).after(json['html']);
+			}
+
+		},
+		
+		error: function(xhr, ajaxOptions, thrownError) {
+			alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+		}
+	});
+
+}
+function setImages( layout_image_id, image, item_id ) {
+
+	$("#layout_image_"+layout_image_id).attr("src", image );
+	$("#layout_image_"+layout_image_id).data( "item_id", item_id );
+	$("#form_layout_image_"+layout_image_id).val( item_id );
+	
+
+	$.ajax({
+		url: 'index.php?route=configurator/configurator/iteminfo',
+		type: 'get',
+		data: document.location.search+'&item_id='+item_id+'&layout_id='+layout_image_id ,
+		dataType: 'json',
+		success: function(json) {
+
+
+			if (json['success']) {
+				$('.material_info_block_'+layout_image_id).remove();
+				$('#element_materials_'+layout_image_id).after(json['html']);
+
+			}
+			if (json['cokol']) {
+
+
+				var paramsString = document.location.search; // ?page=4&limit=10&sortby=desc
+				var searchParams = new URLSearchParams(paramsString);
+					
+				house_id = searchParams.get("house_id"); // 4
+
+
+		//		alert(json['cokol']);
+				material_cokol(json['cokol'], 5, house_id);
+
+
+			}
+			
+
+		},
+		error: function(xhr, ajaxOptions, thrownError) {
+			alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+		}
+	});
+
+	
+}
+function material_cokol( material_id, element_id, house_id ) {
+
+	$.ajax({
+		url: 'index.php?route=configurator/configurator/materials',
+		type: 'get',
+		data: 'house_id=' + house_id+'&material_id='+material_id ,
+		dataType: 'json',
+		success: function(json) {
+
+			if (json['success']) {
+				$('#element_materials_5').after(json['html']);
+			}
+
+		},
+		error: function(xhr, ajaxOptions, thrownError) {
+			alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+		}
+	});
+
+}
+
+function material_select( material_id, element_id, house_id ) {
+
+//	$('.configurator-series-view' ).css( "display", "none" );
+//	$('.'+material_id ).css( "display", "" );
+$('.panel-conf-materials').remove();
+
+	$.ajax({
+		url: 'index.php?route=configurator/configurator/materials',
+		type: 'get',
+		data: 'house_id=' + house_id+'&material_id='+material_id ,
+		dataType: 'json',
+		success: function(json) {
+
+			if (json['success']) {
+				$('.panel-conf-items').remove();
+				$('#element_materials_'+element_id).after(json['html']);
+			}
+
+		},
+		error: function(xhr, ajaxOptions, thrownError) {
+			alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+		}
+	});
+
+}
+
+function form_save_conf( ) {
+
+
+	$.ajax({
+		url: 'index.php?route=configurator/configurator/saveImage',
+		type: 'get',
+		data: $("#form_save_image").serialize(), 
+		dataType: 'json',
+		success: function(json) {
+
+			if (json['success']) {
+			//	alert(json['text']);
+
+				download_link = document.getElementById("download_link");
+				open_link = document.getElementById("open_link");
+
+				download_link.setAttribute("href", json['text']);
+				open_link.setAttribute("href", json['text']);		  
+
+				download_link.classList.remove("hidden");
+				open_link.classList.remove("hidden");
+
+			}
+
+		},
+		error: function(xhr, ajaxOptions, thrownError) {
+			alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+		}
+	});
+
+	
+
+}

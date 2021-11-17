@@ -51,7 +51,8 @@ class ModelConfiguratorConfigurator extends Model {
 
 		return $query->rows;
 	}
-	
+		
+
 	public function getSeries($element_id) {
 
 		$query = $this->db->query("
@@ -107,7 +108,7 @@ class ModelConfiguratorConfigurator extends Model {
 	public function getItemInfo($item_id) {
     
 		$query = $this->db->query("
-		SELECT *, i.name AS title, m.element_id AS element_id , s.name AS seria, v.name AS collection, m.name AS material
+		SELECT *, i.name AS title, m.element_id AS element_id , s.name AS seria, v.name AS collection, m.name AS material , v.related AS related
 		
 		FROM conf_item i
         

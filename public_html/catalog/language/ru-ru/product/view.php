@@ -44,6 +44,8 @@ $_['text_more']            = 'Подробнее:';
 $_['text_add_cart']        = 'Добавить в корзину';
 $_['text_variants']        = 'Элементы:';
 $_['text_offer']           = 'Цена от: ';
+$_['text_product_order']     = 'Цена по запросу';
+$_['title_query_price']               = 'Связаться с менеджером';
 
 // Entry
 $_['entry_qty']                = 'Кол-во';

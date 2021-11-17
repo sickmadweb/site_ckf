@@ -25,6 +25,8 @@ $_['text_image']             = 'Только с изоброжением';
 $_['text_no_image']          = 'Без изоброжения';
 $_['tab_variants']           = 'Состав товара';
 
+
+
 // Column
 $_['column_name']            = 'Название';
 $_['column_category']        = 'Категория';

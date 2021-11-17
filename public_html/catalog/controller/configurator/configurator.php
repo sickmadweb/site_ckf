@@ -222,6 +222,8 @@ class ControllerConfiguratorConfigurator extends Controller {
 			$house_id = 0;
 		}
 
+
+
 		if (isset($this->request->get['catalog_id'])) {
 			$view_id = (int)$this->request->get['catalog_id'];
 		} else {
@@ -233,9 +235,11 @@ class ControllerConfiguratorConfigurator extends Controller {
 		
 		$items = $this->model_configurator_configurator->getItem($view_id , $house_id );
 	
-		
+//		print_r($items);
+		$product_id = 5 ;
 		foreach ($items as $item) {
-			 $product_id = $item['product_id'] ;
+			
+
 			$data['items'][] = array(
 				'item_id'  => $item['item_id'],
 				'name'     => $item['title'],
@@ -269,6 +273,8 @@ class ControllerConfiguratorConfigurator extends Controller {
 		} else {
 			$house_id = 0;
 		}
+
+
 
 		if (isset($this->request->get['material_id'])) {
 			$material_id = (int)$this->request->get['material_id'];
@@ -336,7 +342,7 @@ class ControllerConfiguratorConfigurator extends Controller {
 
 	public function saveImage(  ) {
 
-		$this->load->model('catalog/configurator');
+		$this->load->model('configurator/configurator');
 
 		$this->load->model('tool/image');
 
@@ -419,7 +425,7 @@ class ControllerConfiguratorConfigurator extends Controller {
 
 
 		// Освобождаем память
-		imagedestroy($dest);
+	//	imagedestroy($dest);
 
 		$data['text'] ='image/cache/configurator/'.$name.'.png';
 
@@ -441,6 +447,15 @@ class ControllerConfiguratorConfigurator extends Controller {
 
 		$item = $this->model_configurator_configurator->getItemInfo($this->request->get['item_id']);
 
+		if ( $item[0]['related'] ) {
+
+			$data['cokol'] =  $item[0]['related'];
+
+		}
+
+
+
+		
 
     	$material_info  = array(
 
