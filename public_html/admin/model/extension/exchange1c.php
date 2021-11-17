@@ -2066,7 +2066,7 @@ class ModelExtensionExchange1c extends Model {
 			DELETE FROM `ckf_product_package` WHERE `product_id`= '" . $product_id . "'
 		");
 
-		$this->log("ID Упаковки: " . $package_id->row['package_id']);
+		$this->log("ID Упаковки: " . $package->row['package_id']);
 
 		$this->query("INSERT INTO " . DB_PREFIX ."product_package SET
 
@@ -2246,6 +2246,7 @@ class ModelExtensionExchange1c extends Model {
 	private function updateProduct($product_id, $data) {
 
 		$old_data = $this->getProduct($product_id);
+
 		$this->log($old_data, 2);
 
 		$no_update = array();
@@ -2254,7 +2255,8 @@ class ModelExtensionExchange1c extends Model {
 		if ($old_data['name'] != $data['name']) {
 
 			$this->query("
-				INSERT INTO `" . DB_PREFIX . "exchange1c_history`(`type_data`, `item`, `new_value`, `old_value`) VALUES ('product_name'," . $product_id . "," . $data['name'] . "," . $old_data['name'] . ")		
+				INSERT INTO `" . DB_PREFIX . "exchange1c_history`(`type_data`, `item`, `new_value`, `old_value`) VALUES 
+				('product_name','" . $product_id . "','" . $data['name'] . "','" . $old_data['name'] . "')		
 			");		
 		}
 
@@ -2931,7 +2933,10 @@ class ModelExtensionExchange1c extends Model {
 				break;
 				case 'Код':
 					$data['code'] = $this->parseCode($value);
+					$data['sku'] = trim($requisite->Значение);
 					$this->log("> Реквизит: " . $name . " преобразован в " . $data['code'], 2);
+
+					
 				break;
 				case 'ISBN':
 					$data['isbn'] = htmlspecialchars($value);
@@ -5274,17 +5279,13 @@ class ModelExtensionExchange1c extends Model {
 				$guid	= (string)$price_data->ИдТипаЦены;
 				$price	= $price_data->ЦенаЗаЕдиницу ? (float)str_replace(',', '.', $price_data->ЦенаЗаЕдиницу) : 0;
 
-				if ($config_price_type['guid'] != $guid) {
-					continue;
-				}
-
 				
 
 				
 				if (isset($price_list_data->row['price'])) {
 					
 					// устаноска цены прайса  при наличии
-					
+	
 					$this->log("Цена по прайсу" . $price_list_data->row['price'] . " (" . $config_price_type['keyword'] . ")");
 
 					$this->query("
@@ -5885,13 +5886,14 @@ class ModelExtensionExchange1c extends Model {
 			}
 
 			// отметка что offer был был изменет 
-			$query = $this->query("
+			$offer_location_cache = $this->query("
 			
 				UPDATE " . DB_PREFIX . "offer_location_cache SET  changed =1 
-				WHERE offer_id = (SELECT " . DB_PREFIX . "variants.product_id FROM " . DB_PREFIX . "variants WHERE " . DB_PREFIX . "variants.product_id  = " . $product_id . ")
+				WHERE offer_id = (SELECT " . DB_PREFIX . "variants.offer_id  FROM " . DB_PREFIX . "variants WHERE " . DB_PREFIX . "variants.product_id  = " . $product_id . ")
 
 			");
 
+	
 			$this->log($data, 2);
 
 			// ЭТО ХАРАКТЕРИСТИКА
@@ -6049,6 +6051,9 @@ class ModelExtensionExchange1c extends Model {
 
 		}
 
+		// Обновляем цены статусы offer-ов
+		$this->updateLocationOffer();
+
 		$this->logStat('offers');
 
 		$this->log("Загружено предложений " . $num_offer . " из " . $count_offers, 0);
@@ -6117,11 +6122,6 @@ class ModelExtensionExchange1c extends Model {
 			$this->parseOffers($xml->Предложения, $offers_pack);
 			if ($this->ERROR) return false;
 		}
-
-		// Обновляем цены статусы offer-ов
-		$this->updateLocationOffer();
-
-
 
 		return true;
 
@@ -8732,23 +8732,53 @@ class ModelExtensionExchange1c extends Model {
 
 	private function updateLocationOffer() {
 
-		$offers = $this->db->query("SELECT `offer_id` FROM `" . DB_PREFIX . "offer_location_cache` WHERE `changed` =1 ");	
+
+		print_r('<br>');
+		print_r('запуск функции');
+
+
+
+		$offers = $this->db->query("
+		
+			SELECT olc.offer_id , o.offer_id
+
+			FROM " . DB_PREFIX . "offer o
+
+			LEFT JOIN " . DB_PREFIX . "offer_location_cache olc on o.offer_id = olc.offer_id  
+
+			WHERE olc.changed =1 OR  isnull(olc.offer_id)
+		
+		");	
+
 
 		$this->load->model('localisation/location');	
 
 		$loccations = $this->model_localisation_location->getLocations();
 
+		print_r('<br>');
+		print_r('список место положений ');
+		print_r('<br>');
+		print_r($loccations);
+
 		
 		foreach ($offers->rows as $offer) {
+
+			$price = 0; 
+
+			$main = false; 
+
 
 			$this->db->query("DELETE FROM `" . DB_PREFIX . "offer_location_cache` WHERE offer_id =" . $offer['offer_id']);	
 
 			foreach ($loccations as $loccation) {
 
+
+
 				$products = $this->db->query("
 			
 					SELECT " . DB_PREFIX . "product_to_warehouse.quantity, 
-					" . DB_PREFIX . "variants.offer_id
+					" . DB_PREFIX . "variants.offer_id,
+					" . DB_PREFIX . "variants.main,
 					" . DB_PREFIX . "product_location_price.price, 
 					" . DB_PREFIX . "product_location_price.price/" . DB_PREFIX . "product_package.parent_value AS view_price, 
 					" . DB_PREFIX . "variants.main,
@@ -8757,7 +8787,7 @@ class ModelExtensionExchange1c extends Model {
 					FROM " . DB_PREFIX . "variants,  " . DB_PREFIX . "product_to_warehouse, " . DB_PREFIX . "product_location_price, " . DB_PREFIX . "product_package, " . DB_PREFIX . "location
 					
 					WHERE " . DB_PREFIX . "variants.offer_id = ". $offer['offer_id'] ."
-					AND " . DB_PREFIX . "location.location_id = '". $loccation['loccation_id'] ."'
+					AND " . DB_PREFIX . "location.location_id = '". $loccation['location_id'] ."'
 					AND " . DB_PREFIX . "product_to_warehouse.product_id = " . DB_PREFIX . "variants.product_id
 					AND " . DB_PREFIX . "product_location_price.product_id = " . DB_PREFIX . "variants.product_id
 					AND " . DB_PREFIX . "product_package.product_id = " . DB_PREFIX . "product_to_warehouse.product_id
@@ -8766,42 +8796,102 @@ class ModelExtensionExchange1c extends Model {
 
 				");	
 
-				$price = 0; 
-				
-				foreach ($products as $product) {
+				print_r('<br>');
+				print_r('список товаров');
+				print_r('<br>');
+				print_r($products);
 
+
+				
+				foreach ($products->rows as $product) {
+
+					if ( $product['view_price'] > 0 and $price == 0 ) {
+						$price = $product['view_price'];
+
+					}
 
 					if ( $product['main'] == 1) {
 
+
+						print_r('<br>');
+						print_r('main = 1');
+						print_r('<br>');
+						print_r('price= '. $price);	
+						print_r('<br>');
+						print_r('NEWprice= '. $product['view_price']);	
+						print_r('<br>');
+
 						$price = $product['view_price'];
 
-						break;
+						$main = true; 
 
 					} else {
 
-						if ( $product['view_price'] > 0 ) {
+						print_r('<br>');
+						print_r('main != 1');
+						print_r('<br>');
+						print_r('price= '. $price);	
+						print_r('<br>');
+
+						if ( $product['view_price'] > 0  and $main == false ) {
 							
+							print_r('<br>');
+							print_r('view_price > 0 main != 1');
+							print_r('<br>');
+							print_r('price= '. $price);	
+							print_r('<br>');
+
+							print_r('<br>');
+
+
 							if ( $product['view_price']  < $price) {
+
+								print_r('<br>');
+								print_r('view_price < price and main != 1');
+								print_r('<br>');
+								print_r('price= '. $price);	
+								print_r('<br>');
+								print_r('NEWprice= '. $product['view_price']);								
+								print_r('<br>');
 
 								$price = $product['view_price'];
 
+							} else {
+								print_r('<br>');
+								print_r('else');
+								print_r('<br>');
+								print_r('price= '. $price);						
+								print_r('<br>');
+
+
 							}
 
-						} 
+						} else {
+
+							print_r('<br>');
+							print_r('view_price < price and main != 1');
+							print_r('<br>');
+							print_r('price= '. $price);	
+							print_r('<br>');
+							print_r('NEWprice= '. $product['view_price']);								
+							print_r('<br>');
+
+							$price = $product['view_price'];
+						}
 
 					}
 
 				}
 
-				if (array_search(7, array_column($products, 'stock_status_id'))) {
+				if (array_search(7, array_column($product, 'stock_status_id'))) {
 
 					$stock_status_id = 7;
 
-				} elseif (array_search(8, array_column($products, 'stock_status_id')))  {
+				} elseif (array_search(8, array_column($product, 'stock_status_id')))  {
 
 					$stock_status_id = 8;
 
-				} elseif (array_search(4, array_column($products, 'stock_status_id')))  {
+				} elseif (array_search(4, array_column($product, 'stock_status_id')))  {
 
 					$stock_status_id = 4;
 
@@ -8809,7 +8899,7 @@ class ModelExtensionExchange1c extends Model {
 
 					$quantity = $this->db->query("
 
-						SELECT SUM(ckf_product_to_warehouse.quantity) FROM ckf_variants,  ckf_product_to_warehouse
+						SELECT SUM(ckf_product_to_warehouse.quantity) AS quantity FROM ckf_variants,  ckf_product_to_warehouse
 
 						WHERE ckf_variants.product_id = ckf_product_to_warehouse.product_id
 						AND ckf_product_to_warehouse.product_id IN ( SELECT product_id FROM ckf_variants WHERE offer_id = 8 )
@@ -8817,7 +8907,8 @@ class ModelExtensionExchange1c extends Model {
 
 					");
 
-					if ( $quantity > 0) {
+
+					if ( $quantity->row > 0) {
 
 						$stock_status_id = 4;
 
@@ -8829,11 +8920,23 @@ class ModelExtensionExchange1c extends Model {
 
 				}
 
+				print_r('<br>');
+				print_r('offer_location_cache');
+				print_r('<br>');
+				print_r("
+
+				INSERT INTO " . DB_PREFIX . "offer_location_cache
+				(  `offer_id`,	     `price`,           `quantity`, `stock_status_id`, `location_id`, `date_modified`) VALUES 
+				('". $offer['offer_id'] ."', '". $price ."',  '".        0        ."',  '". $stock_status_id ."' ,'". $loccation['location_id'] ."' , NOW() )
+
+			");
+
+
 				$this->db->query("
 
 					INSERT INTO " . DB_PREFIX . "offer_location_cache
 					(  `offer_id`,	     `price`,           `quantity`, `stock_status_id`, `location_id`, `date_modified`) VALUES 
-					('". $offer['offer_id'] ."', '". $price ."',  '".        0        ."',  '". $stock_status_id ."' ,'". $loccation['loccation_id'] ."' , NOW() )
+					('". $offer['offer_id'] ."', '". $price ."',  '".        0        ."',  '". $stock_status_id ."' ,'". $loccation['location_id'] ."' , NOW() )
 
 				");
 

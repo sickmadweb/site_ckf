@@ -37,7 +37,7 @@ function myErrHandler(message, url, line)
 
 
 	$.ajax({
-		url: 'index.php?route=tool/logs/allererror',
+		url: 'index.php?route=tool/logs/AllerJSError',
 		type: 'get',
 		data: '&message='+message+'&url='+url+'&line='+line ,
 		dataType: 'json',
