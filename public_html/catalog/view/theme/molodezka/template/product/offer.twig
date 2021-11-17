@@ -47,9 +47,11 @@
       <div class="row"> {% if column_left or column_right %}
         {% set class = 'col-sm-6' %}
         {% else %}
-        {% set class = 'col-sm-8' %}
+        {% set class = 'col-sm-4' %}
         {% endif %}
-        <div class="{{ class }}"> {% if thumb or images %}
+        <div class="{{ class }}"> 
+          
+          {% if thumb or images %}
           <ul class="thumbnails">
             {% if thumb %}
             <li><a class="thumbnail" href="{{ popup }}" title="{{ heading_title }}"><img src="{{ thumb }}" title="{{ heading_title }}" alt="{{ heading_title }}" /></a></li>
@@ -61,59 +63,349 @@
             {% endif %}
           </ul>
           {% endif %}
-          <ul class="nav nav-tabs">
-            <li class="active"><a href="#tab-description" data-toggle="tab">{{ tab_description }}</a></li>
-            {% if attribute_groups %}
-            <li><a href="#tab-specification" data-toggle="tab">{{ tab_attribute }}</a></li>
-            {% endif %}
-          </ul>
-          <div class="tab-content">
-            <div class="tab-pane active" id="tab-description">{{ description }}</div>
-            {% if attribute_groups %}
-            <div class="tab-pane" id="tab-specification">
-              <table class="table table-bordered">
-                {% for attribute_group in attribute_groups %}
-                <thead>
-                  <tr>
-                    <td colspan="2"><strong>{{ attribute_group.name }}</strong></td>
-                  </tr>
-                </thead>
-                <tbody>
-                {% for attribute in attribute_group.attribute %}
-                <tr>
-                  <td>{{ attribute.name }}</td>
-                  <td>{{ attribute.text }}</td>
-                </tr>
-                {% endfor %}
-                  </tbody>
-                {% endfor %}
-              </table>
-            </div>
-            {% endif %}
-          </div>
+
+
         </div>
         {% if column_left or column_right %}
         {% set class = 'col-sm-6' %}
         {% else %}
-        {% set class = 'col-sm-4' %}
+        {% set class = 'col-sm-8' %}
         {% endif %}
         <div class="{{ class }}">
-          <div class="btn-group">
-            <button type="button" data-toggle="tooltip" class="btn btn-default" title="{{ button_wishlist }}" onclick="wishlist.add('{{ view_id }}');"><i class="fa fa-heart"></i></button>
-            <button type="button" data-toggle="tooltip" class="btn btn-default" title="{{ button_compare }}" onclick="compare.add('{{ view_id }}');"><i class="fa fa-exchange"></i></button>
-          </div>
 
-          <div class="btn-group" role="group" aria-label="...">
+          <h1>{{ heading_title }}</h1>
+          <hr>
 
-            <a href="{{ navigat.firts }}" class="btn btn-default">{{ text_firts }}</a>
-            <a href="{{ navigat.prev }}" class="btn btn-default">{{ text_prev }}</a>
-            <a href="{{ navigat.next }}" class="btn btn-default">{{ text_next }}</a>
-            <a href="{{ navigat.last }}" class="btn btn-default">{{ text_last }}</a>
+            <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+              <div class="panel panel-default">
+                <div class="panel-heading" role="tab" id="variants">
+                  <h4 class="panel-title">
+                    <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapsVariants" aria-expanded="false" aria-controls="collapsVariants">
+                    {{ text_variants }}
+                    {{ group_name }}
+                    </a>
+                  </h4>
+                </div>
+      
             
+            <div id="collapsVariants" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="variants">
+            <div class="panel-body">
+            <ul class="list-group">
+      
+              {% if  calculator == true %}  
+            <li class="list-group-item row">
+        
+              <form name="raschet_zabor" id="raschet_zabor">
+              <div class="col-xs-6">
+              <p>Высота забора:</p>
+              <div>
+                <input type="radio" id="visota_zaboraS" name="visota_zabora" value="S" checked>
+                <label for="visota_zaboraS">1,6 м./2 м.</label>
+                <br>
+                <input type="radio" id="visota_zaboraM" name="visota_zabora" value="M">
+                <label for="visota_zaboraM">2 м./2,4 м.</label>
+              
+              </div>
+              </div>
+              
+              <div class="col-xs-6">
+                <p>Высота забора:</p>
+                <div>
+                  <input type="number" min="0" name="dlinna_zabora" value="0" >
+                  <label for="contactChoice1">Длинна по периметру</label>
+                  <br>
+                  <input type="checkbox" name="zabor" id="zabor">
+                  <label for="zabor">Забор</label>
+                  <br>
+                  <input type="checkbox" name="vorota" id="vorota">
+                  <label for="vorota">Ворота</label>
+              
+                </div>
+              </div>
+              
+              </form>
+              <button  onclick="raschetzabor()" >Расчитать</button>
+            </li>
+            {% endif %}
+      
+                    {% for product in elements %}  
+                      <li class="list-group-item row">
+                      <div class="col-xs-6 col-sm-7">
+                        <div class="col-xs-12 col-sm-9">
+                        <p>{{ product.name }} </p> 
+                        <p>{{ product.sku }} - {{ product.product_id }}</p>                    
+                        <p>{{ product.status }}</p>
+                        <p>{{ product.pricelist }}</p> 
+            
+                        {% if product.view %}
+                        <button type="button" class="btn btn-info" data-toggle="modal" data-target=".view{{ product.product_id }}">{{ text_more }}</button>
+                        <div class="modal fade bs-example-modal-lg view{{ product.product_id }}" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
+                        <div class="modal-dialog modal-lg" role="document">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            <h4 class="modal-title" id="gridSystemModalLabel">{{ product.view.name }}</h4>
+                            </div>
+                            <div class="modal-body">
+                              <div class="row">
+                              <div class="col-xs-6">{{ product.popup }} {{ product.name }}
+                                <img src="{{ product.popup }}"  class="img-responsive" alt="{{ product.name }}"> 
+                              </div>
+                              <div class="col-xs-6">
+                              {{ product.description }}
+                              </div>
+                              </div>
+                              {% if product.attribute_groups %}
+                              <div class="row">
+            
+                                <div class="col-xs-12">
+                                  <div class="tab-pane" id="tab-specification">
+                                    <table class="table table-bordered">
+                                    {% for attribute_group in product.attribute_groups %}
+                                    <thead>
+                                      <tr>
+                                      <td colspan="2"><strong>{{ attribute_group.name }}</strong></td>
+                                      </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for attribute in attribute_group.attribute %}
+                                    <tr>
+                                      <td>{{ attribute.name }}</td>
+                                      <td>{{ attribute.text }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                    {% if manufacturer %}
+                                    <tr>
+                                      <td>{{ text_manufacturer }}</td>
+                                      <td><a href="{{ manufacturers }}">{{ manufacturer }}</a></td>
+                                    </tr>
+                                    {% endif %}
+                                      </tbody>
+                                    {% endfor %}
+                                    </table>
+                                  </div>
+            
+                                </div>
+            
+                              </div>
+                              {% endif %}	
+            
+                            </div>
+                            <div class="modal-footer">
+            
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
+                            </div>
+                          </div>
+                        </div>
+                        </div>
+                        {% endif %}
+            
+                        </div>  
+                        <div class="col-xs-12 col-sm-3">
+                        <img src="{{ product.thumb }}"  class="img-responsive" alt="{{ product.name }}"> 
+                        </div> 
                       </div>
-                      
+                      <div class="col-xs-6 col-sm-5">
+                        <div class="col-xs-12 col-sm-4">
+                        <p>{{ product.price }}</p>   
+      
+                        </div>
+                        <div class="col-xs-12 col-sm-8">
+                        {% if product.packages %}
+                        
+                        <span id="error_quantity_{{ product.product_id }}"></span>
+                        {% for package in product.packages %}
+                        {{ package.value|round(1, 'floor')  }} - {{ package.parent_abbr }} = {{ package.parent_value|round(4, 'floor') |round(4, 'floor') }} - {{ package.package_abbr  }}
+                          <div class="input-group">
+                          <span class="input-group-btn">
+                          <button type="button" onclick="minus_quantity({{ product.product_id }}, {{ package.package_id }})" class="button-minus btn btn-info btn-block"
+                          >-</button>
+                          </span>
+                          <input name="" type="number" onchange="update_quantity({{ product.product_id }}, {{ package.package_id }})" class="{{ package.type }} {{ package.type }}  variants form-control" 
+                          id="package_{{ product.product_id }}_{{ package.package_id }}" 
+                          value="0" 
+                          step="{{ product.minimum }}"
+                          data-product_id="{{ product.product_id }}"                                
+                          data-ratio="{{ package.parent_value }}"              
+                          data-package="{{ package.package_id  }}" 
+                          data-parent="{{ package.parent_id }}"      
+                          >
+                          <span class="input-group-btn">
+                          <button type="button" onclick="plus_quantity({{ product.product_id }}, {{ package.package_id }})" class="button-plus btn btn-info btn-block"
+                          >+</button>
+                          </span>
+                          
+                          </div>
+                        {% endfor %}  
+                        </div>     
+                      {% endif %} 
+                      </div>
+                      </li>           
+                    {% endfor %} 
+                      <li class="list-group-item row">
+                      <div class="row">
+                        <span class="pull-right">							
+                          <strong class="product-quantity-alert" >!</strong>
+                          окончательная цена по запросу
+                        </span>
+                        </div>
+                      <button onclick="add_tocart('variants')" class="pull-right btn btn-info"> {{ text_add_cart }} </button>
+            
+            
+                      </li> 
+                    </ul>
+                </div>
+                </div>
+              </div>
+            
+            
+              {% if offer_groups_product %}	
+              {% for offer_group in offer_groups_product %}
+              <div class="panel panel-default">
+                <div class="panel-heading" role="tab" id="offer_group{{ offer_group.offer_group_id }}">
+                  <h4 class="panel-title">
+                  <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collaps_offer_group{{ offer_group.offer_group_id }}" aria-expanded="false" aria-controls="offer_group{{ offer_group.offer_group_id }}">
+                    {{ offer_group.name }}
+                  </a>
+                  </h4>
+                </div>
+                <div id="collaps_offer_group{{ offer_group.offer_group_id }}" class="panel-collapse collapse " role="tabpanel" aria-labelledby="offer_group{{ offer_group.offer_group_id }}">
+                  <div class="panel-body">
+                    <ul class="list-group">
+                      {% for product in offer_group.elements %}  
+                      <li class="list-group-item row">
+                      <div class="col-xs-6 col-sm-7">
+                        <div class="col-xs-12 col-sm-9">
+                        <p>{{ product.name }}</p>               
+                        <p>{{ product.status }}</p>
+                        <p>{{ product.pricelist }}</p> 
+            
+                        {% if product.view %}
+                        <button type="button" class="btn btn-info" data-toggle="modal" data-target=".view{{ product.product_id }}">{{ text_more }}</button>
+                        <div class="modal fade bs-example-modal-lg view{{ product.product_id }}" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
+                        <div class="modal-dialog modal-lg" role="document">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            <h4 class="modal-title" id="gridSystemModalLabel">{{ product.view.name }}</h4>
+                            </div>
+                            <div class="modal-body">
+                              <div class="row">
+                              <div class="col-xs-6">
+                                <img src="{{ product.popup }}"  class="img-responsive" alt="{{ product.name }}"> 
+                              </div>
+                              <div class="col-xs-6">
+                              {{ product.view.description }}
+                              </div>
+                              </div>
+                              {% if product.view_attributes %}
+                              <div class="row">
+            
+                                <div class="col-xs-12">
+                                  <div class="tab-pane" id="tab-specification">
+                                    <table class="table table-bordered">
+                                    {% for attribute_group in product.view_attributes %}
+                                    <thead>
+                                      <tr>
+                                      <td colspan="2"><strong>{{ attribute_group.name }}</strong></td>
+                                      </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for attribute in attribute_group.attribute %}
+                                    <tr>
+                                      <td>{{ attribute.name }}</td>
+                                      <td>{{ attribute.text }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                    {% if manufacturer %}
+                                    <tr>
+                                      <td>{{ text_manufacturer }}</td>
+                                      <td><a href="{{ manufacturers }}">{{ manufacturer }}</a></td>
+                                    </tr>
+                                    {% endif %}
+                                      </tbody>
+                                    {% endfor %}
+                                    </table>
+                                  </div>
+            
+                                </div>
+            
+                              </div>
+                              {% endif %}	
+            
+                            </div>
+                            <div class="modal-footer">
+            
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
+                            </div>
+                          </div>
+                        </div>
+                        </div>
+                        {% endif %}
+            
+                        </div>  
+                        <div class="col-xs-12 col-sm-3">
+                        <img src="{{ product.thumb }}"  class="img-responsive" alt="{{ product.name }}"> 
+                        </div> 
+                      </div>
+                      <div class="col-xs-6 col-sm-5">
+                        <div class="col-xs-12 col-sm-4">
+                        <p>{{ product.price }}</p>   
+      
+                        </div>
+                        <div class="col-xs-12 col-sm-8">
+                        {% if product.packages %}
+                        
+                        <span id="error_quantity_{{ product.product_id }}"></span>
+                        {% for package in product.packages %}
+                        {{ package.value  }} - {{ package.parent_abbr }} = {{ package.parent_value|round(4, 'floor')  }} - {{ package.package_abbr  }}
+                          <div class="input-group">
+                          <span class="input-group-btn">
+                          <button type="button" onclick="minus_quantity({{ product.product_id }}, {{ package.package_id }})" class="button-minus btn btn-info btn-block"
+                          >-</button>
+                          </span>
+                          <input name="" type="number" onchange="update_quantity({{ product.product_id }}, {{ package.package_id }})" class="{{ package.type }} offer_group_{{ offer_group.offer_group_id }} form-control" 
+                          id="package_{{ product.product_id }}_{{ package.package_id }}" 
+                          value="0" 
+                          step="{{ product.minimum }}"
+                          data-product_id="{{ product.product_id }}"                                
+                          data-ratio="{{ package.value }}"              
+                          data-package="{{ package.parent_id  }}" 
+                          data-parent="{{ package.package_id }}"      
+                          >
+                          <span class="input-group-btn">
+                          <button type="button" onclick="plus_quantity({{ product.product_id }}, {{ package.package_id }})" class="button-plus btn btn-info btn-block"
+                          >+</button>
+                          </span>
+                          
+                          </div>
+                        {% endfor %}  
+                        </div>     
+                      {% endif %} 
+                      </div>
+                      </li>           
+                      {% endfor %} 
+                      <li class="list-group-item row">
+                        <div class="row">
+                          <span class="pull-right">							
+                            <strong class="product-quantity-alert" >!</strong>
+                            окончательная цена по запросу
+                          </span>
+                          </div>
+                        <button onclick="add_tocart('offer_group_{{ offer_group.offer_group_id }}')" class="pull-right btn btn-info"> {{ text_add_cart }} </button>
+                      </li> 
+                    </ul>
+                  </div>
+                </div>
+              </div>
+              {% endfor %}
+              {% endif %}
+              </div>
 
-          <table id="variants" class="table table-striped table-bordered table-hover">
+           
+          
+
+          <table hidden id="variants" class="table table-striped table-bordered table-hover">
             <thead>
               <tr>
                 <td class="text-left">{{ text_product_id }}</td>
@@ -152,219 +444,11 @@
             </tfoot>
           </table>
 
-          <h1>{{ heading_title }}</h1>
-          <ul class="list-unstyled">
-            {% if manufacturer %}
-            <li>{{ text_manufacturer }} <a href="{{ manufacturers }}">{{ manufacturer }}</a></li>
-            {% endif %}
-            <li>{{ text_model }} {{ model }}</li>
-            {% if reward %}
-            <li>{{ text_reward }} {{ reward }}</li>
-            {% endif %}
-            <li>{{ text_stock }} {{ stock }}</li>
-          </ul>
-          {% if price %}
-          <ul class="list-unstyled">
-            {% if not special %}
-            <li>
-              <h2>{{ price }}</h2>
-            </li>
-            {% else %}
-            <li><span style="text-decoration: line-through;">{{ price }}</span></li>
-            <li>
-              <h2>{{ special }}</h2>
-            </li>
-            {% endif %}
-            {% if tax %}
-            <li>{{ text_tax }} {{ tax }}</li>
-            {% endif %}
-            {% if points %}
-            <li>{{ text_points }} {{ points }}</li>
-            {% endif %}
-            {% if discounts %}
-            <li>
-              <hr>
-            </li>
-            {% for discount in discounts %}
-            <li>{{ discount.quantity }}{{ text_discount }}{{ discount.price }}</li>
-            {% endfor %}
-            {% endif %}
-          </ul>
-          {% endif %}
-          <div id="view"> {% if options %}
-            <hr>
-            <h3>{{ text_option }}</h3>
-            {% for option in options %}
-            {% if option.type == 'select' %}
-            <div class="form-group{% if option.required %} required {% endif %}">
-              <label class="control-label" for="input-option{{ option.view_option_id }}">{{ option.name }}</label>
-              <select name="option[{{ option.view_option_id }}]" id="input-option{{ option.view_option_id }}" class="form-control">
-                <option value="">{{ text_select }}</option>
-                {% for option_value in option.view_option_value %}
-                <option value="{{ option_value.view_option_value_id }}">{{ option_value.name }}
-                {% if option_value.price %}
-                ({{ option_value.price_prefix }}{{ option_value.price }})
-                {% endif %} </option>
-                {% endfor %}
-              </select>
-            </div>
-            {% endif %}
-            {% if option.type == 'radio' %}
-            <div class="form-group{% if option.required %} required {% endif %}">
-              <label class="control-label">{{ option.name }}</label>
-              <div id="input-option{{ option.view_option_id }}"> {% for option_value in option.view_option_value %}
-                <div class="radio">
-                  <label>
-                    <input type="radio" name="option[{{ option.view_option_id }}]" value="{{ option_value.view_option_value_id }}" />
-                    {% if option_value.image %} <img src="{{ option_value.image }}" alt="{{ option_value.name }} {% if option_value.price %} {{ option_value.price_prefix }} {{ option_value.price }} {% endif %}" class="img-thumbnail" /> {% endif %}                  
-                    {{ option_value.name }}
-                    {% if option_value.price %}
-                    ({{ option_value.price_prefix }}{{ option_value.price }})
-                    {% endif %} </label>
-                </div>
-                {% endfor %} </div>
-            </div>
-            {% endif %}
-            {% if option.type == 'checkbox' %}
-            <div class="form-group{% if option.required %} required {% endif %}">
-              <label class="control-label">{{ option.name }}</label>
-              <div id="input-option{{ option.view_option_id }}"> {% for option_value in option.view_option_value %}
-                <div class="checkbox">
-                  <label>
-                    <input type="checkbox" name="option[{{ option.view_option_id }}][]" value="{{ option_value.view_option_value_id }}" />
-                    {% if option_value.image %} <img src="{{ option_value.image }}" alt="{{ option_value.name }} {% if option_value.price %} {{ option_value.price_prefix }} {{ option_value.price }} {% endif %}" class="img-thumbnail" /> {% endif %}
-                    {{ option_value.name }}
-                    {% if option_value.price %}
-                    ({{ option_value.price_prefix }}{{ option_value.price }})
-                    {% endif %} </label>
-                </div>
-                {% endfor %} </div>
-            </div>
-            {% endif %}
-            {% if option.type == 'text' %}
-            <div class="form-group{% if option.required %} required {% endif %}">
-              <label class="control-label" for="input-option{{ option.view_option_id }}">{{ option.name }}</label>
-              <input type="text" name="option[{{ option.view_option_id }}]" value="{{ option.value }}" placeholder="{{ option.name }}" id="input-option{{ option.view_option_id }}" class="form-control" />
-            </div>
-            {% endif %}
-            {% if option.type == 'textarea' %}
-            <div class="form-group{% if option.required %} required {% endif %}">
-              <label class="control-label" for="input-option{{ option.view_option_id }}">{{ option.name }}</label>
-              <textarea name="option[{{ option.view_option_id }}]" rows="5" placeholder="{{ option.name }}" id="input-option{{ option.view_option_id }}" class="form-control">{{ option.value }}</textarea>
-            </div>
-            {% endif %}
-            {% if option.type == 'file' %}
-            <div class="form-group{% if option.required %} required {% endif %}">
-              <label class="control-label">{{ option.name }}</label>
-              <button type="button" id="button-upload{{ option.view_option_id }}" data-loading-text="{{ text_loading }}" class="btn btn-default btn-block"><i class="fa fa-upload"></i> {{ button_upload }}</button>
-              <input type="hidden" name="option[{{ option.view_option_id }}]" value="" id="input-option{{ option.view_option_id }}" />
-            </div>
-            {% endif %}
-            {% if option.type == 'date' %}
-            <div class="form-group{% if option.required %} required {% endif %}">
-              <label class="control-label" for="input-option{{ option.view_option_id }}">{{ option.name }}</label>
-              <div class="input-group date">
-                <input type="text" name="option[{{ option.view_option_id }}]" value="{{ option.value }}" data-date-format="YYYY-MM-DD" id="input-option{{ option.view_option_id }}" class="form-control" />
-                <span class="input-group-btn">
-                <button class="btn btn-default" type="button"><i class="fa fa-calendar"></i></button>
-                </span></div>
-            </div>
-            {% endif %}
-            {% if option.type == 'datetime' %}
-            <div class="form-group{% if option.required %} required {% endif %}">
-              <label class="control-label" for="input-option{{ option.view_option_id }}">{{ option.name }}</label>
-              <div class="input-group datetime">
-                <input type="text" name="option[{{ option.view_option_id }}]" value="{{ option.value }}" data-date-format="YYYY-MM-DD HH:mm" id="input-option{{ option.view_option_id }}" class="form-control" />
-                <span class="input-group-btn">
-                <button type="button" class="btn btn-default"><i class="fa fa-calendar"></i></button>
-                </span></div>
-            </div>
-            {% endif %}
-            {% if option.type == 'time' %}
-            <div class="form-group{% if option.required %} required {% endif %}">
-              <label class="control-label" for="input-option{{ option.view_option_id }}">{{ option.name }}</label>
-              <div class="input-group time">
-                <input type="text" name="option[{{ option.view_option_id }}]" value="{{ option.value }}" data-date-format="HH:mm" id="input-option{{ option.view_option_id }}" class="form-control" />
-                <span class="input-group-btn">
-                <button type="button" class="btn btn-default"><i class="fa fa-calendar"></i></button>
-                </span></div>
-            </div>
-            {% endif %}
-            {% endfor %}
-            {% endif %}
-            {% if recurrings %}
-            <hr>
-            <h3>{{ text_payment_recurring }}</h3>
-            <div class="form-group required">
-              <select name="recurring_id" class="form-control">
-                <option value="">{{ text_select }}</option>
-                {% for recurring in recurrings %}
-                <option value="{{ recurring.recurring_id }}">{{ recurring.name }}</option>
-                {% endfor %}
-              </select>
-              <div class="help-block" id="recurring-description"></div>
-            </div>
-            {% endif %}
-            <div class="form-group">
-              <label class="control-label" for="input-quantity">{{ entry_qty }}</label>
-              <input type="text" name="quantity" value="{{ minimum }}" size="2" id="input-quantity" class="form-control" />
-              <input type="hidden" name="view_id" value="{{ view_id }}" />
-              <br />
-              <button type="button" id="button-cart" data-loading-text="{{ text_loading }}" class="btn btn-primary btn-lg btn-block">{{ button_cart }}</button>
-            </div>
-            {% if minimum > 1 %}
-            <div class="alert alert-info"><i class="fa fa-info-circle"></i> {{ text_minimum }}</div>
-            {% endif %}</div>
+          
+
             </div>
       </div>
-      {% if views %}
-      <h3>{{ text_related }}</h3>
-      <div class="row"> {% set i = 0 %}
-        {% for view in views %}
-        {% if column_left and column_right %}
-        {% set class = 'col-xs-8 col-sm-6' %}
-        {% elseif column_left or column_right %}
-        {% set class = 'col-xs-6 col-md-4' %}
-        {% else %}
-        {% set class = 'col-xs-6 col-sm-3' %}
-        {% endif %}
-        <div class="{{ class }}">
-          <div class="view-thumb transition">
-            <div class="image"><a href="{{ view.href }}"><img src="{{ view.thumb }}" alt="{{ view.name }}" title="{{ view.name }}" class="img-responsive" /></a></div>
-            <div class="caption">
-              <h4><a href="{{ view.href }}">{{ view.name }}</a></h4>
-              <p>{{ view.description }}</p>
 
-              {% if view.price %}
-              <p class="price"> {% if not view.special %}
-                {{ view.price }}
-                {% else %} <span class="price-new">{{ view.special }}</span> <span class="price-old">{{ view.price }}</span> {% endif %}
-                {% if view.tax %} <span class="price-tax">{{ text_tax }} {{ view.tax }}</span> {% endif %} </p>
-              {% endif %} </div>
-            <div class="button-group">
-              <button type="button" onclick="cart.add('{{ view.view_id }}', '{{ view.minimum }}');"><span class="hidden-xs hidden-sm hidden-md">{{ button_cart }}</span> <i class="fa fa-shopping-cart"></i></button>
-              <button type="button" data-toggle="tooltip" title="{{ button_wishlist }}" onclick="wishlist.add('{{ view.view_id }}');"><i class="fa fa-heart"></i></button>
-              <button type="button" data-toggle="tooltip" title="{{ button_compare }}" onclick="compare.add('{{ view.view_id }}');"><i class="fa fa-exchange"></i></button>
-            </div>
-          </div>
-        </div>
-        {% if column_left and column_right and (i + 1) % 2 == 0 %}
-        <div class="clearfix visible-md visible-sm"></div>
-        {% elseif column_left or column_right and (i + 1) % 3 == 0 %}
-        <div class="clearfix visible-md"></div>
-        {% elseif (i + 1) % 4 == 0 %}
-        <div class="clearfix visible-md"></div>
-        {% endif %}
-        {% set i = i + 1 %}
-        {% endfor %} </div>
-        {% endif %}
-        {% if tags %}
-        <p>{{ text_tags }}
-        {% for i in 0..tags|length - 1 %}
-        {% if i < (tags|length - 1) %} <a href="{{ tags[i].href }}">{{ tags[i].tag }}</a>,
-        {% else %} <a href="{{ tags[i].href }}">{{ tags[i].tag }}</a> {% endif %}
-        {% endfor %} </p>
-        {% endif %}
       {{ content_bottom }}</div>
     {{ column_right }}</div>
 </div>
@@ -522,4 +606,133 @@ $(document).ready(function() {
 	});
 });
 //--></script> 
+<script type="text/javascript">
+
+  function add_tocart(name) {
+  
+    console.log(name);
+    $("."+name+"").each(function( index ) {
+
+      product_id = parseInt(this.dataset.product_id);
+      value =parseFloat(this.value) ;
+      if (value > 0) {
+
+        console.log(this.value);
+        console.log( this.dataset.product_id);
+        addCart( product_id , value );
+
+ 
+      }
+  
+  
+    });
+  
+  }
+
+  function addCart(product_id, quantity) {
+    console.log(product_id);
+    $.ajax({
+      url: 'index.php?route=checkout/cart/add',
+      type: 'post',
+      data: 'product_id=' + product_id + '&quantity=' + (typeof(quantity) != 'undefined' ? quantity : 1),
+      dataType: 'json',
+      beforeSend: function() {
+        $('#cart > button').button('loading');
+      },
+      complete: function() {
+        $('#cart > button').button('reset');
+      },
+      success: function(json) {
+        $('.alert-dismissible, .text-danger').remove();
+
+        if (json['redirect']) {
+          location = json['redirect'];
+        }
+
+        if (json['success']) {
+    //			$('#content').parent().before('<div class="alert alert-success alert-dismissible"><i class="fa fa-check-circle"></i> ' + json['success'] + ' <button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+
+          // Need to set timeout otherwise it wont update the total
+          setTimeout(function () {
+            $('#cart > button').html('<span id="cart-total"><i class="fa fa-shopping-cart"></i> ' + json['total'] + '</span>');
+          }, 100);
+
+    //			$('html, body').animate({ scrollTop: 0 }, 'slow');
+
+          $('#cart > ul').load('index.php?route=common/cart/info ul li');
+        }
+      },
+      error: function(xhr, ajaxOptions, thrownError) {
+        alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+      }
+    });
+  }
+
+  function raschetzabor(id) {
+  
+    visota_zabora = document.forms["raschet_zabor"].elements["visota_zabora"].value;
+    dlinna_zabora = document.forms["raschet_zabor"].elements["dlinna_zabora"].value;
+  
+    if( dlinna_zabora > 2.4) {
+  
+      kalitka = document.forms["raschet_zabor"].elements["zabor"].checked;
+      vorota = document.forms["raschet_zabor"].elements["vorota"].checked;
+      quantit = 1;
+      length_kalitka = parseFloat(1);
+      length_vorota = parseFloat(3.6);
+  
+      if (kalitka == true) {
+        dlinna_zabora = dlinna_zabora - kalitka;
+      }
+      if (vorota == true) {
+        dlinna_zabora = dlinna_zabora - vorota;
+      }
+      paneli = Math.ceil(dlinna_zabora/2.5) ;
+      stolbi = Math.ceil((dlinna_zabora/10)) ;
+      stoiki = Math.ceil(paneli*2) ;
+  
+      let rows_kalitka = document.querySelectorAll('.kalitka'+visota_zabora);
+      let rows_panel = document.querySelectorAll('.panel'+visota_zabora);
+      let rows_stoika = document.querySelectorAll('.stoika'+visota_zabora);
+      let rows_stolb = document.querySelectorAll('.stolb'+visota_zabora);
+  
+      let rows_krishka = document.querySelectorAll('.krishka');
+      let rows_napravlr = document.querySelectorAll('.napravlr');
+      let rows_polotno = document.querySelectorAll('.polotno');
+  
+      for (let i = 0; i < rows_kalitka.length; i++) {
+        rows_kalitka[i].value = 1;
+      }
+  
+      for (let i = 0; i < rows_panel.length; i++) {
+        rows_panel[i].value = paneli;
+      }
+  
+      for (let i = 0; i < rows_stoika.length; i++) {
+        rows_stoika[i].value = stoiki;
+      }
+  
+      for (let i = 0; i < rows_stolb.length; i++) {
+        rows_stolb[i].value = stolbi;
+      }
+  
+      for (let i = 0; i < rows_krishka.length; i++) {
+        rows_krishka[i].value = stolbi;
+      }
+  
+      for (let i = 0; i < rows_napravlr.length; i++) {
+        rows_napravlr[i].value = paneli*2;
+      }
+  
+      for (let i = 0; i < rows_polotno.length; i++) {
+        rows_polotno[i].value = paneli;
+      }
+      
+    } else {
+      alert ('минимальная длина 2,5 метра');
+    }
+  
+  }
+  </script>
+
 {{ footer }} 

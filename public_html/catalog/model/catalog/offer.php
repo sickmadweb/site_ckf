@@ -522,7 +522,8 @@ class ModelCatalogOffer extends Model {
 		SELECT * FROM " . DB_PREFIX . "variants v
 
 		LEFT JOIN " . DB_PREFIX . "product_description pd ON (v.product_id = pd.product_id)
-		
+		LEFT JOIN " . DB_PREFIX . "product p ON (v.product_id = p.product_id)
+
 		WHERE v.offer_id = '". $offer_id ."'
 
 		");

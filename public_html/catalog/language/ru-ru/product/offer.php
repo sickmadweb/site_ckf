@@ -40,6 +40,11 @@ $_['text_prev']                = 'Преведущий';
 $_['text_firts']               = 'Начальный';
 $_['text_last']                = 'Последний';
 $_['text_query_prices']        = 'Цена по запросу';
+$_['text_buy']                 = 'Купить от: ';
+$_['text_more']                = 'Подробнее:';
+$_['text_add_cart']            = 'Добавить в корзину';
+$_['text_variants']            = 'Элементы:';
+$_['text_offer']               = 'Цена от: ';
 
 // Entry
 $_['entry_qty']                = 'Кол-во';

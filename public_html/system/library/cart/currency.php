@@ -44,7 +44,7 @@ class Currency {
 			$string .= $symbol_left;
 		}
 
-		$string .= number_format($amount, (int)$decimal_place, $this->language->get('decimal_point'), $this->language->get('thousand_point'));
+		$string .= number_format($amount, (int)$decimal_place, $this->language->get('decimal_point'), ' ');
 
 		if ($symbol_right) {
 			$string .= $symbol_right;
@@ -118,7 +118,7 @@ class Currency {
 
 		$query = $this->db->query("
 
-		SELECT p.product_id, p.value, d1.name, d1.abbr, p.parent_value, d2.name AS parent_name, d2.abbr AS parent_abbr 
+		SELECT p.product_id, p.value, d1.name, d1.abbr, d1.package_id AS parent_id ,  p.parent_value, d2.name AS parent_name, d2.abbr AS parent_abbr , d2.package_id AS package_id
 		
 		FROM " . DB_PREFIX . "product_package p
 

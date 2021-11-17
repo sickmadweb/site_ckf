@@ -52,7 +52,8 @@ class ModelCatalogView extends Model {
 				'status'           => $query->row['status'],
 				'date_added'       => $query->row['date_added'],
 				'date_modified'    => $query->row['date_modified'],
-				'viewed'           => $query->row['viewed']
+				'viewed'           => $query->row['viewed'],
+				'images'           => $this->getImages($query->row['view_id']),	
 			);
 		} else {
 			return false;
@@ -621,21 +622,23 @@ class ModelCatalogView extends Model {
 		return $query->row;
 	}
 
-	
-	public function getVariantImage($view_id) {
-		
-		$query = $this->db->query("
 
-		SELECT p.image FROM " . DB_PREFIX . "variants v
+	public function getVariantImage( $view_id ) {
 
-		LEFT JOIN " . DB_PREFIX . "product p ON v.product_id = p.product_id
-		
-		WHERE v.view_id = '". $view_id ."'
-		 
+		$offers = $this->db->query("
+
+			SELECT DISTINCT(p.image) AS image, o.image AS offer_image FROM " . DB_PREFIX . "variants v
+
+			LEFT JOIN " . DB_PREFIX . "product p ON (v.product_id = p.product_id)
+			LEFT JOIN " . DB_PREFIX . "offer o ON (v.offer_id = o.offer_id)
+			LEFT JOIN " . DB_PREFIX . "view vw ON (v.view_id = vw.view_id)
+
+			WHERE v.view_id = '". $view_id ."' 
+
+			AND p.image NOT IN ('','no_image.png','placeholder.png')
 		");
 
-		return $query->rows;
+		return $offers->rows;	
 	}
-
 
 }

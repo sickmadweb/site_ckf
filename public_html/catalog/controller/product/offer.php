@@ -408,6 +408,7 @@ class ControllerProductOffer extends Controller {
 				$data['offers'][] = array(
 					'offer_id'  => $result['offer_id'],
 					'thumb'       => $image,
+					'popup'       => $image,
 					'name'        => $result['name'],
 					'description' => utf8_substr(trim(strip_tags(html_entity_decode($result['description'], ENT_QUOTES, 'UTF-8'))), 0, $this->config->get('theme_' . $this->config->get('config_theme') . '_offer_description_length')) . '..',
 					'price'       => $price,
@@ -431,38 +432,35 @@ class ControllerProductOffer extends Controller {
 				}
 			}
 			
-/*  Фильтры offer-а
-			$data['filters'] = array();
 
-			$filters = $this->model_catalog_offer->getFilters((int)$this->request->get['offer_id']);
-			print_r('<pre>');	
-			print_r($filters);	
-			print_r('</pre>');	
-*/
-
-			$data['variants'] = array();
+			$data['elements'] = array();
 	
 			$variants = $this->model_catalog_offer->getVariants((int)$this->request->get['offer_id']);
 	
 			foreach ($variants as $variant) {
 				 
 				$local_data = $this->currency->local_data($variant['product_id'], $this->session->data['location_id']);			
-/*
-				print_r('<pre>');	
-				print_r($local_data);	
-				print_r('</pre>');	
-*/
-				$data['variants'][] = array(
+
+
+
+				if ($variant['image']) {
+					$image = $this->model_tool_image->resize($variant['image'], $this->config->get('theme_' . $this->config->get('config_theme') . '_image_related_width'), $this->config->get('theme_' . $this->config->get('config_theme') . '_image_related_height'));
+				} else {
+					$image = $this->model_tool_image->resize('placeholder.png', $this->config->get('theme_' . $this->config->get('config_theme') . '_image_related_width'), $this->config->get('theme_' . $this->config->get('config_theme') . '_image_related_height'));
+				}
+
+				$data['elements'][] = array(
 					'name'       	=> $variant['name'],		
 					'product_id' 	=> $variant['product_id'],
+					'minimum'       	=> $variant['minimum'],
 					'status'    	=> $local_data['status'],	
+					'thumb'         => $image,
 					'quantity'      => $local_data['quantity'],
 					'abk_quantity'  => $local_data['abk_quantity'],
 					'price'      	=> $local_data['price'] > 0 ? $this->currency->format($local_data['price'], $this->config->get('config_currency')) : $this->language->get('text_query_prices'), 
 					'abk_price'     => $local_data['abk_price'] > 0 ? $this->currency->format($local_data['abk_price'], $this->config->get('config_currency')) : $this->language->get('text_query_prices'),
 					'packages'   	=> $this->currency->product_package($variant['product_id'])
 					
-
 				);
 	
 			}
