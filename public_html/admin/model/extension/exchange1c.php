@@ -8782,7 +8782,7 @@ class ModelExtensionExchange1c extends Model {
 					" . DB_PREFIX . "product_location_price.price, 
 					" . DB_PREFIX . "product_location_price.price/" . DB_PREFIX . "product_package.parent_value AS view_price, 
 					" . DB_PREFIX . "variants.main,
-					" . DB_PREFIX . "product_package.parent_value,
+					" . DB_PREFIX . "product_package.package_id,
 					" . DB_PREFIX . "product_to_warehouse.stock_status_id
 
 					FROM " . DB_PREFIX . "variants,  " . DB_PREFIX . "product_to_warehouse, " . DB_PREFIX . "product_location_price, " . DB_PREFIX . "product_package, " . DB_PREFIX . "location
@@ -8808,7 +8808,7 @@ class ModelExtensionExchange1c extends Model {
 
 					if ( $product['view_price'] > 0 and $price == 0 ) {
 						$price = $product['view_price'];
-						$abbr  = $product['parent_value'];
+						$package_id  = $product['package_id'];
 					}
 
 					if ( $product['main'] == 1) {
@@ -8823,7 +8823,7 @@ class ModelExtensionExchange1c extends Model {
 						print_r('<br>');
 
 						$price = $product['view_price'];
-						$abbr  = $product['parent_value'];
+						$package_id  = $product['package_id'];
 						$main = true; 
 
 					} else {
@@ -8856,7 +8856,7 @@ class ModelExtensionExchange1c extends Model {
 								print_r('<br>');
 
 								$price = $product['view_price'];
-								$abbr  = $product['parent_value'];
+								$package_id  = $product['package_id'];
 							} else {
 								print_r('<br>');
 								print_r('else');
@@ -8878,7 +8878,7 @@ class ModelExtensionExchange1c extends Model {
 							print_r('<br>');
 
 							$price = $product['viewparent_value_price'];
-							$abbr  = $product['parent_value'];
+							$package_id  = $product['package_id'];
 						}
 
 					}
@@ -8928,8 +8928,8 @@ class ModelExtensionExchange1c extends Model {
 				print_r("
 
 				INSERT INTO " . DB_PREFIX . "offer_location_cache
-				(  `offer_id`,	     `price`,           `quantity`, `abbr`, `stock_status_id`, `location_id`, `date_modified`) VALUES 
-				('". $offer['offer_id'] ."', '". $price ."',  '". $abbr ."','".        0        ."',  '". $stock_status_id ."' ,'". $loccation['location_id'] ."' , NOW() )
+				(  `offer_id`,	     `price`,           `quantity`, `package_id`, `stock_status_id`, `location_id`, `date_modified`) VALUES 
+				('". $offer['offer_id'] ."', '". $price ."',  '". $package_id ."','".        0        ."',  '". $stock_status_id ."' ,'". $loccation['location_id'] ."' , NOW() )
 
 			");
 
@@ -8937,8 +8937,8 @@ class ModelExtensionExchange1c extends Model {
 				$this->db->query("
 
 					INSERT INTO " . DB_PREFIX . "offer_location_cache
-					(  `offer_id`,	     `price`,           `quantity`, `stock_status_id`, `location_id`, `date_modified`) VALUES 
-					('". $offer['offer_id'] ."', '". $price ."',  '".        0        ."',  '". $stock_status_id ."' ,'". $loccation['location_id'] ."' , NOW() )
+					(  `offer_id`,	     `price`,           `quantity`, `package_id`, `stock_status_id`, `location_id`, `date_modified`) VALUES 
+					('". $offer['offer_id'] ."', '". $price ."',  '". $package_id ."','".        0        ."',  '". $stock_status_id ."' ,'". $loccation['location_id'] ."' , NOW() )
 
 				");
 
