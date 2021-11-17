@@ -386,8 +386,10 @@
                         <img src="{{ offer.thumb }}" alt="{{ offer.name }}">
                        </td>
 
-                      <td class="text-left">{{ offer.name }}</td>
-                      <td class="text-left">{{ offer.price }}</td>
+
+                      <td class="text-left"><a href="{{ variant.href }}">{{ variant.name }}</a></td>
+                      <td class="text-left">{{ variant.price }}</td>
+
                     </tr>
                 {% endfor %}
             </tbody>

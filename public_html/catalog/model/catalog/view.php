@@ -622,7 +622,8 @@ class ModelCatalogView extends Model {
 		return $query->row;
 	}
 
-	public function getImages( $view_id ) {
+
+	public function getVariantImage( $view_id ) {
 
 		$offers = $this->db->query("
 
@@ -639,4 +640,5 @@ class ModelCatalogView extends Model {
 
 		return $offers->rows;	
 	}
+
 }

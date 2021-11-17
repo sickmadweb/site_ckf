@@ -29,6 +29,19 @@ class Log {
      */
 	public function write($message) {
 		fwrite($this->handle, date('Y-m-d G:i:s') . ' - ' . print_r($message, true) . "\n");
+		/*
+		$config = $this->registry->get('config');
+		// отправка ошибок на почту
+		$to      = $this->config->get('config_email');
+		$subject = 'PHP ERROR';
+		$message = $message.'<br>'.$this->request->get['url'].'<br>'. date('Y-m-d G:i:s').'<br>';
+		$headers = array(
+			'From' => 'webmaster@example.com',
+			'Reply-To' => 'webmaster@example.com',
+			'X-Mailer' => 'PHP/' . phpversion()
+		);
+		mail($to, $subject, $message, $headers);
+		*/
 	}
 	
 	/**

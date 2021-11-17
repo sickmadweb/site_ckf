@@ -432,17 +432,35 @@ class ControllerProductView extends Controller {
 			}
 
 
-			$data['offers'] = array();
+			$data['variants'] = array();
+
 	
 			$variants = $this->model_catalog_view->getVariants((int)$this->request->get['view_id']);
 	
 			foreach ($variants as $variant) {
 		
-				$data['offers'][] = array(
+
+				if ( !empty($variant['image'])) {
+
+					$thumb = $this->model_tool_image->resize($variant['image'], $this->config->get('theme_' . $this->config->get('config_theme') . '_image_thumb_width'), $this->config->get('theme_' . $this->config->get('config_theme') . '_image_thumb_height')) ;
+
+				} else {
+
+					$image = $this->model_catalog_view->getVariantImage($variant['offer_id']);
+	
+					if (count($image) > 0) {
+						$thumb = $this->model_tool_image->resize($image[rand(0, count($image))]['image'], $this->config->get('theme_' . $this->config->get('config_theme') . '_image_thumb_width'), $this->config->get('theme_' . $this->config->get('config_theme') . '_image_thumb_height')) ;
+					}
+
+				}
+
+
+				$data['variants'][] = array(
 					'offer_id'  => $variant['offer_id'],
 					'name'      => $variant['name'],
-					'href'      => $this->url->link('product/offer', 'offer_id=' . $variant['offer_id']),					
-					'thumb'  => !empty($variant['image']) ? $this->model_tool_image->resize($variant['image'], $this->config->get('theme_' . $this->config->get('config_theme') . '_image_thumb_width'), $this->config->get('theme_' . $this->config->get('config_theme') . '_image_thumb_height')) : $this->model_tool_image->resize('placeholder.png', $this->config->get('theme_' . $this->config->get('config_theme') . '_image_related_width'), $this->config->get('theme_' . $this->config->get('config_theme') . '_image_related_height')),
+					'href'      => $this->url->link('product/offer', 'offer_id=' . $variant['offer_id']),		
+					'thumb'  => $thumb,
+
 					'price'  => $this->currency->format($this->tax->calculate($variant['price'], $variant['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']),	
 					
 				);
