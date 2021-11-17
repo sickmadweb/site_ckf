@@ -728,6 +728,9 @@ class ControllerSaleOrder extends Controller {
 
 		$order_info = $this->model_sale_order->getOrder($order_id);
 
+		$viewed = $this->model_sale_order->getOrderViewed($order_id);
+		
+
 		if ($order_info) {
 			$this->load->language('sale/order');
 

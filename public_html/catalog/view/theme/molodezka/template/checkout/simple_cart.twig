@@ -40,7 +40,6 @@
               <tr>
                 <td class="text-center">{{ column_image }}</td>
                 <td class="text-left">{{ column_name }}</td>
-                <td class="text-left">{{ column_model }}</td>
                 <td class="text-left">{{ column_quantity }}</td>
                 <td class="text-right">{{ column_price }}</td>
                 <td class="text-right">{{ column_total }}</td>
@@ -51,8 +50,8 @@
               
             {% for product in products  if product.on_request == true  %}
             <tr>
-              <td class="text-center">{% if product.thumb %} <a href="{{ product.href }}"><img src="{{ product.thumb }}" alt="{{ product.name }}" title="{{ product.name }}" class="img-thumbnail" /></a> {% endif %}</td>
-              <td class="text-left"><a href="{{ product.href }}">{{ product.name }}</a> {% if not product.stock %} <span class="text-danger">***</span> {% endif %}
+              <td class="text-center  col-xs-1">{% if product.thumb %} <a href="{{ product.href }}"><img src="{{ product.thumb }}" alt="{{ product.name }}" title="{{ product.name }}" class="img-thumbnail" /></a> {% endif %}</td>
+              <td class="text-left  col-xs-5"><a href="{{ product.href }}">{{ product.name }}</a> {% if not product.stock %} <span class="text-danger">***</span> {% endif %}
                 {% if product.option %}
                 {% for option in product.option %} <br />
                 <small>{{ option.name }}: {{ option.value }}</small> {% endfor %}
@@ -61,30 +60,33 @@
                 <small>{{ product.reward }}</small> {% endif %}
                 {% if product.recurring %} <br />
                 <span class="label label-info">{{ text_recurring_item }}</span> <small>{{ product.recurring }}</small> {% endif %}</td>
-              <td class="text-left">{{ product.model }}</td>
-              <td class="text-left"><div class="input-group btn-block" style="max-width: 200px;">
-                  <input type="text" name="quantity[{{ product.cart_id }}]" value="{{ product.quantity }}" size="1" class="form-control" />
-                  <span class="input-group-btn">
-                  <button type="submit" data-toggle="tooltip" title="{{ button_update }}" class="btn btn-primary"><i class="fa fa-refresh"></i></button>
-                  <button type="button" data-toggle="tooltip" title="{{ button_remove }}" class="btn btn-danger" onclick="cart.remove('{{ product.cart_id }}');"><i class="fa fa-times-circle"></i></button>
-                  </span></div></td>
-              <td class="text-right">{{ product.price }}</td>
-              <td class="text-right">{{ product.total }}</td>
+              <td class="text-left  col-xs-2"><div class="input-group btn-block" style="max-width: 200px;">
+
+                <div class="input-group">
+                  <a type="button" class="input-group-addon" onclick="down({{ product.cart_id }})">-</a>  
+                  <input id="product_{{ product.cart_id }}" type="number" max="9999999"  onchange="change_cart_id({{ product.cart_id }})"  step="1" data-price="{{ product.price }}" value="{{ product.quantity }}" name="quantity[{{ product.cart_id }}]" class="form-control">
+                  <a type="button" class="input-group-addon" onclick="up({{ product.cart_id }})">+</a>
+                </div>
+
+              </td>
+              <td class="text-right  col-xs-1">{{ product.price }}</td>
+              <td class="text-right  col-xs-2">{{ product.total }}</td>
+              <td><button type="button" data-toggle="tooltip" title="{{ button_remove }}" class="btn btn-danger" onclick="cart.remove('{{ product.cart_id }}');"><i class="fa fa-times-circle"></i></button></td>
             </tr>
             {% endfor %}
 
             {% for product in products  if product.on_request != true  %}
             {% if loop.index == 1 %}
             <tr>
-              <td colspan="6">
+              <td colspan="5">
                 {{ text_on_request }}
               </td>
               
             </tr>
             {% endif %}
             <tr>
-              <td class="text-center">{% if product.thumb %} <a href="{{ product.href }}"><img src="{{ product.thumb }}" alt="{{ product.name }}" title="{{ product.name }}" class="img-thumbnail" /></a> {% endif %}</td>
-              <td class="text-left"><a href="{{ product.href }}">{{ product.name }}</a> {% if not product.stock %} <span class="text-danger">***</span> {% endif %}
+              <td class="text-center  col-xs-1">{% if product.thumb %} <a href="{{ product.href }}"><img src="{{ product.thumb }}" alt="{{ product.name }}" title="{{ product.name }}" class="img-thumbnail" /></a> {% endif %}</td>
+              <td class="text-left  col-xs-5"><a href="{{ product.href }}">{{ product.name }}</a> {% if not product.stock %} <span class="text-danger">***</span> {% endif %}
                 {% if product.option %}
                 {% for option in product.option %} <br />
                 <small>{{ option.name }}: {{ option.value }}</small> {% endfor %}
@@ -93,15 +95,18 @@
                 <small>{{ product.reward }}</small> {% endif %}
                 {% if product.recurring %} <br />
                 <span class="label label-info">{{ text_recurring_item }}</span> <small>{{ product.recurring }}</small> {% endif %}</td>
-              <td class="text-left">{{ product.model }}</td>
-              <td class="text-left"><div class="input-group btn-block" style="max-width: 200px;">
-                  <input type="text" name="quantity[{{ product.cart_id }}]" value="{{ product.quantity }}" size="1" class="form-control" />
-                  <span class="input-group-btn">
-                  <button type="submit" data-toggle="tooltip" title="{{ button_update }}" class="btn btn-primary"><i class="fa fa-refresh"></i></button>
-                  <button type="button" data-toggle="tooltip" title="{{ button_remove }}" class="btn btn-danger" onclick="cart.remove('{{ product.cart_id }}');"><i class="fa fa-times-circle"></i></button>
-                  </span></div></td>
-              <td class="text-right">{{ product.price }}</td>
-              <td class="text-right">{{ product.total }}</td>
+              <td class="text-left  col-xs-2"><div class="input-group btn-block" style="max-width: 200px;">
+
+                <div class="input-group">
+                  <a type="button" class="input-group-addon" onclick="down({{ product.cart_id }})">-</a>  
+                  <input id="product_{{ product.cart_id }}" type="number" max="9999999"  onchange="change_cart_id({{ product.cart_id }})"  step="1" data-price="{{ product.price }}" value="{{ product.quantity }}" name="quantity[{{ product.cart_id }}]" class="form-control">
+                  <a type="button" class="input-group-addon" onclick="up({{ product.cart_id }})">+</a>
+                </div>
+
+                </td>
+              <td class="text-right  col-xs-1">{{ product.price }}</td>
+              <td class="text-right  col-xs-2">{{ product.total }}</td>
+              <td><button type="button" data-toggle="tooltip" title="{{ button_remove }}" class="btn btn-danger" onclick="cart.remove('{{ product.cart_id }}');"><i class="fa fa-times-circle"></i></button></td>
             </tr>
             {% endfor %}
 
@@ -119,6 +124,20 @@
               <td class="text-right">{{ voucher.amount }}</td>
             </tr>
             {% endfor %}
+
+            {% for total in totals %}
+            <tr>
+              <td colspan="3">
+              </td>
+              <td class="text-right"><strong>{{ total.title }}:</strong></td>
+              <td class="text-right">{{ total.text }}</td>
+              <td >
+              </td>
+            </tr>
+            {% endfor %}
+
+
+
               </tbody>
             
           </table>
@@ -172,18 +191,7 @@
 
         </div>
       </form>
-      <div class="row">
-        <div class="col-sm-4 col-sm-offset-8">
-          <table class="table table-bordered">
-            {% for total in totals %}
-            <tr>
-              <td class="text-right"><strong>{{ total.title }}:</strong></td>
-              <td class="text-right">{{ total.text }}</td>
-            </tr>
-            {% endfor %}
-          </table>
-        </div>
-      </div>
+
       <div class="buttons clearfix">
         <div class="pull-left"><a href="{{ continue }}" class="btn btn-default">{{ button_shopping }}</a></div>
       </div>
@@ -213,6 +221,110 @@ function submit_order() {
   });
 
 }
+
+</script>
+<script>
+  function down(cart_id) {
+
+      quantity = document.getElementById( 'product_'+cart_id ).value ;
+
+      if (quantity-- > 0) {
+        document.getElementById( 'product_'+cart_id ).value = quantity;  
+        cart_quantity( cart_id, quantity ) ;
+      }
+
+
+  }
+
+  function up(cart_id) {
+    quantity = document.getElementById( 'product_'+cart_id ).value ;
+
+
+    if (quantity++ <= 9999999) {
+      document.getElementById( 'product_'+cart_id ).value = quantity;  
+      cart_quantity( cart_id, quantity ) ;
+    }
+
+
+  } 
+
+  function change_cart_id(cart_id) {
+    quantity = document.getElementById( 'product_'+cart_id ).value ;
+
+
+    if (quantity > 0 || quantity <= 9999999) {
+      document.getElementById( 'product_'+cart_id ).value = quantity;  
+      cart_quantity( cart_id, quantity ) ;
+    }
+    
+    if (quantity => 9999999) {
+      document.getElementById( 'product_'+cart_id ).value = 9999999;  
+      cart_quantity( cart_id, 9999999 ) ;
+    }
+
+    if (quantity <= 0) {
+      document.getElementById( 'product_'+cart_id ).value = 0;  
+      cart_quantity( cart_id, 0 ) ;
+    }
+      
+  } 
+  
+
+
+  function cart_quantity (product_id, quantity) {
+
+    $.ajax({
+      url: 'index.php?route=checkout/cart/update',
+      type: 'post',
+      data: 'product_id=' + product_id + '&quantity=' +quantity ,
+      dataType: 'json',
+      success: function(json) {
+
+      },
+
+      error: function(xhr, ajaxOptions, thrownError) {
+        alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+      }
+    });
+  }
+</script>
+<script>
+
+  function update (product_id, quantity) {
+    console.log (product_id);
+    console.log (quantity);
+    $.ajax({
+      url: 'index.php?route=checkout/cart/update',
+      type: 'post',
+      data: 'product_id=' + product_id + '&quantity=' +quantity ,
+      dataType: 'json',
+
+      success: function(json) {
+        $('.alert-dismissible, .text-danger').remove();
+
+        if (json['redirect']) {
+          location = json['redirect'];
+        }
+
+        if (json['success']) {
+          $('#content').parent().before('<div class="alert alert-success alert-dismissible"><i class="fa fa-check-circle"></i> ' + json['success'] + ' <button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+          console.log (quantity);
+          // Need to set timeout otherwise it wont update the total
+          setTimeout(function () {
+            $('#cart > button').html('<span id="cart-total"><i class="fa fa-shopping-cart"></i> ' + json['total'] + '</span>');
+          }, 100);
+
+          $('html, body').animate({ scrollTop: 0 }, 'slow');
+
+          $('#cart > ul').load('index.php?route=common/cart/info ul li');
+        }
+      },
+      error: function(xhr, ajaxOptions, thrownError) {
+        alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+      }
+    });
+  }
+
 
 </script>
 

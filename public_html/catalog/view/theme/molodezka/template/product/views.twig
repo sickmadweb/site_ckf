@@ -50,7 +50,11 @@
         <div class="col-sm-2"><img src="{{ thumb }}" alt="{{ heading_title }}" title="{{ heading_title }}" class="img-thumbnail" /></div>
         {% endif %}
         {% if description %}
-        <div class="col-sm-10">{{ description }}</div>
+        <div class="col-sm-10">
+          {{ description }}
+          <hr>
+          <a  class="btn btn-info pull-right"  href="{{ offers }}">{{ text_fo_offers }}</a>
+        </div>
         {% endif %}</div>
       <hr>
       {% endif %}
@@ -62,7 +66,9 @@
             {% for views in categories %}
             <li  class="col-xs-6 col-sm-4 col-md-3">
               <div class="category text-center">
-                <a href="{{ views.href }}"><img src="{{ views.thumb }}" alt="{{ views.name }}" title="{{ views.name }}" class="img-responsive img-thumbnail" /></a>
+                <a href="{{ views.href }}">
+                  <img src="{{ views.thumb }}" alt="{{ views.name }}" title="{{ views.name }}" class="img-responsive img-thumbnail" />
+                </a>
                 <a href="{{ views.href }}" class="category-name">{{ views.name }}</a>
               </div>
 
@@ -77,6 +83,9 @@
       {% endif %}
       {% if products %}
       <div class="row">
+        <div class="col-md-4 col-xs-6">
+          <a  class="btn btn-info"  href="{{ offers }}">{{ text_fo_offers }}</a>
+        </div>
         <div class="col-md-4 col-xs-6">
           <div class="form-group input-group input-group-sm">
             <label class="input-group-addon" for="input-sort">{{ text_sort }}</label>
@@ -97,7 +106,7 @@
             </select>
           </div>
         </div>
-        <div class="col-md-3 col-xs-6">
+        <div class="col-md-4 col-xs-6">
           <div class="form-group input-group input-group-sm">
             <label class="input-group-addon" for="input-limit">{{ text_limit }}</label>
             <select id="input-limit" class="form-control" onchange="location = this.value;">
@@ -125,6 +134,20 @@
             <div class="image">
               <a href="{{ product.href }}"><img src="{{ product.thumb }}" alt="{{ product.name }}" title="{{ product.name }}" class="img-responsive" /></a>
             </div>
+            {% if product.images %}
+            <!-- Swiper -->
+              <div class="swiper-container product-images mySwiperView">
+                <div class="swiper-wrapper">
+                  {% for image in product.images %}
+                  <div class="swiper-slide" data-swiper-autoplay="2000">
+                    <img src="{{ image }}" title="" alt="" class="img-responsive img-thumbnail" />
+                  </div>
+                  {% endfor %}
+                </div>
+                <div class="swiper-button-next"></div>
+                <div class="swiper-button-prev"></div>
+              </div>
+          {% endif %}
             <div>
               <div class="caption text-center">
                 <h4><a href="{{ product.href }}">{{ product.name }}</a></h4>
@@ -147,4 +170,20 @@
       {{ content_bottom }}</div>
     {{ column_right }}</div>
 </div>
+<script>
+  var swiper = new Swiper(".mySwiperView", {
+    slidesPerView: 3,
+    spaceBetween: 10,
+    loop: true,
+    centeredSlides: true,
+    autoplay: {
+      delay: 5000,
+    },
+
+    navigation: {
+      nextEl: ".swiper-button-next",
+      prevEl: ".swiper-button-prev",
+    },
+  });
+</script>
 {{ footer }} 

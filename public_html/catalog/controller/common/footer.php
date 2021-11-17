@@ -34,7 +34,6 @@ class ControllerCommonFooter extends Controller {
 		$data['video_category'] = $this->url->link('information/video_category', '', true);		
 
 		$data['callback'] = $this->load->controller('extension/form/callback');
-		$data['query_price'] = $this->load->controller('extension/form/query_price');
 		$data['support'] = $this->load->controller('extension/form/support');
 	
 		$data['offers'] = $this->url->link('product/offers', '', true);

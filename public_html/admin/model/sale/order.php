@@ -480,4 +480,11 @@ class ModelSaleOrder extends Model {
 
 		return $query->row['total'];
 	}
+
+	public function getOrderViewed($order_id) {
+		$query = $this->db->query("UPDATE `" . DB_PREFIX . "order` SET  viewed = 1 WHERE  order_id ='" . (int)$order_id . "'");
+
+ 
+	}
+	
 }
