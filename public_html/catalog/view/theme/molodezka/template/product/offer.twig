@@ -54,11 +54,19 @@
           {% if thumb or images %}
           <ul class="thumbnails">
             {% if thumb %}
-            <li><a class="thumbnail" href="{{ popup }}" title="{{ heading_title }}"><img src="{{ thumb }}" title="{{ heading_title }}" alt="{{ heading_title }}" /></a></li>
+            <li class="col-xs-6">
+              <a class="thumbnail " href="{{ popup }}" title="{{ heading_title }}">
+                <img src="{{ thumb }}" title="{{ heading_title }}" alt="{{ heading_title }}" />
+              </a>
+            </li>
             {% endif %}
             {% if images %}
             {% for image in images %}
-            <li class="image-additional"><a class="thumbnail" href="{{ image.popup }}" title="{{ heading_title }}"> <img src="{{ image.thumb }}" title="{{ heading_title }}" alt="{{ heading_title }}" /></a></li>
+            <li  class="col-xs-6">
+              <a class="thumbnail" href="{{ image.popup }}" title="{{ heading_title }}"> 
+                <img src="{{ image.thumb }}" title="{{ heading_title }}" alt="{{ heading_title }}" />
+              </a>
+              </li>
             {% endfor %}
             {% endif %}
           </ul>
@@ -137,7 +145,7 @@
                         <p>{{ product.status }}</p>
                         <p>{{ product.pricelist }}</p> 
             
-                        {% if product.view %}
+                        {% if product.attributes %}
                         <button type="button" class="btn btn-info" data-toggle="modal" data-target=".view{{ product.product_id }}">{{ text_more }}</button>
                         <div class="modal fade bs-example-modal-lg view{{ product.product_id }}" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
                         <div class="modal-dialog modal-lg" role="document">
@@ -148,20 +156,21 @@
                             </div>
                             <div class="modal-body">
                               <div class="row">
-                              <div class="col-xs-6">{{ product.popup }} {{ product.name }}
-                                <img src="{{ product.popup }}"  class="img-responsive" alt="{{ product.name }}"> 
+                              <div class="col-xs-6">{{ product.name }}
+                                <img src="{{ product.thumb }}"  class="img-responsive" alt="{{ product.name }}"> 
+                                
                               </div>
                               <div class="col-xs-6">
                               {{ product.description }}
                               </div>
                               </div>
-                              {% if product.attribute_groups %}
+                              {% if product.attributes %}
                               <div class="row">
             
                                 <div class="col-xs-12">
                                   <div class="tab-pane" id="tab-specification">
                                     <table class="table table-bordered">
-                                    {% for attribute_group in product.attribute_groups %}
+                                    {% for attribute_group in product.attributes %}
                                     <thead>
                                       <tr>
                                       <td colspan="2"><strong>{{ attribute_group.name }}</strong></td>
@@ -184,9 +193,9 @@
                                     {% endfor %}
                                     </table>
                                   </div>
-            
+                                  <a href="{{ product.href }}" class="btn btn-info pull-right" >Подробная информация</a>      
                                 </div>
-            
+
                               </div>
                               {% endif %}	
             

@@ -152,6 +152,9 @@ class ControllerProductOffers extends Controller {
 			} else {
 				$data['thumb'] = '';
 			}
+			
+			$data['offers_id'] = $offers_info['offers_id'];
+
 
 			$data['description'] = html_entity_decode($offers_info['description'], ENT_QUOTES, 'UTF-8');
 			$this->document->setDescription($offers_info['meta_description']);
@@ -187,8 +190,6 @@ class ControllerProductOffers extends Controller {
 			if (isset($this->request->get['limit'])) {
 				$url .= '&limit=' . $this->request->get['limit'];
 			}
-
-			$data['views_id'] = $offers_info['views_id'];
 
 			$data['categories'] = array();
 

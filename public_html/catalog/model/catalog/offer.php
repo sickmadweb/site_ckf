@@ -519,10 +519,11 @@ class ModelCatalogOffer extends Model {
 		
 		$query = $this->db->query("
 
-		SELECT * FROM " . DB_PREFIX . "variants v
+		SELECT *, vd.description AS description FROM " . DB_PREFIX . "variants v
 
 		LEFT JOIN " . DB_PREFIX . "product_description pd ON (v.product_id = pd.product_id)
 		LEFT JOIN " . DB_PREFIX . "product p ON (v.product_id = p.product_id)
+		LEFT JOIN " . DB_PREFIX . "view_description vd ON (v.view_id = vd.view_id)		
 
 		WHERE v.offer_id = '". $offer_id ."'
 

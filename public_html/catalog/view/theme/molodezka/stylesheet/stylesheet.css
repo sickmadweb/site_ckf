@@ -502,7 +502,6 @@ footer h5 {
 /* list group */
 .list-group a {
 	border: 1px solid #DDDDDD;
-	color: #888888;
 	padding: 8px 12px;
 }
 .list-group a.active, .list-group a.active:hover, .list-group a:hover {
@@ -669,9 +668,7 @@ h2.price {
 	padding: 0;
 	margin: 0;
 }
-.thumbnails > li {
-	margin-left: 20px;
-}
+
 .thumbnails {
 	margin-left: -20px;
 }
@@ -818,4 +815,36 @@ td > a , b, strong {
     border: 1px solid #de5a37;
     margin-bottom: 15px;
     border-radius: 5px;
+}
+
+.product-quantity-alert {
+    width: 20px;
+    height: 20px;
+    background: red;
+    display: block;
+    text-align: center;
+    line-height: normal;
+    border-radius: 16px;
+    color: white;
+    font-weight: bold;
+    padding: 1px;
+	float: left;
+	margin: 0 15px;
+}
+.glyphicon-question-sign {
+    color: red;
+	margin: 15px 0;
+}
+.text_price {
+    background: #c70000;
+    color: white;
+    font-weight: bold;
+    padding-bottom: 10px;
+	padding-top: 5px;
+	border-top: 1px	 solid;
+	margin: 0;
+}
+.col-lg-1, .col-lg-10, .col-lg-11, .col-lg-12, .col-lg-2, .col-lg-3, .col-lg-4, .col-lg-5, .col-lg-6, .col-lg-7, .col-lg-8, .col-lg-9, .col-md-1, .col-md-10, .col-md-11, .col-md-12, .col-md-2, .col-md-3, .col-md-4, .col-md-5, .col-md-6, .col-md-7, .col-md-8, .col-md-9, .col-sm-1, .col-sm-10, .col-sm-11, .col-sm-12, .col-sm-2, .col-sm-3, .col-sm-4, .col-sm-5, .col-sm-6, .col-sm-7, .col-sm-8, .col-sm-9, .col-xs-1, .col-xs-10, .col-xs-11, .col-xs-12, .col-xs-2, .col-xs-3, .col-xs-4, .col-xs-5, .col-xs-6, .col-xs-7, .col-xs-8, .col-xs-9 {
+    padding-right: 5px;
+    padding-left: 5px;
 }

@@ -438,7 +438,6 @@ class ControllerProductView extends Controller {
 			$variants = $this->model_catalog_view->getVariants((int)$this->request->get['view_id']);
 	
 			foreach ($variants as $variant) {
-		
 
 				if ( !empty($variant['image'])) {
 
@@ -447,11 +446,9 @@ class ControllerProductView extends Controller {
 				} else {
 
 					$image = $this->model_catalog_view->getVariantImage($variant['offer_id']);
-/*
-print_r('<pre>');
-print_r($variant);
-print_r('</pre>');
-*/
+
+
+
 					if (count($image) > 0) {
 						$thumb = $this->model_tool_image->resize($image[rand(0, count($image)-1)]['image'], $this->config->get('theme_' . $this->config->get('config_theme') . '_image_thumb_width'), $this->config->get('theme_' . $this->config->get('config_theme') . '_image_thumb_height')) ;
 					}

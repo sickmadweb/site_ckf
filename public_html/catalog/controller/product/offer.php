@@ -18,17 +18,17 @@ class ControllerProductOffer extends Controller {
 
 		$data['breadcrumbs'][] = array(
 			'text' => $this->language->get('text_category'),
-			'href' => $this->url->link('product/category')
+			'href' => $this->url->link('product/offers')
 		);
 
-		$this->load->model('catalog/category');
+		$this->load->model('catalog/offers');
 
 		if (isset($this->request->get['path'])) {
 			$path = '';
 
 			$parts = explode('_', (string)$this->request->get['path']);
 
-			$category_id = (int)array_pop($parts);
+			$offers_id = (int)array_pop($parts);
 
 			foreach ($parts as $path_id) {
 				if (!$path) {
@@ -37,18 +37,18 @@ class ControllerProductOffer extends Controller {
 					$path .= '_' . $path_id;
 				}
 
-				$category_info = $this->model_catalog_category->getCategory($path_id);
+				$category_info = $this->model_catalog_offers->getOffers($path_id);
 
 				if ($category_info) {
 					$data['breadcrumbs'][] = array(
 						'text' => $category_info['name'],
-						'href' => $this->url->link('product/category', 'path=' . $path)
+						'href' => $this->url->link('product/offers', 'path=' . $path)
 					);
 				}
 			}
 
 			// Set the last category breadcrumb
-			$category_info = $this->model_catalog_category->getCategory($category_id);
+			$category_info = $this->model_catalog_offers->getOffers($offers_id);
 
 			if ($category_info) {
 				$url = '';
@@ -71,7 +71,7 @@ class ControllerProductOffer extends Controller {
 
 				$data['breadcrumbs'][] = array(
 					'text' => $category_info['name'],
-					'href' => $this->url->link('product/category', 'path=' . $this->request->get['path'] . $url)
+					'href' => $this->url->link('product/offers', 'path=' . $this->request->get['path'] . $url)
 				);
 			}
 		}
@@ -127,8 +127,8 @@ class ControllerProductOffer extends Controller {
 				$url .= '&description=' . $this->request->get['description'];
 			}
 
-			if (isset($this->request->get['category_id'])) {
-				$url .= '&category_id=' . $this->request->get['category_id'];
+			if (isset($this->request->get['offers_id'])) {
+				$url .= '&offers_id=' . $this->request->get['offers_id'];
 			}
 
 			if (isset($this->request->get['sub_category'])) {
@@ -195,8 +195,8 @@ class ControllerProductOffer extends Controller {
 				$url .= '&description=' . $this->request->get['description'];
 			}
 
-			if (isset($this->request->get['category_id'])) {
-				$url .= '&category_id=' . $this->request->get['category_id'];
+			if (isset($this->request->get['offers_id'])) {
+				$url .= '&offers_id=' . $this->request->get['offers_id'];
 			}
 
 			if (isset($this->request->get['sub_category'])) {
@@ -283,9 +283,12 @@ class ControllerProductOffer extends Controller {
 				$data['thumb'] = '';
 			}
 
+
 			$data['images'] = array();
 
-			$results = $this->model_catalog_offer->getOfferImages($this->request->get['offer_id']);
+			$this->load->model('catalog/view');
+
+			$results = $this->model_catalog_view->getVariantImage($this->request->get['offer_id']);
 
 			foreach ($results as $result) {
 				$data['images'][] = array(
@@ -451,24 +454,24 @@ class ControllerProductOffer extends Controller {
 					$image = $this->model_tool_image->resize('placeholder.png', $this->config->get('theme_' . $this->config->get('config_theme') . '_image_related_width'), $this->config->get('theme_' . $this->config->get('config_theme') . '_image_related_height'));
 				}
 
-
 				$data['elements'][] = array(
 					'name'       	=> $variant['name'],
 					'sku'       	=> $variant['sku'],			
 					'product_id' 	=> $variant['product_id'],
-					'minimum'       	=> $variant['minimum'],
+					'minimum'       => $variant['minimum'],
 					'status'    	=> $local_data['status'],	
 					'thumb'         => $image,
-					'thumb'         => $this->model_catalog_product->getProductAttributes($variant['product_id']),
-					'thumb'         => $image,					
+					'attributes'    => $this->model_catalog_product->getProductAttributes($variant['product_id']),	
+					'description'   => html_entity_decode($variant['description'], ENT_QUOTES, 'UTF-8'),
 					'quantity'      => $local_data['quantity'],
 					'abk_quantity'  => $local_data['abk_quantity'],
+					'href'        => $this->url->link('product/view', 'view_id=' . $variant['view_id']),
+
 					'price'      	=> $local_data['price'] > 0 ? $this->currency->format($local_data['price'], $this->config->get('config_currency')) : $this->language->get('text_query_prices'), 
 					'abk_price'     => $local_data['abk_price'] > 0 ? $this->currency->format($local_data['abk_price'], $this->config->get('config_currency')) : $this->language->get('text_query_prices'),
 					'packages'   	=> $this->currency->product_package($variant['product_id'])
 					
 				);	
-				print_r($this->model_catalog_product->getProductAttributes($variant['product_id']));
 			}
 
 
@@ -522,8 +525,8 @@ class ControllerProductOffer extends Controller {
 				$url .= '&description=' . $this->request->get['description'];
 			}
 
-			if (isset($this->request->get['category_id'])) {
-				$url .= '&category_id=' . $this->request->get['category_id'];
+			if (isset($this->request->get['offers_id'])) {
+				$url .= '&offers_id=' . $this->request->get['offers_id'];
 			}
 
 			if (isset($this->request->get['sub_category'])) {
