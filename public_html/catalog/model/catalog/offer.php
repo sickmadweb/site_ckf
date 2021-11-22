@@ -525,7 +525,14 @@ class ModelCatalogOffer extends Model {
 		LEFT JOIN " . DB_PREFIX . "product p ON (v.product_id = p.product_id)
 		LEFT JOIN " . DB_PREFIX . "view_description vd ON (v.view_id = vd.view_id)		
 
+		LEFT JOIN " . DB_PREFIX . "product_location_price plp ON (v.product_id = plp.product_id)
+		LEFT JOIN " . DB_PREFIX . "product_to_warehouse pw ON (v.product_id = pw.product_id)
+		LEFT JOIN " . DB_PREFIX . "stock_status ss ON (pw.stock_status_id = ss.stock_status_id)
+
 		WHERE v.offer_id = '". $offer_id ."'
+		AND plp.location_id = ".$this->session->data['location_id'] ." 
+		AND pw.location_id = ".$this->session->data['location_id'] ." 
+		AND ss.visible = 1 
 
 		");
 

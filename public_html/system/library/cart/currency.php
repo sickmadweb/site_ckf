@@ -219,16 +219,34 @@ class Currency {
 
 		$pricelist = $this->pricelist($product_id);
 
-		$data = array(
-			'price'          => $price['price'],	
-			'abk_price'      => $price['abk_price'],			
-			'quantity'       => $status['quantity'],
-			'status'         => $status['status'],
-			'visible'         => $status['visible'],
-			'abk_quantity'   => $status['abk_quantity'],
-			'pricelist'      => isset($pricelist['pricelist_price']) ? $pricelist['pricelist_price'] : false,
-			'pricelist_group_id'      => isset($pricelist['group_id']) ? $pricelist['group_id'] : false,
-		);
+		if ( isset($price['price']) ) {
+
+			$data = array(
+				'price'          => $price['price'],	
+				'abk_price'      => $price['abk_price'],			
+				'quantity'       => $status['quantity'],
+				'status'         => $status['status'],
+				'visible'         => $status['visible'],
+				'abk_quantity'   => $status['abk_quantity'],
+				'pricelist'      => isset($pricelist['pricelist_price']) ? $pricelist['pricelist_price'] : false,
+				'pricelist_group_id'      => isset($pricelist['group_id']) ? $pricelist['group_id'] : false,
+			);
+
+		} else {
+
+			$data = array(
+				'price'          => 0,	
+				'abk_price'      => 0,			
+				'quantity'       => 0,
+				'status'         => 'Нет в наличии',
+				'visible'         =>0,
+				'abk_quantity'   => 0,
+				'pricelist'      => false,
+				'pricelist_group_id'      =>  false,
+			);
+
+		}
+
 
 		return $data;
 

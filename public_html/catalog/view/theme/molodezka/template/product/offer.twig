@@ -52,24 +52,31 @@
         <div class="{{ class }}"> 
           
           {% if thumb or images %}
-          <ul class="thumbnails">
+
+          <div class="my-gallery" itemscope itemtype="http://schema.org/ImageGallery">        
+
+
             {% if thumb %}
-            <li class="col-xs-6">
-              <a class="thumbnail " href="{{ popup }}" title="{{ heading_title }}">
-                <img src="{{ thumb }}" title="{{ heading_title }}" alt="{{ heading_title }}" />
+            <figure class="col-xs-6" itemprop="associatedMedia" itemscope itemtype="http://schema.org/ImageObject">
+              <a href="{{ popup }}" itemprop="contentUrl" data-size="1024x1024">
+                  <img src="{{ thumb }}" itemprop="thumbnail" class="img-responsive img-thumbnail" alt="{{ title }}" />
               </a>
-            </li>
+              <figcaption itemprop="caption description">{{ name }}</figcaption>
+            </figure>
             {% endif %}
             {% if images %}
             {% for image in images %}
-            <li  class="col-xs-6">
-              <a class="thumbnail" href="{{ image.popup }}" title="{{ heading_title }}"> 
-                <img src="{{ image.thumb }}" title="{{ heading_title }}" alt="{{ heading_title }}" />
+            <figure class="col-xs-6" itemprop="associatedMedia" itemscope itemtype="http://schema.org/ImageObject">
+              <a href="{{ image.popup }}" itemprop="contentUrl" data-size="1024x1024">
+                  <img src="{{ image.thumb }}" itemprop="thumbnail" class="img-responsive img-thumbnail" alt="{{ image.title }}" />
               </a>
-              </li>
+              <figcaption itemprop="caption description">{{ image.name }}</figcaption>
+            </figure>
+
             {% endfor %}
             {% endif %}
-          </ul>
+          </div>
+
           {% endif %}
 
 
@@ -636,46 +643,6 @@ $(document).ready(function() {
   
     });
   
-  }
-
-  function addCart(product_id, quantity) {
-    console.log(product_id);
-    $.ajax({
-      url: 'index.php?route=checkout/cart/add',
-      type: 'post',
-      data: 'product_id=' + product_id + '&quantity=' + (typeof(quantity) != 'undefined' ? quantity : 1),
-      dataType: 'json',
-      beforeSend: function() {
-        $('#cart > button').button('loading');
-      },
-      complete: function() {
-        $('#cart > button').button('reset');
-      },
-      success: function(json) {
-        $('.alert-dismissible, .text-danger').remove();
-
-        if (json['redirect']) {
-          location = json['redirect'];
-        }
-
-        if (json['success']) {
-    //			$('#content').parent().before('<div class="alert alert-success alert-dismissible"><i class="fa fa-check-circle"></i> ' + json['success'] + ' <button type="button" class="close" data-dismiss="alert">&times;</button></div>');
-
-          // Need to set timeout otherwise it wont update the total
-          setTimeout(function () {
-            $('#cart > button').html('<span id="cart-total"><i class="fa fa-shopping-cart"></i> ' + json['total'] + '</span>');
-          }, 100);
-
-    //			$('html, body').animate({ scrollTop: 0 }, 'slow');
-
-     //     $('#cart > ul').load('index.php?route=common/cart/info ul li');
-
-        }
-      },
-      error: function(xhr, ajaxOptions, thrownError) {
-        alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
-      }
-    });
   }
 
   function raschetzabor(id) {

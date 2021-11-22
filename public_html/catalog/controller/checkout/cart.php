@@ -389,6 +389,7 @@ class ControllerCheckoutCart extends Controller {
 				$json['redirect'] = str_replace('&amp;', '&', $this->url->link('product/product', 'product_id=' . $this->request->post['product_id']));
 			}
 		}
+
 		$this->response->addHeader('Content-Type: application/json');
 		$this->response->setOutput(json_encode($json));
 	}
@@ -430,7 +431,13 @@ class ControllerCheckoutCart extends Controller {
 
 		$products = $this->cart->getProducts();
 
-	
+		$sum = 0;
+
+		foreach ($products as $product) {
+
+			$sum += $product['total'];
+		}
+
 		
 		$res	=  array_search($this->request->post['product_id'], array_column($products, 'cart_id'));
 	
@@ -442,8 +449,8 @@ class ControllerCheckoutCart extends Controller {
 			$json['total'] = 'Цена по запросу';
 		}
 
-
-
+		$json['summ_cart'] = $this->currency->format($sum, $this->session->data['currency']);
+		
 		$this->response->addHeader('Content-Type: application/json');
 		$this->response->setOutput(json_encode($json));
 		

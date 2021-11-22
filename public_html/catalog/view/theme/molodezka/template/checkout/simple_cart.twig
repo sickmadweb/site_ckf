@@ -130,7 +130,7 @@
               <td colspan="3">
               </td>
               <td class="text-right"><strong>{{ total.title }}:</strong></td>
-              <td class="text-right">{{ total.text }}</td>
+              <td  class="text-right summ_cart">{{ total.text }}</td>
               <td >
               </td>
             </tr>
@@ -284,7 +284,12 @@ function submit_order() {
         el = document.querySelector('.product_total_'+product_id);
       
         el.innerHTML = json['total'];
-        
+    
+        el_total = document.querySelector('.summ_cart');  
+
+        el_total.innerHTML = json['summ_cart'];
+
+
       },
 
       error: function(xhr, ajaxOptions, thrownError) {
