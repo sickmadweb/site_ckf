@@ -79,7 +79,21 @@ class ModelCatalogView extends Model {
 			$sql .= " FROM " . DB_PREFIX . "view p";
 		}
 
-		$sql .= " LEFT JOIN " . DB_PREFIX . "view_description pd ON (p.view_id = pd.view_id) LEFT JOIN " . DB_PREFIX . "view_to_store p2s ON (p.view_id = p2s.view_id) WHERE pd.language_id = '" . (int)$this->config->get('config_language_id') . "' AND p.status = '1' AND p.date_available <= NOW() AND p2s.store_id = '" . (int)$this->config->get('config_store_id') . "'";
+		$sql .= " LEFT JOIN " . DB_PREFIX . "view_description pd ON (p.view_id = pd.view_id) 
+				  LEFT JOIN " . DB_PREFIX . "view_to_store p2s ON (p.view_id = p2s.view_id) 
+				  
+				  LEFT JOIN " . DB_PREFIX . "variants v ON (p.view_id = v.view_id)
+				  LEFT JOIN " . DB_PREFIX . "offer_location_cache olc ON ( v.offer_id = olc.offer_id)
+				  LEFT JOIN " . DB_PREFIX . "stock_status ss ON (olc.stock_status_id = ss.stock_status_id)
+				 
+				  WHERE pd.language_id = '" . (int)$this->config->get('config_language_id') . "' 
+				  AND p.status = '1' 
+				  AND p.date_available <= NOW() 
+				  AND p2s.store_id = '" . (int)$this->config->get('config_store_id') . "'
+				  AND olc.location_id  = '". $this->session->data['location_id'] ."'
+				  AND ss.visible = '1'
+				 
+				";
 
 		if (!empty($data['filter_views_id'])) {
 			if (!empty($data['filter_sub_category'])) {
@@ -200,9 +214,6 @@ class ModelCatalogView extends Model {
 
 		$view_data = array();
 
-
-
-
 		$query = $this->db->query($sql);
 
 		foreach ($query->rows as $result) {
@@ -210,7 +221,6 @@ class ModelCatalogView extends Model {
 		}
 
 		return $view_data;
-
 
 	}
 
@@ -477,7 +487,22 @@ class ModelCatalogView extends Model {
 			$sql .= " FROM " . DB_PREFIX . "view p";
 		}
 
-		$sql .= " LEFT JOIN " . DB_PREFIX . "view_description pd ON (p.view_id = pd.view_id) LEFT JOIN " . DB_PREFIX . "view_to_store p2s ON (p.view_id = p2s.view_id) WHERE pd.language_id = '" . (int)$this->config->get('config_language_id') . "' AND p.status = '1' AND p.date_available <= NOW() AND p2s.store_id = '" . (int)$this->config->get('config_store_id') . "'";
+		$sql .= " LEFT JOIN " . DB_PREFIX . "view_description pd ON (p.view_id = pd.view_id) 
+				  LEFT JOIN " . DB_PREFIX . "view_to_store p2s ON (p.view_id = p2s.view_id) 
+				 
+				  LEFT JOIN " . DB_PREFIX . "variants v ON (p.view_id = v.view_id)
+				  LEFT JOIN " . DB_PREFIX . "offer_location_cache olc ON ( v.offer_id = olc.offer_id)
+				  LEFT JOIN " . DB_PREFIX . "stock_status ss ON (olc.stock_status_id = ss.stock_status_id)
+
+				  WHERE 
+				  
+				  pd.language_id = '" . (int)$this->config->get('config_language_id') . "' 
+				  AND p.status = '1' AND p.date_available <= NOW() 
+				  AND p2s.store_id = '" . (int)$this->config->get('config_store_id') . "'
+				  AND olc.location_id  = '". $this->session->data['location_id'] ."'
+				  AND ss.visible = '1'
+				 
+				";
 
 		if (!empty($data['filter_views_id'])) {
 			if (!empty($data['filter_sub_category'])) {

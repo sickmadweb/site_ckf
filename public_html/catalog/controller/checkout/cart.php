@@ -116,9 +116,9 @@ class ControllerCheckoutCart extends Controller {
 				// замена цены по место положению
 				$local_data = $this->currency->local_data($product['product_id'], $this->session->data['location_id']);			
 
-				$price = $local_data['price'] > 0 ? $this->currency->format($local_data['price'], $this->config->get('config_currency')) : $this->language->get('text_query_prices');
+				$price = ($local_data['price'] > 0 and $local_data['visible'] > 0 ) ? $this->currency->format($local_data['price'], $this->config->get('config_currency')) : $this->language->get('text_query_prices');
 				
-				$total = $this->currency->format($local_data['price'] * $product['quantity'], $this->session->data['currency']);
+				$total = ($local_data['price'] > 0 and $local_data['visible'] > 0 ) ? $this->currency->format($local_data['price'] * $product['quantity'], $this->session->data['currency']): $this->language->get('text_query_prices');
 
 				$recurring = '';
 
@@ -284,6 +284,7 @@ class ControllerCheckoutCart extends Controller {
 
 		$this->load->model('catalog/product');
 
+
 		$product_info = $this->model_catalog_product->getProduct($product_id);
 
 		if ($product_info) {
@@ -328,6 +329,7 @@ class ControllerCheckoutCart extends Controller {
 			}
 
 			if (!$json) {
+						
 				$this->cart->add($this->request->post['product_id'], $quantity, $option, $recurring_id);
 
 				$json['success'] = sprintf($this->language->get('text_success'), $this->url->link('product/product', 'product_id=' . $this->request->post['product_id']), $product_info['name'], $this->url->link('checkout/cart'));
@@ -381,13 +383,12 @@ class ControllerCheckoutCart extends Controller {
 
 					array_multisort($sort_order, SORT_ASC, $totals);
 				}
-
-				$json['total'] = sprintf($this->language->get('text_items'), $this->cart->countProducts() + (isset($this->session->data['vouchers']) ? count($this->session->data['vouchers']) : 0), $this->currency->format($total, $this->session->data['currency']));
+				
+				$json['total'] = sprintf($this->language->get('text_items'), $this->cart->countProducts() + (isset($this->session->data['vouchers']) ? count($this->session->data['vouchers']) : 0), $this->currency->format($total, $this->session->data['currency']));			
 			} else {
 				$json['redirect'] = str_replace('&amp;', '&', $this->url->link('product/product', 'product_id=' . $this->request->post['product_id']));
 			}
 		}
-
 		$this->response->addHeader('Content-Type: application/json');
 		$this->response->setOutput(json_encode($json));
 	}
@@ -426,6 +427,20 @@ class ControllerCheckoutCart extends Controller {
 
 		$this->cart->update($this->request->post['product_id'], $this->request->post['quantity']);
 		$this->session->data['success'] = $this->language->get('text_remove');
+
+		$products = $this->cart->getProducts();
+
+	
+		
+		$res	=  array_search($this->request->post['product_id'], array_column($products, 'cart_id'));
+	
+
+	//	$json = $products[$res]['total'];
+		if ( $products[$res]['total'] > 0) {
+			$json['total'] = $this->currency->format($products[$res]['total'], $this->session->data['currency']);
+		} else {
+			$json['total'] = 'Цена по запросу';
+		}
 
 
 

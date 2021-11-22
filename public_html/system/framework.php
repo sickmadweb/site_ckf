@@ -46,6 +46,24 @@ set_error_handler(function($code, $message, $file, $line) use($log, $config) {
 		$log->write('PHP ' . $error . ':  ' . $message . ' in ' . $file . ' on line ' . $line);
 	}
 
+// уведомление об ошибке на почту
+	$url = ((!empty($_SERVER['HTTPS'])) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+		
+	$message .= $url;
+			
+	$to      = 'pro_kolr@mail.ru';
+	$subject = 'ERROR';
+	$headers = array(
+		'From' => 'webmaster@example.com',
+		'Reply-To' => 'webmaster@example.com',
+		'X-Mailer' => 'PHP/' . phpversion()
+	);
+	
+	mail($to, $subject, $message, $headers);
+// уведомление об ошибке на почту	
+			
+
+
 	return true;
 });
 

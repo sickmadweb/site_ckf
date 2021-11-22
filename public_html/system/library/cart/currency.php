@@ -5,6 +5,8 @@ class Currency {
 
 	public function __construct($registry) {
 		$this->db = $registry->get('db');
+		$this->session = $registry->get('session');
+
 		$this->language = $registry->get('language');
 
 		$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "currency");
@@ -165,7 +167,7 @@ class Currency {
 
 		$query = $this->db->query("
 
-		SELECT ss.name AS status, pw.quantity, 
+		SELECT ss.name AS status, pw.quantity, ss.visible,
 		(
 			SELECT SUM(" . DB_PREFIX . "product_to_warehouse.quantity) FROM " . DB_PREFIX . "product_to_warehouse, " . DB_PREFIX . "location
 			WHERE 
@@ -198,7 +200,7 @@ class Currency {
 
 		");		
 		
-		return $query->rows;
+		return $query->row;
 
 	}
 
@@ -206,7 +208,7 @@ class Currency {
 	public function local_data($product_id, $location_id = false ) {
 
 		if ($location_id == false ) {
-			$location_id = $this->session->data['location_id']['location_id'];
+			$location_id = $this->session->data['location_id'];
 		}
 
 		$data = array();
@@ -222,9 +224,10 @@ class Currency {
 			'abk_price'      => $price['abk_price'],			
 			'quantity'       => $status['quantity'],
 			'status'         => $status['status'],
+			'visible'         => $status['visible'],
 			'abk_quantity'   => $status['abk_quantity'],
-			'pricelist'      => isset($pricelist['pricelist_price']) ? $pricelist['pricelist_price'] : 0,
-			'pricelist_group_id'      => isset($pricelist['group_id']) ? $pricelist['group_id'] : 0,
+			'pricelist'      => isset($pricelist['pricelist_price']) ? $pricelist['pricelist_price'] : false,
+			'pricelist_group_id'      => isset($pricelist['group_id']) ? $pricelist['group_id'] : false,
 		);
 
 		return $data;

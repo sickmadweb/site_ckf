@@ -49,7 +49,7 @@
             
               
             {% for product in products  if product.on_request == true  %}
-            <tr>
+            <tr class="product_row_{{ product.cart_id }}" >
               <td class="text-center  col-xs-1">{% if product.thumb %} <a href="{{ product.href }}"><img src="{{ product.thumb }}" alt="{{ product.name }}" title="{{ product.name }}" class="img-thumbnail" /></a> {% endif %}</td>
               <td class="text-left  col-xs-5"><a href="{{ product.href }}">{{ product.name }}</a> {% if not product.stock %} <span class="text-danger">***</span> {% endif %}
                 {% if product.option %}
@@ -70,7 +70,7 @@
 
               </td>
               <td class="text-right  col-xs-1">{{ product.price }}</td>
-              <td class="text-right  col-xs-2">{{ product.total }}</td>
+              <td class="text-right col-xs-2 product_total_{{ product.cart_id }}">{{ product.total }}</td>
               <td><button type="button" data-toggle="tooltip" title="{{ button_remove }}" class="btn btn-danger" onclick="cart.remove('{{ product.cart_id }}');"><i class="fa fa-times-circle"></i></button></td>
             </tr>
             {% endfor %}
@@ -84,7 +84,7 @@
               
             </tr>
             {% endif %}
-            <tr>
+            <tr class="product_row_{{ product.cart_id }}" >
               <td class="text-center  col-xs-1">{% if product.thumb %} <a href="{{ product.href }}"><img src="{{ product.thumb }}" alt="{{ product.name }}" title="{{ product.name }}" class="img-thumbnail" /></a> {% endif %}</td>
               <td class="text-left  col-xs-5"><a href="{{ product.href }}">{{ product.name }}</a> {% if not product.stock %} <span class="text-danger">***</span> {% endif %}
                 {% if product.option %}
@@ -105,7 +105,7 @@
 
                 </td>
               <td class="text-right  col-xs-1">{{ product.price }}</td>
-              <td class="text-right  col-xs-2">{{ product.total }}</td>
+              <td class="text-right  col-xs-2 product_total_{{ product.cart_id }}">{{ product.total }}</td>
               <td><button type="button" data-toggle="tooltip" title="{{ button_remove }}" class="btn btn-danger" onclick="cart.remove('{{ product.cart_id }}');"><i class="fa fa-times-circle"></i></button></td>
             </tr>
             {% endfor %}
@@ -279,7 +279,12 @@ function submit_order() {
       data: 'product_id=' + product_id + '&quantity=' +quantity ,
       dataType: 'json',
       success: function(json) {
+        cart.reload();
 
+        el = document.querySelector('.product_total_'+product_id);
+      
+        el.innerHTML = json['total'];
+        
       },
 
       error: function(xhr, ajaxOptions, thrownError) {

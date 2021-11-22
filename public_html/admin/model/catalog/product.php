@@ -461,7 +461,23 @@ class ModelCatalogProduct extends Model {
 	}
 
 	public function getProducts($data = array()) {
-		$sql = "SELECT * FROM " . DB_PREFIX . "product p LEFT JOIN " . DB_PREFIX . "product_description pd ON (p.product_id = pd.product_id) WHERE pd.language_id = '" . (int)$this->config->get('config_language_id') . "'";
+		$sql = "SELECT *, pd.name AS name FROM " . DB_PREFIX . "product p 
+		
+				LEFT JOIN " . DB_PREFIX . "product_description pd ON (p.product_id = pd.product_id) 
+				";
+				if (isset($data['available']) && $data['available'] !== '') {
+					$sql .= "
+					LEFT JOIN " . DB_PREFIX . "product_to_warehouse pw ON  (p.product_id = pw.product_id)
+					LEFT JOIN " . DB_PREFIX . "stock_status ss ON (pw.stock_status_id = ss.stock_status_id)
+					 
+					 ";
+				}
+				$sql .= "
+
+				WHERE pd.language_id = '" . (int)$this->config->get('config_language_id') . "'
+				
+				
+				";
 
 		if (isset($data['filter_category']) && !is_null($data['filter_category'])) {
 			preg_match('/(.*)(WHERE pd\.language_id.*)/', $sql, $sql_crutch_matches);
@@ -541,7 +557,11 @@ class ModelCatalogProduct extends Model {
 		if (isset($data['filter_image']) && $data['filter_image'] !== '') {
 			$sql .= " AND p.image IN ('', 'no_image.png')";
 		}
-		
+
+		if (isset($data['available']) && $data['available'] !== '') {
+			$sql .= " AND ss.visible = 1";
+		}
+	
 		$sql .= " GROUP BY p.product_id";
 
 		$sort_data = array(
@@ -816,7 +836,21 @@ class ModelCatalogProduct extends Model {
 	}
 
 	public function getTotalProducts($data = array()) {
-		$sql = "SELECT COUNT(DISTINCT p.product_id) AS total FROM " . DB_PREFIX . "product p LEFT JOIN " . DB_PREFIX . "product_description pd ON (p.product_id = pd.product_id)";
+		$sql = "
+				SELECT COUNT(DISTINCT p.product_id) AS total 
+				
+				FROM " . DB_PREFIX . "product p 
+				LEFT JOIN " . DB_PREFIX . "product_description pd ON (p.product_id = pd.product_id)
+				";
+
+				if (isset($data['available']) && $data['available'] !== '') {
+					$sql .= "
+					LEFT JOIN " . DB_PREFIX . "product_to_warehouse pw ON  (p.product_id = pw.product_id)
+					LEFT JOIN " . DB_PREFIX . "stock_status ss ON (pw.stock_status_id = ss.stock_status_id)
+					 
+					 ";
+				}
+
 
 		if (isset($data['filter_category']) && !is_null($data['filter_category'])) {
 			$sql .= " LEFT JOIN " . DB_PREFIX . "product_to_category p2c ON (p.product_id = p2c.product_id)";
@@ -894,6 +928,10 @@ class ModelCatalogProduct extends Model {
 			$sql .= " AND p.image IN ('', 'no_image.png')";
 		}
 		
+		if (isset($data['available']) && $data['available'] !== '') {
+			$sql .= " AND ss.visible = 1";
+		}
+
 		$query = $this->db->query($sql);
 
 		return $query->row['total'];

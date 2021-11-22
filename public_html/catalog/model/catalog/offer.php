@@ -519,7 +519,7 @@ class ModelCatalogOffer extends Model {
 		
 		$query = $this->db->query("
 
-		SELECT *, vd.description AS description FROM " . DB_PREFIX . "variants v
+		SELECT *, vd.description AS description, pd.full_name AS full_name , pd.name AS name FROM " . DB_PREFIX . "variants v
 
 		LEFT JOIN " . DB_PREFIX . "product_description pd ON (v.product_id = pd.product_id)
 		LEFT JOIN " . DB_PREFIX . "product p ON (v.product_id = p.product_id)
@@ -595,5 +595,28 @@ class ModelCatalogOffer extends Model {
 
 		return $grouped_filters;
 	}
+
+	public function getOffersPrice ($offer_id) {
+        			
+		$query = $this->db->query("
+		SELECT * FROM `" . DB_PREFIX . "offer_location_cache` 
+		
+		WHERE `offer_id` = ". $offer_id ." 
+		AND location_id = ".$this->session->data['location_id'] ." 
+
+		");
+		print_r("
+		<br>
+		SELECT * FROM `" . DB_PREFIX . "offer_location_cache` 
+		
+		WHERE `offer_id` = ". $offer_id ." 
+		AND location_id = ".$this->session->data['location_id'] ." 
+
+		");
+
+		return $query->row;
+	}
+
+	
 
 }

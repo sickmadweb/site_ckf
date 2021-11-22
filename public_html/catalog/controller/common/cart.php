@@ -97,9 +97,10 @@ class ControllerCommonCart extends Controller {
 			// замена цены по место положению
 			$local_data = $this->currency->local_data($product['product_id'], $this->session->data['location_id']);			
 
-			$price = $local_data['price'] > 0 ? $this->currency->format($local_data['price'], $this->config->get('config_currency')) : $this->language->get('text_query_prices');
+
+			$price = ($local_data['price'] > 0 and $local_data['visible'] > 0 ) ? $this->currency->format($local_data['price'], $this->config->get('config_currency')) : $this->language->get('text_query_prices');
 			
-			$total = $this->currency->format($local_data['price'] * $product['quantity'], $this->session->data['currency']);
+			$total = ($local_data['price'] > 0 and $local_data['visible'] > 0 ) ? $this->currency->format($local_data['price'] * $product['quantity'], $this->session->data['currency']) : $this->language->get('text_query_prices');
 
 			$data['products'][] = array(
 				'cart_id'   => $product['cart_id'],
@@ -109,7 +110,7 @@ class ControllerCommonCart extends Controller {
 				'option'    => $option_data,
 				'recurring' => ($product['recurring'] ? $product['recurring']['name'] : ''),
 				'quantity'  => $product['quantity'],
-				'price'     => $price,
+	//			'price'     => $price,
 				'total'     => $total,
 				'href'      => $this->url->link('product/product', 'product_id=' . $product['product_id'])
 			);

@@ -283,7 +283,6 @@ class ControllerProductOffer extends Controller {
 				$data['thumb'] = '';
 			}
 
-
 			$data['images'] = array();
 
 			$this->load->model('catalog/view');
@@ -291,10 +290,15 @@ class ControllerProductOffer extends Controller {
 			$results = $this->model_catalog_view->getVariantImage($this->request->get['offer_id']);
 
 			foreach ($results as $result) {
-				$data['images'][] = array(
-					'popup' => $this->model_tool_image->resize($result['image'], $this->config->get('theme_' . $this->config->get('config_theme') . '_image_popup_width'), $this->config->get('theme_' . $this->config->get('config_theme') . '_image_popup_height')),
-					'thumb' => $this->model_tool_image->resize($result['image'], $this->config->get('theme_' . $this->config->get('config_theme') . '_image_additional_width'), $this->config->get('theme_' . $this->config->get('config_theme') . '_image_additional_height'))
-				);
+
+					if ($result['image'] != $offer_info['image']) {
+						$data['images'][] = array(
+							'popup' => $this->model_tool_image->resize($result['image'], $this->config->get('theme_' . $this->config->get('config_theme') . '_image_popup_width'), $this->config->get('theme_' . $this->config->get('config_theme') . '_image_popup_height')),
+							'thumb' => $this->model_tool_image->resize($result['image'], $this->config->get('theme_' . $this->config->get('config_theme') . '_image_additional_width'), $this->config->get('theme_' . $this->config->get('config_theme') . '_image_additional_height'))
+						);
+					}
+
+
 			}
 
 			if ($this->customer->isLogged() || !$this->config->get('config_customer_price')) {
@@ -446,7 +450,7 @@ class ControllerProductOffer extends Controller {
 				 
 				$local_data = $this->currency->local_data($variant['product_id'], $this->session->data['location_id']);			
 
-
+	//			print_r($local_data);
 
 				if ($variant['image']) {
 					$image = $this->model_tool_image->resize($variant['image'], $this->config->get('theme_' . $this->config->get('config_theme') . '_image_related_width'), $this->config->get('theme_' . $this->config->get('config_theme') . '_image_related_height'));
@@ -455,7 +459,7 @@ class ControllerProductOffer extends Controller {
 				}
 
 				$data['elements'][] = array(
-					'name'       	=> $variant['name'],
+					'name'       	=> isset($variant['full_name']) ? $variant['full_name'] : $variant['name'] ,
 					'sku'       	=> $variant['sku'],			
 					'product_id' 	=> $variant['product_id'],
 					'minimum'       => $variant['minimum'],
@@ -466,8 +470,8 @@ class ControllerProductOffer extends Controller {
 					'quantity'      => $local_data['quantity'],
 					'abk_quantity'  => $local_data['abk_quantity'],
 					'href'        => $this->url->link('product/view', 'view_id=' . $variant['view_id']),
-
-					'price'      	=> $local_data['price'] > 0 ? $this->currency->format($local_data['price'], $this->config->get('config_currency')) : $this->language->get('text_query_prices'), 
+					'pricelist_group_id'      => $local_data['pricelist_group_id'],
+					'price'      	=> ($local_data['price'] > 0 and $local_data['visible'] > 0) ? $this->currency->format($local_data['price'], $this->config->get('config_currency')) : $this->language->get('text_query_prices'), 
 					'abk_price'     => $local_data['abk_price'] > 0 ? $this->currency->format($local_data['abk_price'], $this->config->get('config_currency')) : $this->language->get('text_query_prices'),
 					'packages'   	=> $this->currency->product_package($variant['product_id'])
 					

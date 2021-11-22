@@ -143,7 +143,7 @@
                         <p>{{ product.name }} </p> 
                         <p>{{ product.sku }} - {{ product.product_id }}</p>                    
                         <p>{{ product.status }}</p>
-                        <p>{{ product.pricelist }}</p> 
+                        <p>{{ product.pricelist_group_id }}</p> 
             
                         {% if product.attributes %}
                         <button type="button" class="btn btn-info" data-toggle="modal" data-target=".view{{ product.product_id }}">{{ text_more }}</button>
@@ -629,7 +629,7 @@ $(document).ready(function() {
         console.log(this.value);
         console.log( this.dataset.product_id);
         addCart( product_id , value );
-
+    //    cart.add( product_id , value );
  
       }
   
@@ -668,7 +668,8 @@ $(document).ready(function() {
 
     //			$('html, body').animate({ scrollTop: 0 }, 'slow');
 
-          $('#cart > ul').load('index.php?route=common/cart/info ul li');
+     //     $('#cart > ul').load('index.php?route=common/cart/info ul li');
+
         }
       },
       error: function(xhr, ajaxOptions, thrownError) {

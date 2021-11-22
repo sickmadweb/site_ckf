@@ -84,6 +84,10 @@ class ControllerCatalogProduct extends Controller {
 				$url .= '&filter_image=' . $this->request->get['filter_image'];
 			}
 
+			if (isset($this->request->get['available'])) {
+				$url .= '&available=' . $this->request->get['available'];
+			}
+
 			if (isset($this->request->get['sort'])) {
 				$url .= '&sort=' . $this->request->get['sort'];
 			}
@@ -174,10 +178,15 @@ class ControllerCatalogProduct extends Controller {
 			if (isset($this->request->get['filter_noindex'])) {
 				$url .= '&filter_noindex=' . $this->request->get['filter_noindex'];
 			}
+
 			if (isset($this->request->get['filter_image'])) {
 				$url .= '&filter_image=' . $this->request->get['filter_image'];
 			}
-			
+				
+			if (isset($this->request->get['available'])) {
+				$url .= '&available=' . $this->request->get['available'];
+			}
+
 			if (isset($this->request->get['sort'])) {
 				$url .= '&sort=' . $this->request->get['sort'];
 			}
@@ -267,6 +276,10 @@ class ControllerCatalogProduct extends Controller {
 				$url .= '&filter_image=' . $this->request->get['filter_image'];
 			}
 			
+			if (isset($this->request->get['available'])) {
+				$url .= '&available=' . $this->request->get['available'];
+			}
+
 			if (isset($this->request->get['sort'])) {
 				$url .= '&sort=' . $this->request->get['sort'];
 			}
@@ -354,6 +367,10 @@ class ControllerCatalogProduct extends Controller {
 			
 			if (isset($this->request->get['filter_image'])) {
 				$url .= '&filter_image=' . $this->request->get['filter_image'];
+			}
+			
+			if (isset($this->request->get['available'])) {
+				$url .= '&available=' . $this->request->get['available'];
 			}
 
 			if (isset($this->request->get['sort'])) {
@@ -515,6 +532,12 @@ class ControllerCatalogProduct extends Controller {
 		} else {
 			$filter_image = '';
 		}
+		
+		if (isset($this->request->get['available'])) {
+			$available = $this->request->get['available'];
+		} else {
+			$available = '';
+		}
 
 		if (isset($this->request->get['sort'])) {
 			$sort = $this->request->get['sort'];
@@ -590,7 +613,12 @@ class ControllerCatalogProduct extends Controller {
 		
 		if (isset($this->request->get['filter_image'])) {
 			$url .= '&filter_image=' . $this->request->get['filter_image'];
-		}	
+		}
+		
+		if (isset($this->request->get['available'])) {
+			$url .= '&available=' . $this->request->get['available'];
+		}
+
 		if (isset($this->request->get['order'])) {
 			$url .= '&order=' . $this->request->get['order'];
 		}
@@ -639,6 +667,7 @@ class ControllerCatalogProduct extends Controller {
 			'filter_manufacturer_id'=> $filter_manufacturer_id,
 			'filter_noindex' 		=> $filter_noindex,
 			'filter_image' 		    => $filter_image,
+			'available' 		    => $available,			
 			'sort'            		=> $sort,
 			'order'           		=> $order,
 			'start'           		=> ($page - 1) * $this->config->get('config_limit_admin'),
@@ -764,6 +793,10 @@ class ControllerCatalogProduct extends Controller {
 		if (isset($this->request->get['filter_image'])) {
 			$url .= '&filter_image=' . $this->request->get['filter_image'];
 		}
+		
+		if (isset($this->request->get['available'])) {
+			$url .= '&available=' . $this->request->get['available'];
+		}
 
 		if ($order == 'ASC') {
 			$url .= '&order=DESC';
@@ -839,6 +872,11 @@ class ControllerCatalogProduct extends Controller {
 		if (isset($this->request->get['filter_image'])) {
 			$url .= '&filter_image=' . $this->request->get['filter_image'];
 		}	
+		
+		if (isset($this->request->get['available'])) {
+			$url .= '&available=' . $this->request->get['available'];
+		}
+
 		if (isset($this->request->get['sort'])) {
 			$url .= '&sort=' . $this->request->get['sort'];
 		}
@@ -934,8 +972,9 @@ class ControllerCatalogProduct extends Controller {
 		$data['filter_manufacturer_name'] = $filter_manufacturer_name;
 		$data['filter_manufacturer_id'] = $filter_manufacturer_id;
 		$data['filter_noindex'] = $filter_noindex;
-		$data['filter_image'] = $filter_image;
-		
+		$data['filter_image'] = $filter_image;		
+		$data['available'] = $available;
+
 		$data['sort'] = $sort;
 		$data['order'] = $order;
 
@@ -1045,7 +1084,10 @@ class ControllerCatalogProduct extends Controller {
 		if (isset($this->request->get['filter_image'])) {
 			$url .= '&filter_image=' . $this->request->get['filter_image'];
 		}
-
+		
+		if (isset($this->request->get['available'])) {
+			$url .= '&available=' . $this->request->get['available'];
+		}	
 		if (isset($this->request->get['sort'])) {
 			$url .= '&sort=' . $this->request->get['sort'];
 		}

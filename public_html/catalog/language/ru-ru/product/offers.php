@@ -26,4 +26,6 @@ $_['text_model_asc']    = 'Код Товара (А - Я)';
 $_['text_model_desc']   = 'Код Товара (Я - А)';
 $_['text_limit']        = 'Показать:';
 $_['text_benefits']     = 'Преимущества:';
-$_['text_offers']     = 'Каталог';
+$_['text_offers']     = 'Каталог магазина';
+$_['text_query_price']     = 'Цена по запросу';
+$_['text_query_on']        = 'Цена от: ';
