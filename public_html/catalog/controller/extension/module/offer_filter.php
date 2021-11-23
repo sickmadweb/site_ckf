@@ -40,7 +40,7 @@ class ControllerExtensionModuleOfferFilter extends Controller {
 				$data['filter_offers'] = array();
 			}
 
-			$this->load->model('catalog/product');
+			$this->load->model('catalog/offer');
 
 			if (isset($this->request->get['filter'])) {
 				$data['filter_category'] = explode(',', $this->request->get['filter']);
@@ -52,7 +52,34 @@ class ControllerExtensionModuleOfferFilter extends Controller {
 
 			$filter_groups = $this->model_catalog_offers->getProductsFilters($offers_id);
 
-			if ($filter_groups) {
+
+			$filters = $this->model_catalog_offer->getFilterAttributes($offers_id);
+			
+			if ($filter_groups or $filters ) {
+
+
+				$childen_data = array();
+				foreach ($filters as $filter) {
+					
+		
+
+					$childen_data[$filter['filter_group_id']][] = array(
+						'filter_id' => $filter['filter_id'],
+						'name'      => $filter['filter_name'] 
+					);
+
+					$data['filter_groups'][$filter['filter_group_id']] = array(
+						'filter_group_id' => $filter['filter_group_id'],
+						'name'            => $filter['filter_group_name'],
+						'filter'          =>$childen_data[$filter['filter_group_id']]
+					);
+				}
+
+
+
+
+/*
+
 				foreach ($filter_groups as $filter_group) {
 					$childen_data = array();
 
@@ -74,6 +101,8 @@ class ControllerExtensionModuleOfferFilter extends Controller {
 						'filter'          => $childen_data
 					);
 				}
+*/
+
 
 				return $this->load->view('extension/module/offer_filter', $data);
 			}

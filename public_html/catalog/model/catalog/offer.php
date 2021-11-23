@@ -108,7 +108,9 @@ class ModelCatalogOffer extends Model {
 					$implode[] = (int)$filter_id;
 				}
 
-				$sql .= " AND pf.filter_id IN (" . implode(',', $implode) . ")";
+				foreach ($grouped_filters as $filter_group_id => $filters) {
+					$sql .= " AND pf" . $filter_group_id . ".filter_id IN (" . implode(',', $filters) . ")";
+				}
 				
 
 			}
@@ -453,7 +455,9 @@ class ModelCatalogOffer extends Model {
 					$implode[] = (int)$filter_id;
 				}
 
-				$sql .= " AND pf.filter_id IN (" . implode(',', $implode) . ")";
+				foreach ($grouped_filters as $filter_group_id => $filters) {
+					$sql .= " AND pf" . $filter_group_id . ".filter_id IN (" . implode(',', $filters) . ")";
+				}
 			}
 		}
 
@@ -572,8 +576,8 @@ class ModelCatalogOffer extends Model {
 			LEFT JOIN " . DB_PREFIX . "filter_group_description fgd ON  fgd.filter_group_id =fd.filter_group_id
 			
 			WHERE v.offer_id = '". $offer_id ."'
-			AND fgd.language_id = 1
-			AND fd.language_id = 1
+			AND fgd.language_id = '" . (int)$this->config->get('config_language_id') . "'
+			AND fd.language_id = '" . (int)$this->config->get('config_language_id') . "'
 			
 			GROUP BY pf.filter_id
 
@@ -612,18 +616,42 @@ class ModelCatalogOffer extends Model {
 		AND location_id = ".$this->session->data['location_id'] ." 
 
 		");
-		print_r("
-		<br>
-		SELECT * FROM `" . DB_PREFIX . "offer_location_cache` 
-		
-		WHERE `offer_id` = ". $offer_id ." 
-		AND location_id = ".$this->session->data['location_id'] ." 
-
-		");
 
 		return $query->row;
 	}
+	public function getFilterAttributes ($offers_id) {
 
-	
+		$query = $this->db->query("
+
+		SELECT 
+		" . DB_PREFIX . "filter.filter_id,
+		" . DB_PREFIX . "filter_description.name AS filter_name,
+		" . DB_PREFIX . "filter.filter_group_id,
+		" . DB_PREFIX . "filter_group_description.name AS filter_group_name
+		
+		
+		
+		
+		FROM " . DB_PREFIX . "offer_to_category, 
+		" . DB_PREFIX . "variants,
+		" . DB_PREFIX . "product_filter,
+		" . DB_PREFIX . "filter,
+		" . DB_PREFIX . "filter_group_description,
+		" . DB_PREFIX . "filter_description
+		
+		WHERE " . DB_PREFIX . "offer_to_category.offers_id = ". $offers_id ."
+		AND " . DB_PREFIX . "offer_to_category.offer_id = " . DB_PREFIX . "variants.offer_id 
+		AND " . DB_PREFIX . "variants.product_id = " . DB_PREFIX . "product_filter.product_id
+		AND " . DB_PREFIX . "product_filter.filter_id = " . DB_PREFIX . "filter.filter_id
+		AND " . DB_PREFIX . "filter.filter_id = " . DB_PREFIX . "filter_description.filter_id
+		AND " . DB_PREFIX . "filter.filter_group_id = " . DB_PREFIX . "filter_group_description.filter_group_id
+		AND " . DB_PREFIX . "filter_group_description.language_id = '" . (int)$this->config->get('config_language_id') . "'
+		AND " . DB_PREFIX . "filter_description.language_id = '" . (int)$this->config->get('config_language_id') . "'
+
+		");
+
+		return $query->rows;	
+
+	}
 
 }

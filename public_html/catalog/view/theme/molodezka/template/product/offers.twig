@@ -35,25 +35,29 @@
       }
       </script>
   </ul>
-  <div class="row">{{ column_left }}
+  <div class="row">
+    <h1>{{ heading_title }}</h1>
+    {% if thumb or description %}
+    <div class="row"> {% if thumb %}
+      <div class="col-sm-2"><img src="{{ thumb }}" alt="{{ heading_title }}" title="{{ heading_title }}" class="img-thumbnail" /></div>
+      {% endif %}
+      {% if description %}
+      <div class="col-sm-10">{{ description }}</div>
+      {% endif %}</div>
+    <hr>
+    {% endif %}
+    
+    {{ offer_filter }}  {{ column_left }} 
     {% if column_left and column_right %}
     {% set class = 'col-sm-6' %}
-    {% elseif column_left or column_right %}
+    {% elseif column_left or column_right or offer_filter %}
     {% set class = 'col-sm-9' %}
     {% else %}
     {% set class = 'col-sm-12' %}
     {% endif %}
-    <div id="content" class="{{ class }}">{{ content_top }}
-      <h1>{{ heading_title }}</h1>
-      {% if thumb or description %}
-      <div class="row"> {% if thumb %}
-        <div class="col-sm-2"><img src="{{ thumb }}" alt="{{ heading_title }}" title="{{ heading_title }}" class="img-thumbnail" /></div>
-        {% endif %}
-        {% if description %}
-        <div class="col-sm-10">{{ description }}</div>
-        {% endif %}</div>
-      <hr>
-      {% endif %}
+    <div id="content" class="{{ class }}">
+      {{ content_top }}
+
       {% if categories %}
       <h3>{{ text_refine }}</h3>
       <div class="row">
