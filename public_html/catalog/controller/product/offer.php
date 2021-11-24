@@ -445,18 +445,19 @@ class ControllerProductOffer extends Controller {
 			$data['elements'] = array();
 	
 			$variants = $this->model_catalog_offer->getVariants((int)$this->request->get['offer_id']);
-	
+
 			foreach ($variants as $variant) {
 				 
 				$local_data = $this->currency->local_data($variant['product_id'], $this->session->data['location_id']);			
 
-	//			print_r($local_data);
+		
 
 				if ($variant['image']) {
 					$image = $this->model_tool_image->resize($variant['image'], $this->config->get('theme_' . $this->config->get('config_theme') . '_image_related_width'), $this->config->get('theme_' . $this->config->get('config_theme') . '_image_related_height'));
 				} else {
 					$image = $this->model_tool_image->resize('placeholder.png', $this->config->get('theme_' . $this->config->get('config_theme') . '_image_related_width'), $this->config->get('theme_' . $this->config->get('config_theme') . '_image_related_height'));
 				}
+
 
 				$data['elements'][] = array(
 					'name'       	=> isset($variant['full_name']) ? $variant['full_name'] : $variant['name'] ,

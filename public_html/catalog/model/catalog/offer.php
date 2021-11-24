@@ -624,7 +624,7 @@ class ModelCatalogOffer extends Model {
 		$query = $this->db->query("
 
 		SELECT 
-		" . DB_PREFIX . "filter.filter_id,
+		DISTINCT(" . DB_PREFIX . "filter.filter_id),
 		" . DB_PREFIX . "filter_description.name AS filter_name,
 		" . DB_PREFIX . "filter.filter_group_id,
 		" . DB_PREFIX . "filter_group_description.name AS filter_group_name

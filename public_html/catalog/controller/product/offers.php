@@ -263,10 +263,6 @@ class ControllerProductOffers extends Controller {
 					$price = $this->language->get('text_query_price');
 				}
 
-
-
-
-
 				$data['products'][] = array(
 					'offer_id'  => $result['offer_id'],
 					'thumb'       => $image,
