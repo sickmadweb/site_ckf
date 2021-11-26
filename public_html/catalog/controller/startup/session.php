@@ -20,8 +20,6 @@ class ControllerStartupSession extends Controller {
 				$session_id = '';
 			}
 		
-	//		$location_id = $this->session->data['location_id'];
-
 			$this->session->start($session_id);
 
 //			$this->session->data['location_id'] = $location_id;
