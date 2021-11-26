@@ -55,6 +55,13 @@ class Session {
 	 * @return	string
  	*/	
 	public function start($session_id = '') {
+/*
+		print_r('<hr>adaptor<pre><<<<<<<<<<<<<<<<<<<<<<');
+		print_r($this->data['location_id']);
+		print_r('>>>>>>>>>>>>>>>>>>>>></pre>');
+*/
+		$location_id = $this->data['location_id'];
+
 		if (!$session_id) {
 			if (function_exists('random_bytes')) {
 				$session_id = substr(bin2hex(random_bytes(26)), 0, 26);
@@ -70,7 +77,9 @@ class Session {
 		}
 		
 		$this->data = $this->adaptor->read($session_id);
+
 		
+		$this->data['location_id'] = $location_id;
 		return $session_id;
 	}
 	

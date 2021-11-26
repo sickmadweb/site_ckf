@@ -5,11 +5,10 @@ class ControllerCommonLocation extends Controller {
 
 		$data['action'] = $this->url->link('common/location/location', '', $this->request->server['HTTPS']);
 
-		$this->load->model('localisation/location');
 
 		$data['locations'] = array();
 
-
+		$this->load->model('localisation/location');
 
 		$results = $this->model_localisation_location->getLocations();
 

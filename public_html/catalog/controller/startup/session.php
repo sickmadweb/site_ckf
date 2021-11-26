@@ -19,9 +19,13 @@ class ControllerStartupSession extends Controller {
 			} else {
 				$session_id = '';
 			}
-			
+		
+	//		$location_id = $this->session->data['location_id'];
+
 			$this->session->start($session_id);
-			
+
+//			$this->session->data['location_id'] = $location_id;
+
 			//setcookie($this->config->get('session_name'), $this->session->getId(), ini_get('session.cookie_lifetime'), ini_get('session.cookie_path'), ini_get('session.cookie_domain'));
 
 			// FIX: expires - Unix time

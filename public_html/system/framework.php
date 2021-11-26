@@ -127,8 +127,24 @@ if ($config->get('session_autostart')) {
 
 	$session->start($session_id);
 
+
     setcookie($config->get('session_name'), $session->getId(), (ini_get('session.cookie_lifetime') ? (time() + ini_get('session.cookie_lifetime')) : 0), ini_get('session.cookie_path'), ini_get('session.cookie_domain'));
 }
+//-------------- location
+if (empty($session->data['location_id'])) {
+
+$loader->model('localisation/location');
+
+$location = new ModelLocalisationLocation($registry);
+
+$locations = $location->getLocations();
+
+$session->data['location_id']	= $locations[0]['location_id'];		
+
+} 
+
+//-------------- location
+
 
 // Cache
 $registry->set('cache', new Cache($config->get('cache_engine'), $config->get('cache_expire')));
@@ -185,6 +201,7 @@ if ($config->has('action_pre_action')) {
 
 // Dispatch
 $route->dispatch(new Action($config->get('action_router')), new Action($config->get('action_error')));
+
 
 // Output
 $response->output();
