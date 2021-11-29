@@ -125,7 +125,7 @@ if ($config->get('session_autostart')) {
 		$session_id = '';
 	}
 
-
+//-------------- location
 if (empty($session->data['location_id'])) {
 
 	$loader->model('localisation/location');
@@ -140,7 +140,7 @@ if (empty($session->data['location_id'])) {
 	
 	} 
 	
-
+//-------------- location
 
 	$session->start($session_id);
 
