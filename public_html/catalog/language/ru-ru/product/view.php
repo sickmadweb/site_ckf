@@ -46,6 +46,8 @@ $_['text_variants']        = 'Элементы:';
 $_['text_offer']           = 'Цена от: ';
 $_['text_product_order']     = 'Цена по запросу';
 $_['title_query_price']               = 'Связаться с менеджером';
+$_['tab_videos']           = 'Видео';
+
 
 // Entry
 $_['entry_qty']                = 'Кол-во';

@@ -31,7 +31,7 @@ class ControllerCommonFooter extends Controller {
 		$data['location'] = $this->url->link('information/location', '', true);
 		$data['about_us'] = $this->url->link('information/about_us', '', true);
 		$data['deliverly'] = $this->url->link('information/deliverly', '', true);
-		$data['video_category'] = $this->url->link('information/video_category', '', true);		
+		$data['video_category'] = $this->url->link('product/video_category', '', true);		
 
 		$data['callback'] = $this->load->controller('extension/form/callback');
 		$data['support'] = $this->load->controller('extension/form/support');

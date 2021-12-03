@@ -243,6 +243,7 @@ class ControllerProductViews extends Controller {
 
 				if (count($images) > 0) {
 
+
 					$image =$images[rand(0, count($images)-1)];
 
 				} else {
@@ -263,6 +264,13 @@ class ControllerProductViews extends Controller {
 					$price = $this->currency->format($this->tax->calculate($result['price'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
 				} else {
 					$price = false;
+				}
+
+
+				if ($image) {
+
+				} else {
+					$image =$images[rand(0, count($images)-1)];	
 				}
 
 				$data['products'][] = array(

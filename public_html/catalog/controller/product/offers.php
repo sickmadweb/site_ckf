@@ -242,8 +242,7 @@ class ControllerProductOffers extends Controller {
 
 					if (count($images) > 0) {
 
-						$image = $this->model_tool_image->resize($images[rand(0, count($images)-1)]['image'], $this->config->get('theme_' . $this->config->get('config_theme') . '_image_thumb_width'), $this->config->get('theme_' . $this->config->get('config_theme') . '_image_thumb_height')) ;
-				
+						$image = $this->model_tool_image->resize($images[rand(0, count($images)-1)]['image'], $this->config->get('theme_' . $this->config->get('config_theme') . '_image_thumb_width'), $this->config->get('theme_' . $this->config->get('config_theme') . '_image_thumb_height')) ;			
 
 					} else {
 		
@@ -255,9 +254,15 @@ class ControllerProductOffers extends Controller {
 
 				$price_local = $this->model_catalog_offer->getOffersPrice($result['offer_id']);
 
-				if ($price_local['price'] > 0 ) {
+				if (isset($price_local['price']) ) {
 
-					$price =$this->language->get('text_query_on'). $this->currency->format($this->tax->calculate($price_local['price'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
+					if ($price_local['price'] > 0  ) {
+
+						$price =$this->language->get('text_query_on'). $this->currency->format($this->tax->calculate($price_local['price'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
+
+					} else {
+						$price = $this->language->get('text_query_price');
+					}
 
 				} else {
 					$price = $this->language->get('text_query_price');

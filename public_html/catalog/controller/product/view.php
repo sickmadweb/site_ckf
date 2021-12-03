@@ -431,9 +431,11 @@ class ControllerProductView extends Controller {
 				}
 			}
 
+			$data['videos'] = array();
+	
+			$data['videos'] = $this->model_catalog_view->getVideos((int)$this->request->get['view_id']);
 
 			$data['variants'] = array();
-
 	
 			$variants = $this->model_catalog_view->getVariants((int)$this->request->get['view_id']);
 	
@@ -455,6 +457,10 @@ class ControllerProductView extends Controller {
 
 				}
 
+				if (empty($variant['abbr']) ) {
+					$variant['abbr'] ='шт';
+				}
+
 				$data['variants'][] = array(
 					'offer_id'  => $variant['offer_id'],
 					'name'      => $variant['name'],
@@ -466,6 +472,9 @@ class ControllerProductView extends Controller {
 	
 			}
 
+
+
+			
 			$data['navigat'] = array();
 			
 			$navigat = $this->model_catalog_view->getNavigat((int)$this->request->get['view_id']);

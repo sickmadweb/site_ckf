@@ -654,4 +654,31 @@ class ModelCatalogOffer extends Model {
 
 	}
 
+	public function getOfferGroupsElements($offer_id) {
+
+		$query = $this->db->query("
+
+			SELECT *,  " . DB_PREFIX . "offer_groups.name AS name, " . DB_PREFIX . "stock_status.name AS status
+
+			FROM " . DB_PREFIX . "offer_groups_product 
+
+			LEFT JOIN " . DB_PREFIX . "offer_groups  ON " . DB_PREFIX . "offer_groups_product.offer_group_id = " . DB_PREFIX . "offer_groups.offer_group_id
+			LEFT JOIN " . DB_PREFIX . "product_to_warehouse ON " . DB_PREFIX . "offer_groups_product.product_id = " . DB_PREFIX . "product_to_warehouse.product_id
+			LEFT JOIN " . DB_PREFIX . "product_location_price ON  " . DB_PREFIX . "offer_groups_product.product_id = " . DB_PREFIX . "product_location_price.product_id
+			LEFT JOIN " . DB_PREFIX . "stock_status ON " . DB_PREFIX . "product_to_warehouse.stock_status_id = " . DB_PREFIX . "stock_status.stock_status_id
+			
+			WHERE offer_id = '". $offer_id ."'
+
+			AND " . DB_PREFIX . "offer_groups_product.offer_group_id = " . DB_PREFIX . "offer_groups.offer_group_id
+			AND " . DB_PREFIX . "product_to_warehouse.location_id = '". (isset($this->session->data['location_id']) ? $this->session->data['location_id'] : $this->config->get('config_location')[0] ) ."'
+			AND " . DB_PREFIX . "product_location_price.location_id = '". (isset($this->session->data['location_id']) ? $this->session->data['location_id'] : $this->config->get('config_location')[0] ) ."'
+			AND " . DB_PREFIX . "stock_status.visible = 1 
+
+		");
+
+
+
+		return $query->rows;
+	}
+
 }

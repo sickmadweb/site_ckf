@@ -626,6 +626,7 @@ class ModelCatalogView extends Model {
 
 		");
 
+
 		return $query->rows;
 	}
 
@@ -680,6 +681,20 @@ class ModelCatalogView extends Model {
 			WHERE v.view_id = '". $view_id ."' 
 
 			AND p.image NOT IN ('','no_image.png','placeholder.png')
+		");
+
+		return $offers->rows;	
+	}
+	
+	public function getVideos( $view_id ) {
+
+		$offers = $this->db->query("
+
+			SELECT * FROM " . DB_PREFIX . "video_installation vi
+
+			LEFT JOIN " . DB_PREFIX . "videos v ON (vi.video_id = v.video_id) 
+			WHERE vi.view_id = '". $view_id ."' 
+
 		");
 
 		return $offers->rows;	

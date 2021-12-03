@@ -479,6 +479,49 @@ class ControllerProductOffer extends Controller {
 				);	
 			}
 
+			$data['offer_groups_product'] = array();
+
+			$results = $this->model_catalog_offer->getOfferGroupsElements($this->request->get['offer_id']);
+	
+			$elements = array();
+			
+			foreach ($results as $result) {
+
+				$local_data = $this->currency->local_data($result['product_id'], $this->session->data['location_id']);	
+
+				$product_info = $this->model_catalog_product->getProduct($result['product_id']);
+			
+				if ($product_info['image']) {
+					$image = $this->model_tool_image->resize($product_info['image'], $this->config->get('theme_' . $this->config->get('config_theme') . '_image_related_width'), $this->config->get('theme_' . $this->config->get('config_theme') . '_image_related_height'));
+				} else {
+					$image = $this->model_tool_image->resize('placeholder.png', $this->config->get('theme_' . $this->config->get('config_theme') . '_image_related_width'), $this->config->get('theme_' . $this->config->get('config_theme') . '_image_related_height'));
+				}
+
+
+					$elements[$result['offer_group_id']][$product_info['product_id']] = array(
+						'product_id'  => $product_info['product_id'],
+						'thumb'       => $image,
+						'name'        => $product_info['name'],
+						'description' => utf8_substr(trim(strip_tags(html_entity_decode($product_info['description'], ENT_QUOTES, 'UTF-8'))), 0, $this->config->get('theme_' . $this->config->get('config_theme') . '_offer_description_length')) . '..',
+						'status'    	=> $local_data['status'],			
+						'minimum'     => $product_info['minimum'] > 0 ? $product_info['minimum'] : 1,
+						'pricelist'   =>$local_data['pricelist'],
+						'href'        => $this->url->link('product/product', 'product_id=' . $product_info['product_id']),
+						'price'      	=> ($local_data['price'] > 0 and $local_data['visible'] > 0) ? $this->currency->format($local_data['price'], $this->config->get('config_currency')) : $this->language->get('text_query_prices'), 
+						'abk_price'     => $local_data['abk_price'] > 0 ? $this->currency->format($local_data['abk_price'], $this->config->get('config_currency')) : $this->language->get('text_query_prices'),
+						'packages'   	=> $this->currency->product_package($product_info['product_id'])
+					);
+				
+
+				$data['offer_groups_product'][$result['offer_group_id']] = array(
+					'name'        => $result['name'],
+					'offer_group_id'        => $result['offer_group_id'],		
+					'elements'    => $elements[$result['offer_group_id']],		
+
+				);
+
+			}
+
 
 			$data['navigat'] = array();
 			

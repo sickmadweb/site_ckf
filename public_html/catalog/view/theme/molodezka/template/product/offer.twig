@@ -265,8 +265,41 @@
                           окончательная цена по запросу
                         </span>
                         </div>
-                      <button onclick="add_tocart('variants')" class="pull-right btn btn-info"> {{ text_add_cart }} </button>
-            
+<script> 
+$('#collapsVariants input').on('click',function(e){
+key = 0 ;
+int = document.querySelectorAll("#collapsVariants  input");
+for (var i = 0; i < int.length; ++i) {
+key  = key + int[i].value;  // Вызов myNodeList.item(i) необязателен в JavaScript
+}
+                      
+if (key > 0) {
+text = document.querySelector(".btn-Variants");
+text.innerText = 'Добавить в корзину'
+} else {
+text.innerText = 'Далее'
+}
+});
+$('#collapsVariants button').on('click',function(e){
+
+key = 0 ;
+int = document.querySelectorAll("#collapsVariants  input");
+for (var i = 0; i < int.length; ++i) {
+  key  = key + int[i].value;  // Вызов myNodeList.item(i) необязателен в JavaScript
+}
+if (key > 0) {
+text = document.querySelector(".btn-Variants");
+text.innerText = 'Добавить в корзину'
+} else {
+text.innerText = 'Далее'
+}
+});
+</script>                     
+                      {% if offer_groups_product %}	
+                      <button onclick="add_tocart('Variants')" class="pull-right btn btn-info btn-Variants "> Далее </button>
+                      {% else %} 
+                      <button onclick="add_tocart('Variants')" class="pull-right btn btn-info btn-Variants"> {{ text_add_cart }} </button>                  
+                      {% endif %} 
             
                       </li> 
                     </ul>
@@ -280,12 +313,13 @@
               <div class="panel panel-default">
                 <div class="panel-heading" role="tab" id="offer_group{{ offer_group.offer_group_id }}">
                   <h4 class="panel-title">
-                  <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collaps_offer_group{{ offer_group.offer_group_id }}" aria-expanded="false" aria-controls="offer_group{{ offer_group.offer_group_id }}">
+                  <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapsoffer_group{{ offer_group.offer_group_id }}" aria-expanded="false" aria-controls="offer_group{{ offer_group.offer_group_id }}">
                     {{ offer_group.name }}
                   </a>
                   </h4>
-                </div>
-                <div id="collaps_offer_group{{ offer_group.offer_group_id }}" class="panel-collapse collapse " role="tabpanel" aria-labelledby="offer_group{{ offer_group.offer_group_id }}">
+                </div> 
+
+                <div id="collapsoffer_group{{ offer_group.offer_group_id }}" class="panel-collapse collapse " role="tabpanel" aria-labelledby="offer_group{{ offer_group.offer_group_id }}">
                   <div class="panel-body">
                     <ul class="list-group">
                       {% for product in offer_group.elements %}  
@@ -408,7 +442,43 @@
                             окончательная цена по запросу
                           </span>
                           </div>
-                        <button onclick="add_tocart('offer_group_{{ offer_group.offer_group_id }}')" class="pull-right btn btn-info"> {{ text_add_cart }} </button>
+
+                          <script> 
+                            $('#collapsoffer_group{{ offer_group.offer_group_id }} input').on('click',function(e){
+                            key = 0 ;
+                            int = document.querySelectorAll("#collapsoffer_group{{ offer_group.offer_group_id }}  input");
+                            for (var i = 0; i < int.length; ++i) {
+                            key  = key + int[i].value;  // Вызов myNodeList.item(i) необязателен в JavaScript
+                            }
+                                                  
+                            if (key > 0) {
+                            text = document.querySelector(".btn-Variants");
+                            text.innerText = 'Добавить в корзину'
+                            } else {
+                            text.innerText = 'Далее'
+                            }
+                            });
+                            $('#collapsoffer_group{{ offer_group.offer_group_id }} button').on('click',function(e){
+                            
+                            key = 0 ;
+                            int = document.querySelectorAll("#collapsoffer_group{{ offer_group.offer_group_id }}  input");
+                            for (var i = 0; i < int.length; ++i) {
+                              key  = key + int[i].value;  // Вызов myNodeList.item(i) необязателен в JavaScript
+                            }
+                            if (key > 0) {
+                            text = document.querySelector(".btn-offer_group{{ offer_group.offer_group_id }}");
+                            text.innerText = 'Добавить в корзину'
+                            } else {
+                            text.innerText = 'Далее'
+                            }
+                            });
+                            </script> 
+                        {% if loop.last %}	
+                        <button onclick="add_tocart('offer_group{{ offer_group.offer_group_id }}')" class="pull-right btn btn-info btn-offer_group{{ offer_group.offer_group_id }}"> {{ text_add_cart }} </button>
+                        {% else %} 
+                        <button onclick="add_tocart('offer_group{{ offer_group.offer_group_id }}')" class="pull-right btn btn-info btn-offer_group{{ offer_group.offer_group_id }}"> Далее </button>                
+                        {% endif %} 
+
                       </li> 
                     </ul>
                   </div>
@@ -464,6 +534,8 @@
 
             </div>
       </div>
+
+
 
       {{ content_bottom }}</div>
     {{ column_right }}</div>
@@ -626,22 +698,43 @@ $(document).ready(function() {
 
   function add_tocart(name) {
   
-    console.log(name);
-    $("."+name+"").each(function( index ) {
 
+
+
+    $('#collaps'+name + ' input').each(function( index ) {
+      console.log('addCart start');
       product_id = parseInt(this.dataset.product_id);
       value =parseFloat(this.value) ;
       if (value > 0) {
 
-        console.log(this.value);
-        console.log( this.dataset.product_id);
+
+        console.log('addCart start');
         addCart( product_id , value );
     //    cart.add( product_id , value );
- 
+    console.log('addCart end');
+
+
       }
   
-  
     });
+
+    $('#collaps'+name).collapse('toggle')
+    console.log('#collaps'+name);
+    offer_group = parseInt(name);
+
+    offer_group = parseInt(name.toString().slice(-1));
+
+
+
+
+    if (isFinite(offer_group)) {
+
+      offer_group = offer_group +1;
+    } else {
+      offer_group =1;
+    }
+    console.log('#collapsoffer_group'+offer_group);
+    $('#collapsoffer_group'+offer_group).collapse('toggle')  ;
   
   }
 

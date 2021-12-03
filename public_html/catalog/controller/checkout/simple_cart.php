@@ -162,7 +162,7 @@ class ControllerCheckoutSimpleCart extends Controller {
 					'price'     => $price,
 					'total'     => $total,
 					'on_request'=> $on_request,
-					'href'      => $this->url->link('product/product', 'product_id=' . $product['product_id'])
+					'href'      => $this->url->link('product/offer', 'offer_id=' . $product['offer_id'])
 				);
 			}
 

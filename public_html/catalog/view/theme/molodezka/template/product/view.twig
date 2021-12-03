@@ -199,7 +199,27 @@
                </div>
              </div>
              {% endif %}
-  
+
+             {% if videos %}
+             <div class="panel panel-default">
+               <div class="panel-heading" role="tab" id="headingimages">
+                 <h4 class="panel-title">
+                   <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseimages" aria-expanded="true" aria-controls="collapseimages">
+                     {{ tab_videos }}
+                   </a>
+                 </h4>
+               </div>
+               <div id="collapseimages" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingimages">
+                  <div class="panel-body">
+                    {% for video in videos %} 
+                       <iframe width="100%" height="450" src="{{ video.link }}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    {% endfor %}
+                  </div>    
+                 </div>
+              </div>
+
+             {% endif %}
+
              {% if options  %}
              <div class="panel panel-default">
                <div class="panel-heading" role="tab" id="headingoptions">
@@ -360,7 +380,7 @@
                </div>
              </div>
              {% endif %}
-             <div class="">
+             <div class="panel panel-default">
               <a href="/index.php?route=product/configurator">
                 <video style="width: 100%;" autoplay="" loop="" muted="" playsinline="" class="home-baner_block-source">
                   <source src="/video/configurator.mp4">
@@ -375,6 +395,7 @@
             </div>
       </div>
       {% if views %}
+      <div class="clearfix"></div>
       <h3>{{ text_related }}</h3>
       <div class="row"> {% set i = 0 %}
         {% for product in views %}
