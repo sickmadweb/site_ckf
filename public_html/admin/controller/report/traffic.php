@@ -46,7 +46,7 @@ class ControllerReportTraffic extends Controller {
 				$data['reports'][] = array(
 					'site'	       => $result['site'],	
 					'store_id'     => $result['store_id'],
-					'users'        => $result['users'],
+					'users'        => $result['users']-1,
 					'repeated'     => $result['repeated'],		
 					'telephone'    => $result['telephone'],		
 					'contacts'     => $result['contacts'],		
@@ -56,9 +56,9 @@ class ControllerReportTraffic extends Controller {
 					'orders'       => $result['orders'],		
 					'email'        => $result['email'],		
 					'configurator' => $result['configurator'],		
-					'time_less_1'  => $result['time_less_1'],	
-					'time_1m_5m'   => $result['time_1m_5m'],	
-					'time_more_5m' => $result['time_more_5m'],	
+					'time_less_1'  => $result['time_less_1']-1,	
+					'time_1m_5m'   => $result['time_1m_5m']-1,	
+					'time_more_5m' => $result['time_more_5m']-1,	
 	
 				);
 			}
